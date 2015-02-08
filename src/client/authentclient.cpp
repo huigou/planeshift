@@ -57,6 +57,10 @@
 #elif defined(CS_PLATFORM_UNIX)
 #include "sys/utsname.h"
     struct utsname SYSinfo;
+#else
+typedef void (WINAPI *PGNSI)(LPSYSTEM_INFO);
+typedef BOOL (WINAPI *PGPI)(DWORD, DWORD, DWORD, DWORD, PDWORD);
+
 #endif
 
 
@@ -220,25 +224,44 @@ void psAuthenticationClient::HandlePreAuth( MsgEntry* me )
 #ifdef CS_PLATFORM_MACOSX
     uname(&SYSinfo);
     char *s=strstr( SYSinfo.version, "root:" )+5;
-    sprintf( SysString, "%1.1s%9.9s%14.14s-%6.6s", SYSinfo.sysname, SYSinfo.release, s, SYSinfo.machine );
+    sprintf( SysString, "M%5.5s%6.6s %14.14s", SYSinfo.release, SYSinfo.machine, s );
 #elif defined(CS_PLATFORM_UNIX)
     uname (&SYSinfo);
     char *s=SYSinfo.version;
-    sprintf( SysString, "%1.1s%9.9s%14.14s-%6.6s", SYSinfo.sysname, SYSinfo.release, s, SYSinfo.machine );
+    sprintf( SysString, "%1.1s %4.4s%6.6s %14.14s", SYSinfo.sysname, SYSinfo.release, SYSinfo.machine, s );
 #elif defined(_WINDOWS)
-    OSVERSIONINFO osvi;
-
+    OSVERSIONINFO    osvi;
+    SYSTEM_INFO      si;
+    PGNSI            pGNSI;
+    BOOL             bOsVersionInfoEx;
+   
+    ZeroMemory(&si, sizeof(SYSTEM_INFO));
     ZeroMemory(&osvi, sizeof(OSVERSIONINFO));
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
+    bOsVersionInfoEx = GetVersionEx((OSVERSIONINFO*) &osvi);
+    //fields : OS, MajorRev, MinorRev, architecture, platform
+    if( ! bOsVersionInfoEx ) {
+        sprintf( SysString, "%1.1s??.?? %2.2s.%2.2s %s", CS_PLATFORM_NAME, CS_PROCESSOR_NAME,CS_PROCESSOR_SIZE,CS_COMPILER_NAME );
+    }
+    else
+    {
+        // Call GetNativeSystemInfo if supported or GetSystemInfo otherwise.
 
-    GetVersionEx(&osvi);
+        pGNSI = (PGNSI) GetProcAddress(
+            GetModuleHandle(TEXT("kernel32.dll")), 
+            "GetNativeSystemInfo");
+        if(NULL != pGNSI)
+            pGNSI(&si);
+        else GetSystemInfo(&si);
 
-    sprintf(SysString, "Windows rev%d.%d, build=%d", osvi.dwMajorVersion, osvi.dwMinorVersion, osvi.dwBuildNumber);
+        sprintf(SysString, "W% 2d.% 2d%06.0d", osvi.dwMajorVersion, osvi.dwMinorVersion, si.dwProcessorType ); //8664 = x86_64
+
+    }
 #else
     //default back to old information taken not from the currently executing machine but the client compile env.
-    sprintf( SysString, "%s-%s (%s(%s))-%s", CS_PLATFORM_NAME, CS_PROCESSOR_NAME,CS_VER_QUOTE,CS_PROCESSOR_SIZE,CS_COMPILER_NAME );
+    sprintf( SysString, "%1.1s??.?? %2.2s.%2.2s %s", CS_PLATFORM_NAME, CS_PROCESSOR_NAME,CS_PROCESSOR_SIZE,CS_COMPILER_NAME );
 #endif
-    SysString[31]=0;	//just to make sure...
+    SysString[31]=0;    //just to make sure...
     psAuthenticationMessage request(0,username.GetData(), hexstring.GetData(), SysString, HWRender.GetDataSafe(), HWGLVersion.GetDataSafe(), "" );
     
     request.SendMessage();                
