@@ -837,10 +837,14 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
         else
         {
             dest = path->Next();
-            StartMoveTo(npc, dest->GetPosition(), dest->GetSector(), GetVelocity(npc),
-                        action, angle);
-            currentDistance =  npcclient->GetWorld()->Distance2(myPos, mySector,
-                               dest->GetPosition(), dest->GetSector());
+            if( dest==NULL ) 
+            {
+            NPCDebug(npc, 5, "DEST PATH == NULL.");
+                return OPERATION_NOT_COMPLETED;
+            }
+            NPCDebug(npc, 5, "DEST PATH is good.");
+            StartMoveTo(npc, dest->GetPosition(), dest->GetSector(), GetVelocity(npc), action, angle);
+            currentDistance =  npcclient->GetWorld()->Distance2(myPos, mySector, dest->GetPosition(), dest->GetSector());
         }
     }
     else
