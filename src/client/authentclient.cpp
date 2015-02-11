@@ -220,16 +220,58 @@ void psAuthenticationClient::HandlePreAuth( MsgEntry* me )
     iGraphics2D *graphics2D = PawsManager::GetSingleton().GetGraphics3D()->GetDriver2D();
     csString HWRender =  graphics2D->GetHWRenderer();
     csString HWGLVersion =  graphics2D->GetHWGLVersion();
-    char SysString[32];
-#ifdef CS_PLATFORM_MACOSX
+
+    char     OS[2] = { 0,0 },
+             OS_platform[15] = { 0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 } ,
+             machine_type[7] = { 0,0,0,0,0,0,0 },
+             *s,
+             *t;
+    
+    uint16   OS_ver_major,
+             OS_ver_minor;
+
+#ifndef _WINDOWS 
     uname(&SYSinfo);
-    char *s=strstr( SYSinfo.version, "root:" )+5;
-    sprintf( SysString, "M%5.5s%6.6s %14.14s", SYSinfo.release, SYSinfo.machine, s );
-#elif defined(CS_PLATFORM_UNIX)
-    uname (&SYSinfo);
-    char *s=SYSinfo.version;
-    sprintf( SysString, "%1.1s %4.4s%6.6s %14.14s", SYSinfo.sysname, SYSinfo.release, SYSinfo.machine, s );
+
+#   ifdef CS_PLATFORM_MACOSX
+        OS[0]='M';
+        OS_platform[0]=0;
+        s=strstr( SYSinfo.version, "root:" )+5;
+        sprintf( OS_platform, "%14.14s", s );
+#   elif defined(CS_PLATFORM_UNIX)
+        OS[0]='U';
+        sprintf( OS_platform, "%14.14s", SYSinfo.version );
+#   endif
+
+    s=SYSinfo.release;
+    t=strstr( s, "." );
+    if( t!=NULL )
+    {
+        *t=0;
+        OS_ver_major=atoi(s);
+
+        s=t+1;
+        t=strstr( s, "." );
+        if( t!=NULL )
+        {
+            *t=0;
+            OS_ver_minor=atoi(s);
+        }
+        else
+        {
+            OS_ver_minor=atoi(s);
+        }
+    }
+    else
+    {
+        OS_ver_major=atoi(s);
+    }
+     
+
+    sprintf( machine_type, "%6.6s", SYSinfo.machine );
+    
 #elif defined(_WINDOWS)
+    OS[0]='W';
     OSVERSIONINFO    osvi;
     SYSTEM_INFO      si;
     PGNSI            pGNSI;
@@ -240,8 +282,11 @@ void psAuthenticationClient::HandlePreAuth( MsgEntry* me )
     osvi.dwOSVersionInfoSize = sizeof(OSVERSIONINFO);
     bOsVersionInfoEx = GetVersionEx((OSVERSIONINFO*) &osvi);
     //fields : OS, MajorRev, MinorRev, architecture, platform
-    if( ! bOsVersionInfoEx ) {
-        sprintf( SysString, "%1.1s??.?? %2.2s.%2.2s %s", CS_PLATFORM_NAME, CS_PROCESSOR_NAME,CS_PROCESSOR_SIZE,CS_COMPILER_NAME );
+    if( ! bOsVersionInfoEx )
+    {
+        OS_ver_major=0;
+        OS_ver_minor=0;
+        sprintf( machine_type, "x%2.2s_2.2s", CS_PROCESSOR_NAME,CS_PROCESSOR_SIZE );
     }
     else
     {
@@ -254,17 +299,25 @@ void psAuthenticationClient::HandlePreAuth( MsgEntry* me )
             pGNSI(&si);
         else GetSystemInfo(&si);
 
-        sprintf(SysString, "W% 2d.% 2d%06.0d", osvi.dwMajorVersion, osvi.dwMinorVersion, si.dwProcessorType ); //8664 = x86_64
-
+        OS_ver_major=osvi.dwMajorVersion
+        OS_ver_minor=osvi.dwMinorVersion;
+        if( si.dwProcessorType==8664 )
+        {
+            sprintf( machine_type, "x86_64" );
+        }
+        else if( si.dwProcessorType==8632 )
+        {
+            sprintf( machine_type, "x86_32" );
+        }
+        else 
+        {
+            sprintf( machine_type, "% 6i", si.dwProcessorType );
+        }
     }
-#else
-    //default back to old information taken not from the currently executing machine but the client compile env.
-    sprintf( SysString, "%1.1s??.?? %2.2s.%2.2s %s", CS_PLATFORM_NAME, CS_PROCESSOR_NAME,CS_PROCESSOR_SIZE,CS_COMPILER_NAME );
+    OS_platform[0]=0;
 #endif
-    SysString[31]=0;    //just to make sure...
-    psAuthenticationMessage request(0,username.GetData(), hexstring.GetData(), SysString, HWRender.GetDataSafe(), HWGLVersion.GetDataSafe(), "" );
-    
-    request.SendMessage();                
+    psAuthenticationMessage request(0,username.GetData(), hexstring.GetData(), OS, OS_ver_major, OS_ver_minor, OS_platform, machine_type, HWRender.GetDataSafe(), HWGLVersion.GetDataSafe(), "" );
+    request.SendMessage(); 
 }
 
 

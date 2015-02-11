@@ -588,10 +588,16 @@ class psAuthenticationMessage : public psMessageCracker
 {
 public:
     uint32_t  netversion;
-    csString  sAddr;
-    csString  sUser,sPassword;
-    csString  sPassword256;
-    csString  os_, gfxcard_, gfxversion_;
+    csString  sAddr,
+              sUser,
+              sPassword,
+              sPassword256,
+              os_,
+              os_platform,
+              machine_type,
+              gfxcard_, gfxversion_;
+    uint16    os_ver_major,
+              os_ver_minor;
 
     /**
      * This function creates a PS Message struct given a userid and
@@ -599,7 +605,7 @@ public:
      * creation when a user wants to log in.
      */
     psAuthenticationMessage(uint32_t clientnum,const char* userid,
-                            const char* password, const char* os, const char* gfxcard, const char* gfxversion, const char* sPassword256 = "", uint32_t version=PS_NETVERSION);
+                            const char* password, const char* os, uint16 os_ver_major, uint16 os_ver_minor, const char *os_platform, const char *machine_type, const char* gfxcard, const char* gfxversion, const char* sPassword256 = "", uint32_t version=PS_NETVERSION);
 
     /**
      * This constructor receives a PS Message struct and cracks it apart

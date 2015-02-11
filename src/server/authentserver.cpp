@@ -440,9 +440,13 @@ void AuthenticationServer::HandleAuthent(MsgEntry* me, Client* notused)
                    gmtm->tm_sec);
 
     acctinfo->lastlogintime = timeStr;
-    acctinfo->os = msg.os_;
-    acctinfo->gfxcard = msg.gfxcard_;
-    acctinfo->gfxversion = msg.gfxversion_;
+    acctinfo->os            = msg.os_;
+    acctinfo->os_ver_major  = msg.os_ver_major;
+    acctinfo->os_ver_minor  = msg.os_ver_minor;
+    acctinfo->os_platform   = msg.os_platform;
+    acctinfo->machine_type  = msg.machine_type;
+    acctinfo->gfxcard       = msg.gfxcard_;
+    acctinfo->gfxversion    = msg.gfxversion_;
     psserver->GetCacheManager()->UpdateAccountInfo(acctinfo);
 
     iCachedObject* obj = psserver->GetCacheManager()->RemoveFromCache(psserver->GetCacheManager()->MakeCacheName("auth",acctinfo->accountid));
