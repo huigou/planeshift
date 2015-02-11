@@ -77,8 +77,18 @@ public:
     csString createddate;
     /// String value of the last ip a connection came in from
     csString lastloginip;
+
     /// String containing the os the connecting machine is running
     csString os;
+    /// String containing the os major version the connecting machine is running
+    uint16 os_ver_major;
+    /// String containing the os minor version the connecting machine is running
+    uint16 os_ver_minor;
+    /// String containing miscellaneous details about the os the connecting machine is running
+    csString os_platform;
+    /// String containing the type of connecting machine
+    csString machine_type;
+
     /// String containing the graphics card the connecting machine is using
     csString gfxcard;
     /// String containing the graphics driver version the connecting machine is using;

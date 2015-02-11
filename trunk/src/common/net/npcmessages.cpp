@@ -36,7 +36,7 @@ PSF_IMPLEMENT_MSG_FACTORY(psNPCAuthenticationMessage,MSGTYPE_NPCAUTHENT);
 psNPCAuthenticationMessage::psNPCAuthenticationMessage(uint32_t clientnum,
                                                        const char *userid,
                                                        const char *password)
-: psAuthenticationMessage(clientnum,userid,password,"NPC", "NPC", "NPC", "", PS_NPCNETVERSION)
+: psAuthenticationMessage(clientnum,userid,password,"NPC", 0, 0, "NPC", "NPC", "NPC", "NPC", "", PS_NPCNETVERSION)
 {
     /*
      * This structure is exactly like the regular authentication message,

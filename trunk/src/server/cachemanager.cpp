@@ -3965,7 +3965,11 @@ bool CacheManager::UpdateAccountInfo(psAccountInfo* ainfo)
         "last_login_ip",
         "security_level",
         "last_login",
-        "operating_system",
+        "OS",
+        "OS_ver_major",
+        "OS_ver_minor",
+        "OS_platform",
+        "machine_type",
         "graphics_card",
         "graphics_version"
     };
@@ -3976,6 +3980,10 @@ bool CacheManager::UpdateAccountInfo(psAccountInfo* ainfo)
     fields.FormatPush("%d",ainfo->securitylevel);
     fields.Push(ainfo->lastlogintime);
     fields.Push(ainfo->os);
+    fields.FormatPush("%d",ainfo->os_ver_major);
+    fields.FormatPush("%d",ainfo->os_ver_minor);
+    fields.Push(ainfo->os_platform);
+    fields.Push(ainfo->machine_type);
     fields.Push(ainfo->gfxcard);
     fields.Push(ainfo->gfxversion);
     snprintf(accountidstring,11,"%u",ainfo->accountid);

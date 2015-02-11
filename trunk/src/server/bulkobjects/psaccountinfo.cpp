@@ -53,7 +53,12 @@ bool psAccountInfo::Load(iResultRow &row)
     createddate = row["created_date"];
     lastlogintime = row["last_login"];
     lastloginip = row["last_login_ip"];
-    os = row["operating_system"];
+    os = row["OS"];
+    os_ver_major = row.GetInt("OS_ver_major");
+    os_ver_minor = row.GetInt("OS_ver_minor");
+    os_platform = row["OS_platform"];
+    machine_type = row["Machine_type"];
+
     gfxcard = row["graphics_card"];
     gfxversion = row["graphics_version"];
 

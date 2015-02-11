@@ -154,7 +154,7 @@ csString psPreAuthenticationMessage::ToString(NetBase::AccessPointers* /*accessP
 PSF_IMPLEMENT_MSG_FACTORY(psAuthenticationMessage,MSGTYPE_AUTHENTICATE);
 
 psAuthenticationMessage::psAuthenticationMessage(uint32_t clientnum,
-        const char* userid,const char* password, const char* os, const char* gfxcard, const char* gfxversion, const char* password256, uint32_t version)
+        const char* userid,const char* password, const char* os, uint16 os_ver_major, uint16 os_ver_minor, const char *os_platform, const char * machine_type, const char* gfxcard, const char* gfxversion, const char* password256, uint32_t version)
 {
 
     if(!userid || !password)
@@ -164,7 +164,7 @@ psAuthenticationMessage::psAuthenticationMessage(uint32_t clientnum,
     }
 
 
-    msg.AttachNew(new MsgEntry(strlen(userid)+1+strlen(password)+1+strlen(os)+1+strlen(gfxcard)+1+strlen(gfxversion)+1+strlen(password256)+1+sizeof(uint32_t),PRIORITY_LOW));
+    msg.AttachNew(new MsgEntry(strlen(userid)+1+strlen(password)+1+strlen(os)+1+sizeof(os_ver_major)+sizeof(os_ver_minor)+strlen(os_platform)+1+strlen(machine_type)+1+strlen(gfxcard)+1+strlen(gfxversion)+1+strlen(password256)+1+sizeof(uint32_t),PRIORITY_LOW));
 
     msg->SetType(MSGTYPE_AUTHENTICATE);
     msg->clientnum      = clientnum;
@@ -173,6 +173,10 @@ psAuthenticationMessage::psAuthenticationMessage(uint32_t clientnum,
     msg->Add(userid);
     msg->Add(password);
     msg->Add(os);
+    msg->Add(os_ver_major);
+    msg->Add(os_ver_minor);
+    msg->Add(os_platform);
+    msg->Add(machine_type);
     msg->Add(gfxcard);
     msg->Add(gfxversion);
     msg->Add(password256);
@@ -190,6 +194,10 @@ psAuthenticationMessage::psAuthenticationMessage(MsgEntry* message)
     sUser = message->GetStr();
     sPassword = message->GetStr();
     os_ = message->GetStr();
+    os_ver_major = message->GetUInt16();
+    os_ver_minor = message->GetUInt16();
+    os_platform = message->GetStr();
+    machine_type = message->GetStr();
     gfxcard_ = message->GetStr();
     gfxversion_ = message->GetStr();
     if(!message->IsEmpty())
