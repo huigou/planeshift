@@ -299,7 +299,7 @@ void psAuthenticationClient::HandlePreAuth( MsgEntry* me )
             pGNSI(&si);
         else GetSystemInfo(&si);
 
-        OS_ver_major=osvi.dwMajorVersion
+        OS_ver_major=osvi.dwMajorVersion;
         OS_ver_minor=osvi.dwMinorVersion;
         if( si.dwProcessorType==8664 )
         {
