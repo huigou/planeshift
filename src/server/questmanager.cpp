@@ -648,7 +648,7 @@ csString QuestManager::ParseRequireCommand(csString &block, bool &result, psQues
     else if(!strncasecmp(block,"known spell",11))
     {
         csString magicname = block.Slice(12,block.Length()).Trim();
-        command.Format("<knownspell name=\"%s\"/>", magicname.GetData());
+        command.Format("<knownspell spell=\"%s\"/>", magicname.GetData());
     }
     else if(!strncasecmp(block,"race",4))
     {
