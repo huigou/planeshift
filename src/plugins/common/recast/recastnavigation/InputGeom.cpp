@@ -166,7 +166,7 @@ bool InputGeom::load(rcContext* ctx, const char* filePath)
     if (!fp)
         return false;
     fseek(fp, 0, SEEK_END);
-    int bufSize = ftell(fp);
+    long bufSize = ftell(fp);
     if (bufSize < 0)
     {
         fclose(fp);
