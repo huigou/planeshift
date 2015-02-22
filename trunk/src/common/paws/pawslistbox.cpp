@@ -1325,7 +1325,7 @@ void pawsListBox::SortRows()
     skillList->MoveRow(1,0);
     skillList->MoveRow(0,1);
 
-    printf("Testing with 1 and 2 entites\n");
+    printf("Testing with 1 and 2 entities\n");
     skillList->NewRow();
     skillList->MoveRow(1,0);
     skillList->MoveRow(0,1);
