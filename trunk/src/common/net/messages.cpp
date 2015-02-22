@@ -207,6 +207,11 @@ psAuthenticationMessage::psAuthenticationMessage(MsgEntry* message)
         os_platform = message->GetStr();
         machine_type = message->GetStr();
     }
+    else
+    {
+        os_ver_major = 0;
+        os_ver_minor = 0;
+    }
 
     // Sets valid flag based on message overrun state
     valid=!(message->overrun);
