@@ -2601,7 +2601,7 @@ const COMMAND commands[] =
 
     // various commands
     { "-- Various commands",  true, NULL, "------------------------------------------------" },
-    { "list",      true, com_list,      "List entites ( list [char|ent|path|waypoint] <filter> )" },
+    { "list",      true, com_list,      "List entities ( list [char|ent|path|waypoint] <filter> )" },
     { "entlist",   true, com_entlist,   "List all known entities" },
     { "factions",  true, com_factions,  "Display factions" },
     { "filtermsg", true, com_filtermsg, "Add or remove messages from the LOG_MESSAGE log"},
