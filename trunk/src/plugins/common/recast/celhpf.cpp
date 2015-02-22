@@ -75,14 +75,7 @@ void celHPath::Initialize(iCelPath* highLevelPath)
       if(hlPath->HasNext())
       {
         src = hlPath->Next();
-        if(hlPath->HasNext())
-        {
-          dst = hlPath->Next();
-        }
-        else
-        {
-          break;
-        }
+        dst = hlPath->Next();
       }
       else
       {
@@ -739,7 +732,7 @@ iCelHPath* celHNavStruct::ShortestPath (iMapNode* from, iMapNode* goal)
   hlGraph->RemoveNode(goalNodeIdx);
   hlGraph->RemoveNode(fromNodeIdx);  
 
-  if (hlPath->GetNodeCount() <= 1)
+  if (hlPath->GetNodeCount() == 0)
   {
     return 0;
   }
@@ -973,6 +966,7 @@ void celHNavStruct::SaveNavMeshes (iDocumentNode* node, iVFS* vfs)
   while (navMeshIt.HasNext())
   {
     csRef<iCelNavMesh> navMesh = navMeshIt.Next(key);
+    if (!key) continue;
     csRef<iDocumentNode> navMeshNode = node->CreateNodeBefore(CS_NODE_ELEMENT);
     navMeshNode->SetValue("navmesh");
     navMeshNode->SetAttributeAsInt("id", i);
@@ -1091,6 +1085,7 @@ csArray<csSimpleRenderMesh*>* celHNavStruct::GetDebugMeshes (iSector* sector /*=
   {
     csRef<iCelNavMesh> navMesh = it.Next();
     csArray<csSimpleRenderMesh*>* tmp = navMesh->GetDebugMeshes();
+    if (!tmp) continue;
     csArray<csSimpleRenderMesh*>::Iterator tmpIt = tmp->GetIterator();
     while (tmpIt.HasNext())
     {
