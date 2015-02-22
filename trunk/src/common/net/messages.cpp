@@ -173,13 +173,13 @@ psAuthenticationMessage::psAuthenticationMessage(uint32_t clientnum,
     msg->Add(userid);
     msg->Add(password);
     msg->Add(os);
+    msg->Add(gfxcard);
+    msg->Add(gfxversion);
+    msg->Add(password256);
     msg->Add(os_ver_major);
     msg->Add(os_ver_minor);
     msg->Add(os_platform);
     msg->Add(machine_type);
-    msg->Add(gfxcard);
-    msg->Add(gfxversion);
-    msg->Add(password256);
 
     // Sets valid flag based on message overrun state
     valid=!(msg->overrun);
@@ -194,15 +194,18 @@ psAuthenticationMessage::psAuthenticationMessage(MsgEntry* message)
     sUser = message->GetStr();
     sPassword = message->GetStr();
     os_ = message->GetStr();
-    os_ver_major = message->GetUInt16();
-    os_ver_minor = message->GetUInt16();
-    os_platform = message->GetStr();
-    machine_type = message->GetStr();
     gfxcard_ = message->GetStr();
     gfxversion_ = message->GetStr();
     if(!message->IsEmpty())
     {
         sPassword256 = message->GetStr();
+    }
+    if(!message->IsEmpty())
+    {
+        os_ver_major = message->GetUInt16();
+        os_ver_minor = message->GetUInt16();
+        os_platform = message->GetStr();
+        machine_type = message->GetStr();
     }
 
     // Sets valid flag based on message overrun state
