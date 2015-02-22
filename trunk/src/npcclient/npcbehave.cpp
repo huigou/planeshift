@@ -1398,8 +1398,8 @@ Behavior::BehaviorResult Behavior::Advance(float delta, NPC* npc)
     }
     else
     {
-        Error5("Don't know how to advance sequence in behavior %s for %s(%s) in state %d",
-               GetName(),npc->GetName(),ShowID(npc->GetEID()),sequence[current_step]->GetState());
+        Error6("Don't know how to advance sequence in behavior %s for %s(%s) step %zu state %d",
+               GetName(),npc->GetName(),ShowID(npc->GetEID()),current_step,sequence[current_step]->GetState());
         return BEHAVIOR_FAILED;
     }
 
