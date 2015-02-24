@@ -540,7 +540,7 @@ bool NPC::InsertCopy(PID use_char_id, PID ownerPID)
 
 bool NPC::Delete()
 {
-    int r = db->Command("DELETE FROM sc_npc_definitions where char_id='%u'",pid);
+    int r = db->Command("DELETE FROM sc_npc_definitions where char_id='%u'",pid.Unbox());
     return (r == 1);
 }
 
