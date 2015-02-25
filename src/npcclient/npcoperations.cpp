@@ -688,26 +688,21 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC* npc, bool interrupt
         return OPERATION_FAILED;  // This operation is complete
     }
 
+    float distance = npcclient->GetWorld()->Distance2(myPos, mySector, endPos, endSector);
+    if(distance < 0.5)
+    {
+        NPCDebug(npc, 5, "We are done..");
+        return OPERATION_COMPLETED;
+    }
     path = npcclient->ShortestPath(npc, myPos,mySector,endPos,endSector);
     if(!path || !path->HasNext())
     {
-        // Lets check if we are at the end position. The ShortestPath dosn't
-        // seams to work to well if the start and end is the same.
-        float distance = npcclient->GetWorld()->Distance2(myPos, mySector, endPos, endSector);
-        if(distance < 0.5)
-        {
-            NPCDebug(npc, 5, "We are done..");
-            return OPERATION_COMPLETED;
-        }
-        else
-        {
-            // We really failed to find a path between us and the target
-            NPCDebug(npc, 5, "Failed to find a path between %s and %s",
-                     toString(myPos, mySector).GetData(),
-                     toString(endPos, endSector).GetData());
+        // We really failed to find a path between us and the target
+        NPCDebug(npc, 5, "Failed to find a path between %s and %s",
+                 toString(myPos, mySector).GetData(),
+                 toString(endPos, endSector).GetData());
 
-            return OPERATION_FAILED;  // This operation is complete
-        }
+        return OPERATION_FAILED;  // This operation is complete
     }
     else if(!PathReachedEndPoint(npc, path, endPos, endSector))
     {
