@@ -20,7 +20,11 @@
 
 
 #include "celnavmesh.h"
-#include <csgeom/math3d.h>
+
+#include "csgeom/math3d.h"
+#include "csutil/csendian.h"
+#include "csutil/databuf.h"
+#include "csutil/memfile.h"
 
 CS_PLUGIN_NAMESPACE_BEGIN(celNavMesh)
 {
@@ -676,6 +680,33 @@ csBox3 celNavMesh::GetBoundingBox() const
   return csBox3(boundingMin[0], boundingMin[1], boundingMin[2], boundingMax[0], boundingMax[1], boundingMax[2]);
 }
 
+// Saving helpers
+static void SetAttributeFloat (iDocumentNode* parent, const char* childName, float val)
+{
+  csRef<iDocumentNode> node = parent->CreateNodeBefore(CS_NODE_ELEMENT);
+  node->SetValue(childName);
+  node->SetAttributeAsFloat("value", val);
+}
+
+static void SetAttributeFloat3 (iDocumentNode* parent, const char* childName, const float* val)
+{
+  csRef<iDocumentNode> node = parent->CreateNodeBefore(CS_NODE_ELEMENT);
+  node->SetValue(childName);
+  node->SetAttributeAsFloat("x", val[0]);
+  node->SetAttributeAsFloat("y", val[1]);
+  node->SetAttributeAsFloat("z", val[2]);
+}
+
+static void SetAttributeInt (iDocumentNode* parent, const char* childName, int val)
+{
+  csRef<iDocumentNode> node = parent->CreateNodeBefore(CS_NODE_ELEMENT);
+  node->SetValue(childName);
+  node->SetAttributeAsInt("value", val);
+}
+
+static const unsigned char NavmeshFileMagic[3] = { 'c', 'n', 'm' };
+static const unsigned char NavmeshCurrentVersion = 0;
+
 bool celNavMesh::SaveToFile (iFile* file) const
 {
   csRef<iDocumentSystem> docsys = csLoadPluginCheck<iDocumentSystem>(objectRegistry, "crystalspace.documentsystem.tinyxml");
@@ -683,483 +714,311 @@ bool celNavMesh::SaveToFile (iFile* file) const
   {
     return false;
   }
-  
-  // Create XML file
-  csRef<iDocument> doc = docsys->CreateDocument();
-  csRef<iDocumentNode> root = doc->CreateRoot();
-  csRef<iDocumentNode> mainNode = root->CreateNodeBefore(CS_NODE_ELEMENT);
-  mainNode->SetValue("iCelNavMesh");
-  mainNode->SetAttribute("sector", sector->QueryObject()->GetName());
-  
-  // Bounding box node
-  csRef<iDocumentNode> boundingBoxNode = mainNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  boundingBoxNode->SetValue("boundingbox");
-  csRef<iDocumentNode> min = boundingBoxNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  min->SetValue("min");
-  min->SetAttributeAsFloat("x", boundingMin[0]);
-  min->SetAttributeAsFloat("y", boundingMin[1]);
-  min->SetAttributeAsFloat("z", boundingMin[2]);
-  csRef<iDocumentNode> max = boundingBoxNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  max->SetValue("max");
-  max->SetAttributeAsFloat("x", boundingMax[0]);
-  max->SetAttributeAsFloat("y", boundingMax[1]);
-  max->SetAttributeAsFloat("z", boundingMax[2]);
 
-  // Create parameters node
-  csRef<iDocumentNode> parametersNode = mainNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  parametersNode->SetValue("parameters");
-  csRef<iDocumentNode> node = parametersNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("agentheight");
-  node->SetAttributeAsFloat("value", parameters->GetAgentHeight());
-
-  node = parametersNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("agentradius");
-  node->SetAttributeAsFloat("value", parameters->GetAgentRadius());
-
-  node = parametersNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("agentmaxslopeangle");
-  node->SetAttributeAsFloat("value", parameters->GetAgentMaxSlopeAngle());
-
-  node = parametersNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("agentmaxclimb");
-  node->SetAttributeAsFloat("value", parameters->GetAgentMaxClimb());
-
-  node = parametersNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("cellsize");
-  node->SetAttributeAsFloat("value", parameters->GetCellSize());
-
-  node = parametersNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("cellheight");
-  node->SetAttributeAsFloat("value", parameters->GetCellHeight());
-
-  node = parametersNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("maxsimplificationerror");
-  node->SetAttributeAsFloat("value", parameters->GetMaxSimplificationError());
-
-  node = parametersNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("detailsampledist");
-  node->SetAttributeAsFloat("value", parameters->GetDetailSampleDist());
-
-  node = parametersNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("detailsamplemaxerror");
-  node->SetAttributeAsFloat("value", parameters->GetDetailSampleMaxError());
-
-  node = parametersNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("maxedgelength");
-  node->SetAttributeAsInt("value", parameters->GetMaxEdgeLength());
-
-  node = parametersNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("minregionarea");
-  node->SetAttributeAsInt("value", parameters->GetMinRegionArea());
-
-  node = parametersNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("mergeregionarea");
-  node->SetAttributeAsInt("value", parameters->GetMergeRegionArea());
-
-  node = parametersNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("maxvertsperpoly");
-  node->SetAttributeAsInt("value", parameters->GetMaxVertsPerPoly());
-
-  node = parametersNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("tilesize");
-  node->SetAttributeAsInt("value", parameters->GetTileSize());
-
-  node = parametersNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("bordersize");
-  node->SetAttributeAsInt("value", parameters->GetBorderSize());
-
-  // Navigation mesh header node
-  csRef<iDocumentNode> navMeshHeader = mainNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  navMeshHeader->SetValue("navmeshsetheader");
-
-  node = navMeshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("magic");
-  node->SetAttributeAsInt("value", NAVMESHSET_MAGIC);
-
-  node = navMeshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("version");
-  node->SetAttributeAsInt("value", NAVMESHSET_VERSION);
-
-  int numTiles = 0;
-  for (int i = 0; i < detourNavMesh->getMaxTiles(); ++i)
+  // Write header
   {
-    const dtMeshTile* tile = detourNavMesh->getTile(i);
-    if (!tile || !tile->header || !tile->dataSize)
-    {
-      continue;
-    }
-    numTiles++;
+    unsigned char magic[4];
+    magic[0] = NavmeshFileMagic[0];
+    magic[1] = NavmeshFileMagic[1];
+    magic[2] = NavmeshFileMagic[2];
+    magic[3] = NavmeshCurrentVersion;
+    if (file->Write ((char*)magic, sizeof(magic)) != sizeof(magic))
+      return false;
   }
-  node = navMeshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("numtiles");
-  node->SetAttributeAsInt("value", numTiles);
 
-  csRef<iDocumentNode> paramsNode = navMeshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-  paramsNode->SetValue("dtnavmeshparams");
-  const dtNavMeshParams* params = detourNavMesh->getParams();
-  node = paramsNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("origin");
-  node->SetAttributeAsFloat("x", params->orig[0]);
-  node->SetAttributeAsFloat("y", params->orig[1]);
-  node->SetAttributeAsFloat("z", params->orig[2]);
-
-  node = paramsNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("tilewidth");
-  node->SetAttributeAsFloat("value", params->tileWidth);
-
-  node = paramsNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("tileheight");
-  node->SetAttributeAsFloat("value", params->tileHeight);
-
-  node = paramsNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("maxtiles");
-  node->SetAttributeAsInt("value", params->maxTiles);
-
-  node = paramsNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  node->SetValue("maxpolys");
-  node->SetAttributeAsInt("value", params->maxPolys);
-
-  // Create tiles node
-  csRef<iDocumentNode> tilesNode = mainNode->CreateNodeBefore(CS_NODE_ELEMENT);
-  tilesNode->SetValue("tiles");
-
-  for (int i = 0; i < detourNavMesh->getMaxTiles(); ++i)
+  // Create XML container
   {
-    const dtMeshTile* tile = detourNavMesh->getTile(i);
-    if (!tile || !tile->header || !tile->dataSize)
+    csRef<iDocument> doc = docsys->CreateDocument();
+    csRef<iDocumentNode> root = doc->CreateRoot();
+    csRef<iDocumentNode> mainNode = root->CreateNodeBefore(CS_NODE_ELEMENT);
+    mainNode->SetValue("iCelNavMesh");
+    mainNode->SetAttribute("sector", sector->QueryObject()->GetName());
+  
+    // Bounding box node
+    csRef<iDocumentNode> boundingBoxNode = mainNode->CreateNodeBefore(CS_NODE_ELEMENT);
+    boundingBoxNode->SetValue("boundingbox");
+    SetAttributeFloat3 (boundingBoxNode, "min", boundingMin);
+    SetAttributeFloat3 (boundingBoxNode, "max", boundingMax);
+
+    // Create parameters node
+    csRef<iDocumentNode> parametersNode = mainNode->CreateNodeBefore(CS_NODE_ELEMENT);
+    parametersNode->SetValue("parameters");
+    SetAttributeFloat (parametersNode, "agentheight", parameters->GetAgentHeight());
+    SetAttributeFloat (parametersNode, "agentradius", parameters->GetAgentRadius());
+    SetAttributeFloat (parametersNode, "agentmaxslopeangle", parameters->GetAgentMaxSlopeAngle());
+    SetAttributeFloat (parametersNode, "agentmaxclimb", parameters->GetAgentMaxClimb());
+    SetAttributeFloat (parametersNode, "cellsize", parameters->GetCellSize());
+    SetAttributeFloat (parametersNode, "cellheight", parameters->GetCellHeight());
+    SetAttributeFloat (parametersNode, "maxsimplificationerror", parameters->GetMaxSimplificationError());
+    SetAttributeFloat (parametersNode, "detailsampledist", parameters->GetDetailSampleDist());
+    SetAttributeFloat (parametersNode, "detailsamplemaxerror", parameters->GetDetailSampleMaxError());
+    SetAttributeInt (parametersNode, "maxedgelength", parameters->GetMaxEdgeLength());
+    SetAttributeInt (parametersNode, "minregionarea", parameters->GetMinRegionArea());
+    SetAttributeInt (parametersNode, "mergeregionarea", parameters->GetMergeRegionArea());
+    SetAttributeInt (parametersNode, "maxvertsperpoly", parameters->GetMaxVertsPerPoly());
+    SetAttributeInt (parametersNode, "tilesize", parameters->GetTileSize());
+    SetAttributeInt (parametersNode, "bordersize", parameters->GetBorderSize());
+
+    csRef<iDocumentNode> paramsNode = mainNode->CreateNodeBefore(CS_NODE_ELEMENT);
+    paramsNode->SetValue("dtnavmeshparams");
+    const dtNavMeshParams* params = detourNavMesh->getParams();
+    SetAttributeFloat3 (paramsNode, "origin", params->orig);
+    SetAttributeFloat (paramsNode, "tilewidth", params->tileWidth);
+    SetAttributeFloat (paramsNode, "tileheight", params->tileHeight);
+    SetAttributeInt (paramsNode, "maxtiles", params->maxTiles);
+    SetAttributeInt (paramsNode, "maxpolys", params->maxPolys);
+
+    csMemFile xml_file;
+    if (doc->Write (&xml_file)) return false;
+
+    csRef<iDataBuffer> xmlData (xml_file.GetAllData());
+    uint32 diskSize (csLittleEndian::UInt32 ((uint32)xmlData->GetSize()));
+    if (file->Write ((char*)&diskSize, sizeof (diskSize)) != sizeof (diskSize))
+      return false;
+    if (file->Write (xmlData->GetData(), xmlData->GetSize()) != xmlData->GetSize())
+      return false;
+    const char padding[4] = { 0, 0, 0, 0 };
+    size_t paddingSize = 4 - (xmlData->GetSize() & 3);
+    paddingSize &= 3;
+    if (file->Write (padding, paddingSize) != paddingSize)
+      return false;
+  }
+
+  {
+    int numTiles = 0;
+    for (int i = 0; i < detourNavMesh->getMaxTiles(); ++i)
     {
-      continue;
-    }
-    csRef<iDocumentNode> tileNode = tilesNode->CreateNodeBefore(CS_NODE_ELEMENT);
-    tileNode->SetValue("tile");
-
-    // Create tile header node
-    csRef<iDocumentNode> tileHeader = tileNode->CreateNodeBefore(CS_NODE_ELEMENT);
-    tileHeader->SetValue("tileheader");
-    tileHeader->SetAttributeAsInt("tileref", detourNavMesh->getTileRef(tile));
-    tileHeader->SetAttributeAsInt("datasize", tile->dataSize);
-
-    // Create mesh header node
-    csRef<iDocumentNode> meshHeader = tileNode->CreateNodeBefore(CS_NODE_ELEMENT);
-    meshHeader->SetValue("meshheader");
-    unsigned char* data = tile->data;
-    dtMeshHeader* header = (dtMeshHeader*)data;
-
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("magic");
-    node->SetAttributeAsInt("value", header->magic);
-
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("version");
-    node->SetAttributeAsInt("value", header->version);
-
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("location");
-    node->SetAttributeAsInt("x", header->x);
-    node->SetAttributeAsInt("y", header->y);
-
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("userid");
-    node->SetAttributeAsInt("value", header->userId);
-    
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("polycount");
-    node->SetAttributeAsInt("value", header->polyCount);
-    
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("vertcount");
-    node->SetAttributeAsInt("value", header->vertCount);
-    
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("maxlinkcount");
-    node->SetAttributeAsInt("value", header->maxLinkCount);
-    
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("detailmeshcount");
-    node->SetAttributeAsInt("value", header->detailMeshCount);
-
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("detailvertcount");
-    node->SetAttributeAsInt("value", header->detailVertCount);
-    
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("detailtricount");
-    node->SetAttributeAsInt("value", header->detailTriCount);
-
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("bvnodecount");
-    node->SetAttributeAsInt("value", header->bvNodeCount);
-    
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("offmeshconcount");
-    node->SetAttributeAsInt("value", header->offMeshConCount);
-
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("offmeshbase");
-    node->SetAttributeAsInt("value", header->offMeshBase);
-    
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("walkableheight");
-    node->SetAttributeAsFloat("value", header->walkableHeight);
-
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("walkableradius");
-    node->SetAttributeAsFloat("value", header->walkableRadius);
-
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("walkableclimb");
-    node->SetAttributeAsFloat("value", header->walkableClimb);
-
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("boundingmin");
-    node->SetAttributeAsFloat("x", header->bmin[0]);
-    node->SetAttributeAsFloat("y", header->bmin[1]);
-    node->SetAttributeAsFloat("z", header->bmin[2]);
-
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("boundingmax");
-    node->SetAttributeAsFloat("x", header->bmax[0]);
-    node->SetAttributeAsFloat("y", header->bmax[1]);
-    node->SetAttributeAsFloat("z", header->bmax[2]);
-
-    node = meshHeader->CreateNodeBefore(CS_NODE_ELEMENT);
-    node->SetValue("bvquantfactor");
-    node->SetAttributeAsFloat("value", header->bvQuantFactor);
-
-    // Create verts node
-    csRef<iDocumentNode> vertsNode = tileNode->CreateNodeBefore(CS_NODE_ELEMENT);
-    vertsNode->SetValue("verts");
-    const int headerSize = dtAlign4(sizeof(dtMeshHeader));
-    data += headerSize;
-    float* verts = (float*)data;    
-    int index = 0;
-    for (int j = 0; j < header->vertCount; j++)
-    {
-      node = vertsNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("vertex");
-      node->SetAttributeAsFloat("x", verts[index++]);
-      node->SetAttributeAsFloat("y", verts[index++]);
-      node->SetAttributeAsFloat("z", verts[index++]);
-    }
-
-    // Create polys node
-    csRef<iDocumentNode> polysNode = tileNode->CreateNodeBefore(CS_NODE_ELEMENT);
-    polysNode->SetValue("polys");
-    const int vertsSize = dtAlign4(sizeof(float) * 3 * header->vertCount);
-    data += vertsSize;
-    dtPoly* polys = (dtPoly*)data;
-    index = 0;
-    for (int j = 0; j < header->polyCount; j++)
-    {
-      csRef<iDocumentNode> polyNode = polysNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      polyNode->SetValue("poly");
-
-      node = polyNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("firstlink");
-      node->SetAttributeAsInt("value", polys[j].firstLink);
-
-      csRef<iDocumentNode> vertsNode2 = polyNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      vertsNode2->SetValue("verts");
-      csRef<iDocumentNode> neisNode = polyNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      neisNode->SetValue("neis");
-      for (int k = 0; k < DT_VERTS_PER_POLYGON; k++)
+      const dtMeshTile* tile = detourNavMesh->getTile(i);
+      if (!tile || !tile->header || !tile->dataSize)
       {
-        node = vertsNode2->CreateNodeBefore(CS_NODE_ELEMENT);
-        node->SetValue("vertex");
-        node->SetAttributeAsInt("indice", polys[j].verts[k]);
-
-        node = neisNode->CreateNodeBefore(CS_NODE_ELEMENT);
-        node->SetValue("neighbour");
-        node->SetAttributeAsInt("indice", polys[j].neis[k]);
+        continue;
       }
-
-      node = polyNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("flags");
-      node->SetAttributeAsInt("value", polys[j].flags);
-
-      node = polyNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("vertcount");
-      node->SetAttributeAsInt("value", polys[j].vertCount);
-
-      node = polyNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("area");
-      node->SetAttributeAsInt("value", polys[j].getArea());
-
-      node = polyNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("type");
-      node->SetAttributeAsInt("value", polys[j].getType());
+      numTiles++;
     }
-
-    // Create links node
-    csRef<iDocumentNode> linksNode = tileNode->CreateNodeBefore(CS_NODE_ELEMENT);
-    linksNode->SetValue("links");
-    const int polysSize = dtAlign4(sizeof(dtPoly) * header->polyCount);
-    data += polysSize; 
-    dtLink* links = (dtLink*)data;
-    for (int j = 0; j < header->maxLinkCount; j++)
-    {
-      csRef<iDocumentNode> linkNode = linksNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      linkNode->SetValue("link");
-
-      node = linkNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("ref");
-      node->SetAttributeAsInt("value", links[j].ref);
-
-      node = linkNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("next");
-      node->SetAttributeAsInt("value", links[j].next);
-
-      node = linkNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("edge");
-      node->SetAttributeAsInt("value", links[j].edge);
-
-      node = linkNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("side");
-      node->SetAttributeAsInt("value", links[j].side);
-
-      node = linkNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("bmin");
-      node->SetAttributeAsInt("value", links[j].bmin);
-
-      node = linkNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("bmax");
-      node->SetAttributeAsInt("value", links[j].bmax);
-    }
-
-    // Create detail meshes node
-    csRef<iDocumentNode> detailMeshesNode = tileNode->CreateNodeBefore(CS_NODE_ELEMENT);
-    detailMeshesNode->SetValue("detailmeshes");
-    const int linksSize = dtAlign4(sizeof(dtLink) * (header->maxLinkCount));
-    data += linksSize;
-    dtPolyDetail* detailMeshes = (dtPolyDetail*)data;
-    for (int j = 0; j < header->detailMeshCount; j++)
-    {
-      csRef<iDocumentNode> detailMeshNode = detailMeshesNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      detailMeshNode->SetValue("detailmesh");
-
-      node = detailMeshNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("vertbase");
-      node->SetAttributeAsInt("value", detailMeshes[j].vertBase);
-
-      node = detailMeshNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("vertcount");
-      node->SetAttributeAsInt("value", detailMeshes[j].vertCount);
-
-      node = detailMeshNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("tribase");
-      node->SetAttributeAsInt("value", detailMeshes[j].triBase);
-
-      node = detailMeshNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("tricount");
-      node->SetAttributeAsInt("value", detailMeshes[j].triCount);
-    }
-    
-    // Create detail vertices node
-    csRef<iDocumentNode> detailVertsNode = tileNode->CreateNodeBefore(CS_NODE_ELEMENT);
-    detailVertsNode->SetValue("detailverts");
-    const int detailMeshesSize = dtAlign4(sizeof(dtPolyDetail) * header->detailMeshCount);
-    data += detailMeshesSize;
-    float* detailVerts = (float*)data;
-    index = 0;
-    for (int j = 0; j < header->detailVertCount; j++)
-    {
-      node = detailVertsNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("vertex");
-      node->SetAttributeAsFloat("x", detailVerts[index++]);
-      node->SetAttributeAsFloat("y", detailVerts[index++]);
-      node->SetAttributeAsFloat("z", detailVerts[index++]);
-    }
-
-    // Create detail triangles node
-    csRef<iDocumentNode> detailTrisNode = tileNode->CreateNodeBefore(CS_NODE_ELEMENT);
-    detailTrisNode->SetValue("detailtris");
-    const int detailVertsSize = dtAlign4(sizeof(float) * 3 * header->detailVertCount);
-    data += detailVertsSize;
-    unsigned char* detailTris = (unsigned char*)data;
-    index = 0;
-    for (int j = 0; j < header->detailTriCount; j++)
-    {
-      node = detailTrisNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("tri");
-      node->SetAttributeAsInt("a", detailTris[index++]);
-      node->SetAttributeAsInt("b", detailTris[index++]);
-      node->SetAttributeAsInt("c", detailTris[index++]);
-      node->SetAttributeAsInt("d", detailTris[index++]);
-    }
-    
-    // Create bv tree node
-    csRef<iDocumentNode> bvTreeNode = tileNode->CreateNodeBefore(CS_NODE_ELEMENT);
-    bvTreeNode->SetValue("bvtree");
-    const int detailTrisSize = dtAlign4(sizeof(unsigned char) * 4 * header->detailTriCount);
-    data += detailTrisSize;
-    dtBVNode* bvTree = (dtBVNode*)data;
-    index = 0;
-    for (int j = 0; j < header->bvNodeCount; j++)
-    {
-      csRef<iDocumentNode> bvTreeNodeNode = bvTreeNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      bvTreeNodeNode->SetValue("bvtreenode");
-
-      node = bvTreeNodeNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("bmin");
-      node->SetAttributeAsInt("x", bvTree[j].bmin[0]);
-      node->SetAttributeAsInt("y", bvTree[j].bmin[1]);
-      node->SetAttributeAsInt("z", bvTree[j].bmin[2]);
-
-      node = bvTreeNodeNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("bmax");
-      node->SetAttributeAsInt("x", bvTree[j].bmax[0]);
-      node->SetAttributeAsInt("y", bvTree[j].bmax[1]);
-      node->SetAttributeAsInt("z", bvTree[j].bmax[2]);
-
-      node = bvTreeNodeNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("index");
-      node->SetAttributeAsInt("value", bvTree[j].i);
-    }
-
-    // Create offmesh links node
-    csRef<iDocumentNode> offMeshLinksNode = tileNode->CreateNodeBefore(CS_NODE_ELEMENT);
-    offMeshLinksNode->SetValue("offmeshlinks");
-    const int bvtreeSize = dtAlign4(sizeof(dtBVNode) * header->bvNodeCount);
-    data += bvtreeSize;
-    dtOffMeshConnection* offMeshCons = (dtOffMeshConnection*)data;
-    for (int j = 0; j < header->offMeshConCount; j++)
-    {
-      csRef<iDocumentNode> offMeshLinkNode = offMeshLinksNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      offMeshLinkNode->SetValue("offmeshlink");
-
-      node = offMeshLinkNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("pos");
-      node->SetAttributeAsFloat("x1", offMeshCons[j].pos[0]);
-      node->SetAttributeAsFloat("y1", offMeshCons[j].pos[1]);
-      node->SetAttributeAsFloat("z1", offMeshCons[j].pos[2]);
-      node->SetAttributeAsFloat("x2", offMeshCons[j].pos[3]);
-      node->SetAttributeAsFloat("y2", offMeshCons[j].pos[4]);
-      node->SetAttributeAsFloat("z2", offMeshCons[j].pos[5]);
-
-      node = offMeshLinkNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("rad");
-      node->SetAttributeAsFloat("value", offMeshCons[j].rad);
-
-      node = offMeshLinkNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("poly");
-      node->SetAttributeAsInt("value", offMeshCons[j].poly);
-
-      node = offMeshLinkNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("flags");
-      node->SetAttributeAsInt("value", offMeshCons[j].flags);
-
-      node = offMeshLinkNode->CreateNodeBefore(CS_NODE_ELEMENT);
-      node->SetValue("side");
-      node->SetAttributeAsInt("value", offMeshCons[j].side);      
-    }
+    uint32 diskNum (csLittleEndian::UInt32 (numTiles));
+    if (file->Write ((char*)&diskNum, sizeof (diskNum)) != sizeof (diskNum)) return false;
   }
 
-  doc->Write(file);
+  // Create tiles data
+  for (int i = 0; i < detourNavMesh->getMaxTiles(); ++i)
+  {
+    const dtMeshTile* tile = detourNavMesh->getTile(i);
+    if (!tile || !tile->header || !tile->dataSize)
+    {
+      continue;
+    }
+    uint32 diskRef (csLittleEndian::UInt32 (detourNavMesh->getTileRef(tile)));
+    if (file->Write ((char*)&diskRef, sizeof (diskRef)) != sizeof (diskRef))
+      return false;
+    uint32 diskSize (csLittleEndian::UInt32 (tile->dataSize));
+    if (file->Write ((char*)&diskSize, sizeof (diskSize)) != sizeof (diskSize))
+      return false;
+    if (file->Write ((const char*)tile->data, tile->dataSize) != (size_t)tile->dataSize)
+      return false;
+  }
 
   return true;
 }
 
 bool celNavMesh::LoadNavMesh (iFile* file)
+{
+  bool success (true);
+  if (file->GetSize() < 12)
+  {
+    // Too small
+    success = false;
+  }
+  unsigned char magic[4];
+  if (success)
+    success &= (file->Read ((char*)&magic, sizeof (magic)) == sizeof (magic));
+  success &= ((magic[0] == NavmeshFileMagic[0])
+    && (magic[1] == NavmeshFileMagic[1])
+    && (magic[2] == NavmeshFileMagic[2]));
+  if (!success)
+  {
+    // Try fallback
+    file->SetPos (0);
+    return LoadNavMeshLegacy (file);
+  }
+  if (magic[3] != NavmeshCurrentVersion)
+  {
+    // Version mismatch
+    return false;
+  }
+
+  dtNavMeshParams params;
+
+  uint32 xmlSize;
+  if (file->Read ((char*)&xmlSize, sizeof (xmlSize)) != sizeof (xmlSize))
+    return false;
+  xmlSize = csLittleEndian::Convert (xmlSize);
+  {
+    csRef<CS::DataBuffer<> > xmlBuf;
+    xmlBuf.AttachNew (new CS::DataBuffer<> (xmlSize));
+    if (file->Read (xmlBuf->GetData(), xmlSize) != xmlSize) return false;
+
+    char padding[4];
+    size_t paddingSize = 4 - (xmlSize & 3);
+    paddingSize &= 3;
+    if (file->Read (padding, paddingSize) != paddingSize)
+      return false;
+
+    csRef<iDocumentSystem> docsys = csLoadPluginCheck<iDocumentSystem>(objectRegistry, "crystalspace.documentsystem.tinyxml");
+    if (!docsys)
+    {
+      return false;
+    }
+  
+    // Read XML file
+    csRef<iDocument> doc = docsys->CreateDocument();
+    const char* log = doc->Parse(xmlBuf);
+    if (log)
+    {
+      return false;
+    }
+    csRef<iDocumentNode> root = doc->GetRoot();
+    csRef<iDocumentNode> mainNode = root->GetNode("iCelNavMesh");
+
+    // Get sector
+    if (!LoadCelNavMeshParams (mainNode))
+      return false;
+
+    // Read header
+    csRef<iDocumentNode> paramsNode = mainNode->GetNode("dtnavmeshparams");
+    if (!LoadDtNavMeshParams (paramsNode, params))
+      return false;
+  }
+
+  detourNavMesh = new dtNavMesh;
+  if (!detourNavMesh || !detourNavMesh->init(&params))
+  {
+    return false;
+  }
+  detourNavMeshQuery = new dtNavMeshQuery;
+  if (!detourNavMeshQuery || !detourNavMeshQuery->init(detourNavMesh, MAX_NODES))
+  {
+    return false;
+  }
+
+  uint32 numTiles;
+  if (file->Read ((char*)&numTiles, sizeof (numTiles)) != sizeof (numTiles))
+    return false;
+  numTiles = csLittleEndian::Convert (numTiles);
+  for (uint i = 0; i < numTiles; i++)
+  {
+    uint32 tileRef;
+    if (file->Read ((char*)&tileRef, sizeof (tileRef)) != sizeof (tileRef))
+      return false;
+    tileRef = csLittleEndian::Convert (tileRef);
+
+    uint32 tileSize;
+    if (file->Read ((char*)&tileSize, sizeof (tileSize)) != sizeof (tileSize))
+      return false;
+    tileSize = csLittleEndian::Convert (tileSize);
+    unsigned char* tileData = (unsigned char*)dtAlloc (tileSize, DT_ALLOC_PERM);
+    if (file->Read ((char*)tileData, tileSize) != tileSize) return false;
+
+    dtStatus status = detourNavMesh->addTile(tileData, tileSize, DT_TILE_FREE_DATA, tileRef, nullptr);
+    if ((status & DT_FAILURE)
+      && (status & (DT_WRONG_MAGIC | DT_WRONG_VERSION)))
+    {
+      // Try endian-swapping the data
+      if (dtNavMeshHeaderSwapEndian (tileData, tileSize)
+        && dtNavMeshDataSwapEndian (tileData, tileSize))
+      {
+        status = detourNavMesh->addTile(tileData, tileSize, DT_TILE_FREE_DATA, tileRef, nullptr);
+      }
+    }
+    if (status & DT_FAILURE)
+    {
+      dtFree (tileData);
+      return false;
+    }
+  }
+
+  return true;
+}
+
+static float LoadAttributeFloat (iDocumentNode* parent, const char* childName)
+{
+  csRef<iDocumentNode> node = parent->GetNode (childName);
+  return node->GetAttributeValueAsFloat("value");
+}
+
+static void LoadAttributeFloat3 (iDocumentNode* parent, const char* childName, float* val)
+{
+  csRef<iDocumentNode> node = parent->GetNode (childName);
+  val[0] = node->GetAttributeValueAsFloat("x");
+  val[1] = node->GetAttributeValueAsFloat("y");
+  val[2] = node->GetAttributeValueAsFloat("z");
+}
+
+static int LoadAttributeInt (iDocumentNode* parent, const char* childName)
+{
+  csRef<iDocumentNode> node = parent->GetNode (childName);
+  return node->GetAttributeValueAsInt("value");
+}
+
+bool celNavMesh::LoadCelNavMeshParams (iDocumentNode* mainNode)
+{
+  // Get sector
+  const char* sectorName = mainNode->GetAttributeValue("sector");
+  csString sectorNameString(sectorName);
+  csRef<iEngine> engine = csLoadPluginCheck<iEngine>(objectRegistry, "crystalspace.engine.3d");
+  if (!engine)
+  {
+    return false;
+  }
+  int size = engine->GetSectors()->GetCount();
+  for (int i = 0; i < size; i++)
+  {
+    csRef<iSector> sector = engine->GetSectors()->Get(i);
+    if (sectorNameString == sector->QueryObject()->GetName())
+    {
+      this->sector = sector;
+      break;
+    }
+  }
+
+  // Read bounding box
+  csRef<iDocumentNode> boundingBoxNode = mainNode->GetNode("boundingbox");
+  LoadAttributeFloat3 (boundingBoxNode, "min", boundingMin);
+  LoadAttributeFloat3 (boundingBoxNode, "max", boundingMax);
+
+  // Read parameters
+  this->parameters.AttachNew(new celNavMeshParams());
+  csRef<iDocumentNode> parametersNode = mainNode->GetNode("parameters");
+  parameters->SetAgentHeight(LoadAttributeFloat (parametersNode, "agentheight"));
+  parameters->SetAgentRadius(LoadAttributeFloat (parametersNode, "agentradius"));
+  parameters->SetAgentMaxSlopeAngle(LoadAttributeFloat (parametersNode, "agentmaxslopeangle"));
+  parameters->SetAgentMaxClimb(LoadAttributeFloat (parametersNode, "agentmaxclimb"));
+  parameters->SetCellSize(LoadAttributeFloat (parametersNode, "cellsize"));
+  parameters->SetCellHeight(LoadAttributeFloat (parametersNode, "cellheight"));
+  parameters->SetMaxSimplificationError(LoadAttributeFloat (parametersNode, "maxsimplificationerror"));
+  parameters->SetDetailSampleDist(LoadAttributeFloat (parametersNode, "detailsampledist"));
+  parameters->SetDetailSampleMaxError(LoadAttributeFloat (parametersNode, "detailsamplemaxerror"));
+  parameters->SetMaxEdgeLength(LoadAttributeInt (parametersNode, "maxedgelength"));
+  parameters->SetMinRegionArea(LoadAttributeInt (parametersNode, "minregionarea"));
+  parameters->SetMergeRegionArea(LoadAttributeInt (parametersNode, "mergeregionarea"));
+  parameters->SetMaxVertsPerPoly(LoadAttributeInt (parametersNode, "maxvertsperpoly"));
+  parameters->SetTileSize(LoadAttributeInt (parametersNode, "tilesize"));
+  parameters->SetBorderSize(LoadAttributeInt (parametersNode, "bordersize"));
+
+  return true;
+}
+
+bool celNavMesh::LoadDtNavMeshParams (iDocumentNode* paramsNode, dtNavMeshParams& params)
+{
+  LoadAttributeFloat3 (paramsNode, "origin", params.orig);
+  params.tileWidth = LoadAttributeFloat (paramsNode, "tilewidth");
+  params.tileHeight = LoadAttributeFloat (paramsNode, "tileheight");
+  params.maxTiles = LoadAttributeInt (paramsNode, "maxtiles");
+  params.maxPolys =  LoadAttributeInt (paramsNode, "maxpolys");
+
+  return true;
+}
+
+bool celNavMesh::LoadNavMeshLegacy (iFile* file)
 {
   csRef<iDocumentSystem> docsys = csLoadPluginCheck<iDocumentSystem>(objectRegistry, "crystalspace.documentsystem.tinyxml");
   if (!docsys)
@@ -1177,107 +1036,22 @@ bool celNavMesh::LoadNavMesh (iFile* file)
   csRef<iDocumentNode> root = doc->GetRoot();
   csRef<iDocumentNode> mainNode = root->GetNode("iCelNavMesh");
 
-  // Get sector
-  const char* sectorName = mainNode->GetAttributeValue("sector");
-  csString sectorNameString(sectorName);
-  csRef<iEngine> engine = csLoadPluginCheck<iEngine>(objectRegistry, "crystalspace.engine.3d");
-  if (!engine)
-  {
+  if (!LoadCelNavMeshParams (mainNode))
     return false;
-  }
-  size_t size = engine->GetSectors()->GetCount();
-  for (size_t i = 0; i < size; i++)
-  {
-    csRef<iSector> sector = engine->GetSectors()->Get(i);
-    if (sectorNameString == sector->QueryObject()->GetName())
-    {
-      this->sector = sector;
-      break;
-    }
-  }
-
-  // Read bounding box
-  csRef<iDocumentNode> boundingBoxNode = mainNode->GetNode("boundingbox");
-  csRef<iDocumentNode> node = boundingBoxNode->GetNode("min");
-  boundingMin[0] = node->GetAttributeValueAsFloat("x");
-  boundingMin[1] = node->GetAttributeValueAsFloat("y");
-  boundingMin[2] = node->GetAttributeValueAsFloat("z");
-  node = boundingBoxNode->GetNode("max");
-  boundingMax[0] = node->GetAttributeValueAsFloat("x");
-  boundingMax[1] = node->GetAttributeValueAsFloat("y");
-  boundingMax[2] = node->GetAttributeValueAsFloat("z");
-
-  // Read parameters
-  this->parameters.AttachNew(new celNavMeshParams());
-  csRef<iDocumentNode> parametersNode = mainNode->GetNode("parameters");
-  node = parametersNode->GetNode("agentheight");
-  float value = node->GetAttributeValueAsFloat("value");
-  parameters->SetAgentHeight(value);
-  node = parametersNode->GetNode("agentradius");
-  value = node->GetAttributeValueAsFloat("value");
-  parameters->SetAgentRadius(value);
-  node = parametersNode->GetNode("agentmaxslopeangle");
-  value = node->GetAttributeValueAsFloat("value");
-  parameters->SetAgentMaxSlopeAngle(value);
-  node = parametersNode->GetNode("agentmaxclimb");
-  value = node->GetAttributeValueAsFloat("value");
-  parameters->SetAgentMaxClimb(value);
-  node = parametersNode->GetNode("cellsize");
-  value = node->GetAttributeValueAsFloat("value");
-  parameters->SetCellSize(value);
-  node = parametersNode->GetNode("cellheight");
-  value = node->GetAttributeValueAsFloat("value");
-  parameters->SetCellHeight(value);
-  node = parametersNode->GetNode("maxsimplificationerror");
-  value = node->GetAttributeValueAsFloat("value");
-  parameters->SetMaxSimplificationError(value);
-  node = parametersNode->GetNode("detailsampledist");
-  value = node->GetAttributeValueAsFloat("value");
-  parameters->SetDetailSampleDist(value);
-  node = parametersNode->GetNode("detailsamplemaxerror");
-  value = node->GetAttributeValueAsFloat("value");
-  parameters->SetDetailSampleMaxError(value);
-  node = parametersNode->GetNode("maxedgelength");
-  int value2 = node->GetAttributeValueAsInt("value");
-  parameters->SetMaxEdgeLength(value2);
-  node = parametersNode->GetNode("minregionarea");
-  value2 = node->GetAttributeValueAsInt("value");
-  parameters->SetMinRegionArea(value2);
-  node = parametersNode->GetNode("mergeregionarea");
-  value2 = node->GetAttributeValueAsInt("value");
-  parameters->SetMergeRegionArea(value2);
-  node = parametersNode->GetNode("maxvertsperpoly");
-  value2 = node->GetAttributeValueAsInt("value");
-  parameters->SetMaxVertsPerPoly(value2);
-  node = parametersNode->GetNode("tilesize");
-  value2 = node->GetAttributeValueAsInt("value");
-  parameters->SetTileSize(value2);
-  node = parametersNode->GetNode("bordersize");
-  value2 = node->GetAttributeValueAsInt("value");
-  parameters->SetBorderSize(value2);
 
   // Read header
   NavMeshSetHeader header;
   csRef<iDocumentNode> navMeshHeaderNode = mainNode->GetNode("navmeshsetheader");
-  node = navMeshHeaderNode->GetNode("magic");
+  csRef<iDocumentNode> node = navMeshHeaderNode->GetNode("magic");
   header.magic = node->GetAttributeValueAsInt("value");
   node = navMeshHeaderNode->GetNode("version");
   header.version = node->GetAttributeValueAsInt("value");
   node = navMeshHeaderNode->GetNode("numtiles");
   header.numTiles = node->GetAttributeValueAsInt("value");
   csRef<iDocumentNode> paramsNode = navMeshHeaderNode->GetNode("dtnavmeshparams");
+  if (!LoadDtNavMeshParams (paramsNode, header.params))
+    return false;
   node = paramsNode->GetNode("origin");
-  header.params.orig[0] = node->GetAttributeValueAsFloat("x");
-  header.params.orig[1] = node->GetAttributeValueAsFloat("y");
-  header.params.orig[2] = node->GetAttributeValueAsFloat("z");
-  node = paramsNode->GetNode("tilewidth");
-  header.params.tileWidth = node->GetAttributeValueAsFloat("value");
-  node = paramsNode->GetNode("tileheight");
-  header.params.tileHeight = node->GetAttributeValueAsFloat("value");
-  node = paramsNode->GetNode("maxtiles");
-  header.params.maxTiles = node->GetAttributeValueAsInt("value");
-  node = paramsNode->GetNode("maxpolys");
-  header.params.maxPolys = node->GetAttributeValueAsInt("value");
 
   if (header.magic != NAVMESHSET_MAGIC)
   {
@@ -1315,7 +1089,7 @@ bool celNavMesh::LoadNavMesh (iFile* file)
     {
       break;
     }
-    unsigned char* data = (unsigned char*)dtAlloc(tileHeader.dataSize, DT_ALLOC_PERM);
+    unsigned char* data = (unsigned char*)dtAlloc (tileHeader.dataSize, DT_ALLOC_PERM);
     if (!data)
     {
       break;
@@ -1582,6 +1356,7 @@ csArray<csSimpleRenderMesh*>* celNavMesh::GetDebugMeshes ()
   }
 
   // Update debug meshes
+  if (!detourNavMesh) return nullptr;
   DebugDrawCS dd;
   duDebugDrawNavMesh(&dd, *detourNavMesh, navMeshDrawFlags);
   debugMeshes = dd.GetMeshes();
@@ -2178,6 +1953,13 @@ bool celNavMeshBuilder::GetSectorData ()
 
         float scale_x = cell->GetSize().x / (width - 1);
         float scale_z = cell->GetSize().z / (height - 1);
+
+        // load cell
+        while (cell->GetLoadState() != iTerrainCell::Loaded)
+        {
+          cell->SetLoadState(iTerrainCell::Loaded);
+        }
+
 
         // tesselate and clip cell
         for(int y = 0; y < (height-2); ++y)

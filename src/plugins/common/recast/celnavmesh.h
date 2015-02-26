@@ -270,6 +270,9 @@ private:
   static const int NAVMESHSET_MAGIC;
   static const int NAVMESHSET_VERSION;
 
+  bool LoadCelNavMeshParams (iDocumentNode* mainNode);
+  bool LoadDtNavMeshParams (iDocumentNode* paramsNode, dtNavMeshParams& params);
+  bool LoadNavMeshLegacy (iFile* file);
 public:
   celNavMesh (iObjectRegistry* objectRegistry);
   virtual ~celNavMesh ();
