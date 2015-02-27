@@ -113,8 +113,8 @@ public:
                 else
                 {
                     // Item isn't guarded, remove
-                    EntityManager::GetSingleton().RemoveActor(obj);
                     item->Destroy();  // obj is deleted in RemoveActor
+                    EntityManager::GetSingleton().RemoveActor(obj);
                 }
             }
         }
@@ -2870,11 +2870,14 @@ void psItem::ScheduleRemoval()
 
     int randomized_interval = psserver->rng->Get(REMOVAL_INTERVAL_RANGE);
 
-    psItemRemovalEvent* event = new psItemRemovalEvent(REMOVAL_INTERVAL_MINIMUM + randomized_interval, this->uid);
-    psserver->GetEventManager()->Push(event);
-
-    Notify2(LOG_USER,"Scheduling removal of object for %d ticks from now.",
-            REMOVAL_INTERVAL_MINIMUM + randomized_interval);
+    gemItem* obj =this->GetGemObject();
+    if (obj)
+    {
+        psItemRemovalEvent* event = new psItemRemovalEvent(REMOVAL_INTERVAL_MINIMUM + randomized_interval, obj->GetEID() );
+        psserver->GetEventManager()->Push(event);
+ 
+        Notify3(LOG_USER,"Scheduling removal of object %s for %d ticks from now.", ShowID(obj->GetEID()), REMOVAL_INTERVAL_MINIMUM + randomized_interval);
+    }
 }
 
 void psItem::DeleteObjectCallback(iDeleteNotificationObject* object)
