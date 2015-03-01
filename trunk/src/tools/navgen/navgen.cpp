@@ -314,7 +314,7 @@ int main(int argc, char** argv)
     navgen->Run();
 
     delete navgen;
-    CS_STATIC_VARIABLE_CLEANUP
+
     csInitializer::DestroyApplication(object_reg);
 
     return 0;
