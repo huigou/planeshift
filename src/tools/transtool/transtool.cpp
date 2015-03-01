@@ -206,6 +206,6 @@ int main(int argc, char** argv)
     TransTool* transtool = new TransTool(object_reg);
     transtool->Run();
     delete transtool;
-    CS_STATIC_VARIABLE_CLEANUP
+    csInitializer::DestroyApplication(object_reg);
     return 0;
 }
