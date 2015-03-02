@@ -93,7 +93,7 @@ void celEdge::SetWeight (float weight)
 //SCF_IMPLEMENT_FACTORY (celNode)
 
 celNode::celNode ()
-  : scfImplementationType (this)
+  : scfImplementationType (this), heuristic(0), cost(0)
 {
 }
 
