@@ -68,7 +68,7 @@ class gemActor;
 
 /// These two define how long an item will stay in the world before being auto-removed, in seconds.
 #define REMOVAL_INTERVAL_RANGE     300
-#define REMOVAL_INTERVAL_MINIMUM  1200
+#define REMOVAL_INTERVAL_MINIMUM  2419200
 
 /// This indicates that the item has been deleted from the database and should not be updated
 #define  ID_DONT_SAVE_ITEM 0xffffffff
