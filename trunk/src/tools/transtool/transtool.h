@@ -28,7 +28,7 @@ public:
 private:
     void PrintHelp();
 
-    csRef<iObjectRegistry> object_reg;
+    iObjectRegistry* object_reg;
     csRef<iVFS> vfs;
     csRef<iDocumentSystem> docsys;
 

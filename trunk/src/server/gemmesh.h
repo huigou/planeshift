@@ -122,7 +122,7 @@ public:
 
 private:
     csRef<iMeshWrapper> mesh;               ///< This is the mesh we are using.
-    csRef<iObjectRegistry> objectReg;       ///< CS object registry list.
+    iObjectRegistry* objectReg;             ///< CS object registry list.
     csWeakRef<iEngine> engine;              ///< Main CS engine.
 
     GEMSupervisor* gem;                     ///< Object controller.

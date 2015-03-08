@@ -269,7 +269,7 @@ protected:
     static csCollisionPair our_cd_contact[1000];
     static int num_our_cd;
 
-    csRef<iObjectRegistry> object_reg;
+    iObjectRegistry* object_reg;
 
     csRef<iMeshWrapper> mesh;
     psCollisionDetection* colldet;

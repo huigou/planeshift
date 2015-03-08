@@ -123,7 +123,7 @@ public:
     
 
 private:
-    csRef<iObjectRegistry>      objectReg;         ///< object registry
+    iObjectRegistry*            objectReg;         ///< object registry
     SoundSystemManager*         sndSysMgr;         ///< the sound system manager used to play sounds
     InstrumentManager*          instrMgr;          ///< the instruments manager
     SoundSectorManager*         sectorMgr;         ///< the sound sectors manager.

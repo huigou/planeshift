@@ -213,7 +213,7 @@ public:
     virtual void OnSoundChange(SoundControl* sndCtrl);
 
 private:
-    csRef<iObjectRegistry> objectReg;  ///< object registry.
+    iObjectRegistry* objectReg;        ///< object registry.
 
     int weather;                       ///< current weather state (from weather.h).
     int timeOfDay;                     ///< time of the day.

@@ -164,7 +164,7 @@ public:
     void Delete();
 
 private:
-    csRef<iObjectRegistry> objectReg;
+    iObjectRegistry* objectReg;
 
     /**
      * Helper function that retrieve the entity associated to a mesh. It checks

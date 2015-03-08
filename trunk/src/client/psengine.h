@@ -647,7 +647,7 @@ private:
     void FrameLimit();
 
     /* plugins we're using... */
-    csRef<iObjectRegistry>    object_reg;     ///< The Object Registry
+    iObjectRegistry*          object_reg;     ///< The Object Registry
     csRef<iEventNameRegistry> nameRegistry;   ///< The name registry.
     csRef<iEngine>            engine;         ///< Engine plug-in handle.
     csRef<iConfigManager>     cfgmgr;         ///< Config Manager

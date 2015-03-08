@@ -51,7 +51,7 @@ private:
 	bool NegateMoney(iDocumentNode *command, psMoney& money);
 	bool MultiplyMoney(iDocumentNode *command, psMoney& money);
 
-	csRef<iObjectRegistry> object_reg;
+	iObjectRegistry* object_reg;
 	csRef<iVFS> vfs;
 	csRef<iFile> log;
 	csRef<iDocumentSystem> docsys;
