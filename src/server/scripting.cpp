@@ -58,6 +58,8 @@
 #include "psserver.h"
 #include "psproxlist.h"
 
+static bool ParseAOps(EntityManager* entitymanager, CacheManager* cachemanager, iDocumentNode* top, csPDelArray<AppliedOp>& ops);
+
 /**
  * \addtogroup xmlscripting
  * @{ */
@@ -1072,7 +1074,14 @@ protected:
 class LetAOp : public AppliedOp
 {
 public:
-    LetAOp() : AppliedOp(), bindings(NULL) { }
+    LetAOp(EntityManager* entitymanager, CacheManager* cachemanager) :
+        AppliedOp(),
+        bindings(NULL),
+        entitymanager(entitymanager),
+        cachemanager(cachemanager)
+    {
+    }
+
     virtual ~LetAOp()
     {
         MathScript::Destroy(bindings);
@@ -1081,13 +1090,21 @@ public:
     bool Load(iDocumentNode* node)
     {
         bindings = MathScript::Create("<let> bindings", node->GetAttributeValue("vars"));
-        return bindings;
+        return !!bindings && ParseAOps(entitymanager, cachemanager, node, ops);
     }
 
     virtual void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
-        bindings->Evaluate(env);
+        MathEnvironment inner(env);
+        bindings->Evaluate(&inner);
+        csPDelArray<AppliedOp>::Iterator it = ops.GetIterator();
+        while(it.HasNext())
+        {
+            AppliedOp* op = it.Next();
+            op->Run(&inner, target, asp);
+        }
     }
+
     virtual const csString GetDescription(MathEnvironment* env) {
 	bindings->Evaluate(env);
 	return "";
@@ -1095,9 +1112,10 @@ public:
 
 protected:
     MathScript* bindings; /// an embedded MathScript containing new bindings
+    csPDelArray<AppliedOp> ops;
+    EntityManager* entitymanager;
+    CacheManager* cachemanager;
 };
-
-static bool ParseAOps(EntityManager* entitymanager, CacheManager* cachemanager, iDocumentNode* top, csPDelArray<AppliedOp>& ops);
 
 /**
  * IfAOp - a way to evaluate MathScript stuff and create new bindings:
@@ -1257,7 +1275,7 @@ static bool ParseAOps(EntityManager* entitymanager, CacheManager* cachemanager, 
     {
         csRef<iDocumentNode> node = it->Next();
 
-        if(node->GetType() != CS_NODE_ELEMENT)  // not sure if this is really necessary...
+        if(node->GetType() != CS_NODE_ELEMENT)
             continue;
 
         csString elem = node->GetValue();
@@ -1341,7 +1359,7 @@ static bool ParseAOps(EntityManager* entitymanager, CacheManager* cachemanager, 
         }
         else if(elem == "let")
         {
-            op = new LetAOp;
+            op = new LetAOp(entitymanager, cachemanager);
         }
         else if(elem == "if")
         {

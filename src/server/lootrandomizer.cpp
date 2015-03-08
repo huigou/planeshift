@@ -737,9 +737,8 @@ csString LootRandomizer::GenerateScriptXML(csString &name, csString &equip_scrip
         }
     }
 
-    //if we have any variable defined we add their definition on top of the script.
-    //By defining each variable in a <let> entry for the script. It will be skipped
-    //if no variables are defined.
+    // If we have any variables defined, we add their definitions
+    // on top of the script.
     if(!results.IsEmpty())
     {
         scriptXML.AppendFmt("<let vars=\"");
@@ -749,11 +748,12 @@ csString LootRandomizer::GenerateScriptXML(csString &name, csString &equip_scrip
             csTuple2<float, csString> entry = it.NextTuple();
             scriptXML.AppendFmt("%s = %f;", entry.second.GetData(), entry.first);
         }
-        scriptXML.AppendFmt("\" />");
+        scriptXML.AppendFmt("\">%s</let></apply>", equip_script.GetData());
     }
-
-    //now copy the body of the script containing the equip script from the random loot entries.
-    scriptXML.AppendFmt("%s</apply>", equip_script.GetData());
+    else
+    {
+        scriptXML.AppendFmt("%s</apply>", equip_script.GetData());
+    }
 
     return scriptXML;
 }
