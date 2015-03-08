@@ -179,13 +179,13 @@ celNavMeshPath::celNavMeshPath (float* path, int pathSize, int maxPathSize, iSec
   currentPosition = 0;
   increasePosition = 3;
   this->sector = sector;
-  debugMeshes = new csArray<csSimpleRenderMesh*>();
+  debugMeshes = 0;
 }
 
 celNavMeshPath::~celNavMeshPath ()
 {
   delete [] path;
-  if (!debugMeshes->IsEmpty()) 
+  if (debugMeshes)
   { 
     csArray<csSimpleRenderMesh*>::Iterator it = debugMeshes->GetIterator(); 
     while (it.HasNext()) 
@@ -194,9 +194,8 @@ celNavMeshPath::~celNavMeshPath ()
       delete [] mesh->vertices; 
       delete [] mesh->colors;  
     } 
-    debugMeshes->DeleteAll();
+    delete debugMeshes;
   }
-  delete debugMeshes;
 }
 
 iSector* celNavMeshPath::GetSector () const
@@ -382,10 +381,9 @@ csArray<csSimpleRenderMesh*>* celNavMeshPath::GetDebugMeshes ()
     }
     dd.end();
     dd.depthMask(true);
-
-    // Clear previous meshes
-    if (!debugMeshes->IsEmpty()) 
+    if (debugMeshes)
     { 
+      // Clear previous meshes
       csArray<csSimpleRenderMesh*>::Iterator it = debugMeshes->GetIterator(); 
       while (it.HasNext()) 
       { 
@@ -393,7 +391,7 @@ csArray<csSimpleRenderMesh*>* celNavMeshPath::GetDebugMeshes ()
         delete [] mesh->vertices; 
         delete [] mesh->colors; 
       }
-      debugMeshes->DeleteAll(); 
+      delete debugMeshes;
     }
 
     // Update meshes
@@ -423,13 +421,13 @@ celNavMesh::celNavMesh (iObjectRegistry* objectRegistry) : scfImplementationType
   filter.setIncludeFlags(SAMPLE_POLYFLAGS_ALL);
   filter.setExcludeFlags(0);
   this->objectRegistry = objectRegistry;
-  debugMeshes = new csArray<csSimpleRenderMesh*>();
-  agentDebugMeshes = new csArray<csSimpleRenderMesh*>();
+  debugMeshes = 0;
+  agentDebugMeshes = 0;
 }
 
 celNavMesh::~celNavMesh ()
 {  
-  if (!agentDebugMeshes->IsEmpty()) 
+  if (agentDebugMeshes) 
   { 
     csArray<csSimpleRenderMesh*>::Iterator it = agentDebugMeshes->GetIterator(); 
     while (it.HasNext()) 
@@ -438,11 +436,10 @@ celNavMesh::~celNavMesh ()
       delete [] mesh->vertices; 
       delete [] mesh->colors; 
     }
-    agentDebugMeshes->DeleteAll(); 
+    delete agentDebugMeshes;
   }
-  delete agentDebugMeshes;
 
-  if (!debugMeshes->IsEmpty()) 
+  if (debugMeshes) 
   { 
     csArray<csSimpleRenderMesh*>::Iterator it = debugMeshes->GetIterator(); 
     while (it.HasNext()) 
@@ -451,9 +448,8 @@ celNavMesh::~celNavMesh ()
       delete [] mesh->vertices; 
       delete [] mesh->colors; 
     }
-    debugMeshes->DeleteAll(); 
+    delete debugMeshes;
   }
-  delete debugMeshes;
 
   delete detourNavMesh;
   delete detourNavMeshQuery;
@@ -1343,7 +1339,7 @@ bool celNavMesh::LoadNavMeshLegacy (iFile* file)
 csArray<csSimpleRenderMesh*>* celNavMesh::GetDebugMeshes () 
 {
   // Clear previous debug meshes
-  if (!debugMeshes->IsEmpty()) 
+  if (debugMeshes) 
   { 
     csArray<csSimpleRenderMesh*>::Iterator it = debugMeshes->GetIterator(); 
     while (it.HasNext()) 
@@ -1352,7 +1348,8 @@ csArray<csSimpleRenderMesh*>* celNavMesh::GetDebugMeshes ()
       delete [] mesh->vertices; 
       delete [] mesh->colors; 
     }
-    debugMeshes->DeleteAll(); 
+    delete debugMeshes;
+    debugMeshes = 0;
   }
 
   // Update debug meshes
@@ -1397,6 +1394,8 @@ csArray<csSimpleRenderMesh*>* celNavMesh::GetAgentDebugMeshes (const csVector3& 
   dd.depthMask (true);
 
   // Add this new proxy agent to any existing
+  if (!agentDebugMeshes)
+    agentDebugMeshes = new csArray<csSimpleRenderMesh*>();
   csArray<csSimpleRenderMesh*>* tmp = dd.GetMeshes();
   csArray<csSimpleRenderMesh*>::Iterator tmpIt = tmp->GetIterator();
   while (tmpIt.HasNext())
@@ -1409,7 +1408,7 @@ csArray<csSimpleRenderMesh*>* celNavMesh::GetAgentDebugMeshes (const csVector3& 
 void celNavMesh::ResetAgentDebugMeshes ()
 {
   // Clear previous agent debug meshes
-  if (!agentDebugMeshes->IsEmpty()) 
+  if (agentDebugMeshes) 
   { 
     csArray<csSimpleRenderMesh*>::Iterator it = agentDebugMeshes->GetIterator(); 
     while (it.HasNext()) 
@@ -1418,7 +1417,8 @@ void celNavMesh::ResetAgentDebugMeshes ()
       delete [] mesh->vertices; 
       delete [] mesh->colors; 
     }
-    agentDebugMeshes->DeleteAll(); 
+    delete agentDebugMeshes;
+    agentDebugMeshes = 0;
   }
 }
 
