@@ -926,7 +926,7 @@ bool psNPCClient::LoadPathNetwork()
 
     if(!navStruct.IsValid())
     {
-        Error1("Navigation mesh is not valid, check /planeshift/navmesh");
+        Error2("Navigation mesh is not valid, check '%s'", navmesh.GetData());
         return false;
     }
 
