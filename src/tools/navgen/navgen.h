@@ -40,6 +40,6 @@ private:
     csRef<iEngine> engine;
     csRef<iCelHNavStructBuilder> builder;
     csRef<iConfigManager> config;
-    csRef<iObjectRegistry> object_reg;
+    iObjectRegistry* object_reg;
 };
 

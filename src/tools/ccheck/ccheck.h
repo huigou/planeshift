@@ -30,7 +30,7 @@ private:
     void ParseFile(const char* filePath, const char* fileName, bool processing);
     void PrintOutput(const char* string, ...);
 
-    csRef<iObjectRegistry> object_reg;
+    iObjectRegistry* object_reg;
     csRef<iVFS> vfs;
     csRef<iDocumentSystem> docsys;
     csRef<iStringSet> strings;

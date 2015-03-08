@@ -92,7 +92,7 @@ public:
 class celHNavStruct : public scfImplementation1<celHNavStruct, iCelHNavStruct>
 {
 private:
-  csRef<iObjectRegistry> objectRegistry;
+  iObjectRegistry* objectRegistry;
   csRef<iCelNavMeshParams> parameters;
   csHash<csRef<iCelNavMesh>, csPtrKey<iSector> > navMeshes;
   csRef<iCelGraph> hlGraph; // High level graph
@@ -134,7 +134,7 @@ public:
 class celHNavStructBuilder : public scfImplementation2<celHNavStructBuilder, iCelHNavStructBuilder, iComponent>
 {
 private:
-  csRef<iObjectRegistry> objectRegistry;
+  iObjectRegistry* objectRegistry;
   csRef<iCelNavMeshParams> parameters;
   csRefArray<iSector> sectors;
   csHash<csRef<iCelNavMeshBuilder>, csPtrKey<iSector> > builders;

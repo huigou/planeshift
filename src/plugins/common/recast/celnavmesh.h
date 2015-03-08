@@ -255,7 +255,7 @@ private:
   };
 
   csRef<iSector> sector;
-  csRef<iObjectRegistry> objectRegistry;
+  iObjectRegistry* objectRegistry;
   csRef<iCelNavMeshPath> path;
   dtQueryFilter filter;
   dtNavMesh* detourNavMesh;
@@ -310,7 +310,7 @@ class celNavMeshBuilder : public ThreadedCallable<celNavMeshBuilder>,
 {
 private:
   // Crystal space & CEL
-  csRef<iObjectRegistry> objectRegistry;
+  iObjectRegistry* objectRegistry;
   csRef<iSector> currentSector;
   csRef<iStringSet> strings;
 

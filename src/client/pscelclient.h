@@ -106,7 +106,7 @@ struct InstanceObject : public CS::Utility::FastRefCount<InstanceObject>
 class psCelClient : public psClientNetSubscriber
 {
 private:
-    csRef<iObjectRegistry> object_reg;
+    iObjectRegistry* object_reg;
     csPDelArray<GEMClientObject> entities;
     csHash<GEMClientObject*, EID> entities_hash;
     csRefArray<MsgEntry> newActorQueue;

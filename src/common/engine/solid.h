@@ -71,7 +71,7 @@ public:
     iCollider* GetCollider();
 
 private:
-    csRef<iObjectRegistry> objectReg;               ///< Needed to create the collider wrapper.
+    iObjectRegistry* objectReg;                     ///< Needed to create the collider wrapper.
     csWeakRef<iMeshWrapper> mesh;                        ///< The mesh we are using to collide with.
     csRef<csColliderWrapper> colliderWrap;          ///< The actual collider wrapper.
 
