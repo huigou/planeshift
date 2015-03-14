@@ -1016,7 +1016,7 @@ void celHNavStruct::SaveHighLevelGraph (iDocumentNode* node1, iDocumentNode* nod
 
 bool celHNavStruct::SaveToFile (iVFS* vfs, const char* directory)
 {
-  csRef<iDocumentSystem> docsys = csLoadPluginCheck<iDocumentSystem>(objectRegistry, "crystalspace.documentsystem.tinyxml");
+  csRef<iDocumentSystem> docsys = csLoadPluginCheck<iDocumentSystem>(objectRegistry, "crystalspace.documentsystem.multiplexer");
   if (!docsys)
   {
     return false;
@@ -1385,7 +1385,7 @@ bool celHNavStructBuilder::ParseGraph (iDocumentNode* node, iCelGraph* graph, cs
 
 iCelHNavStruct* celHNavStructBuilder::LoadHNavStruct (iVFS* vfs, const char* directory)
 {
-  csRef<iDocumentSystem> docsys = csLoadPluginCheck<iDocumentSystem>(objectRegistry, "crystalspace.documentsystem.tinyxml");
+  csRef<iDocumentSystem> docsys = csLoadPluginCheck<iDocumentSystem>(objectRegistry, "crystalspace.documentsystem.multiplexer");
   if (!docsys)
   {
     return 0;
