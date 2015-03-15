@@ -1590,12 +1590,12 @@ void Behavior::OperationCompleted(NPC* npc)
 
         if(loop)
         {
-            NPCDebug(npc, 1, "Loop back to start of behaviour '%s'",GetName());
+            NPCDebug(npc, 2, "Loop back to start of behaviour '%s'",GetName());
         }
         else
         {
             DoCompletionDecay(npc);
-            NPCDebug(npc, 1, "End of non looping behaviour '%s'",GetName());
+            NPCDebug(npc, 2, "End of non looping behaviour '%s'",GetName());
         }
     }
 
