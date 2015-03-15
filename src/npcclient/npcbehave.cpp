@@ -611,7 +611,7 @@ Behavior* BehaviorSet::Schedule(NPC* npc)
 {
     float max_need = -999.0;
 
-    // Move the behavior with higest need on top of list.
+    // Move the behavior with highest need on top of list.
     for(size_t i=0; i<behaviors.GetSize(); i++)
     {
         Behavior* b = behaviors[i];
@@ -749,7 +749,7 @@ void BehaviorSet::Execute(NPC* npc, bool forceRunScript)
             // If the interrupt has change the needs, try once
             if(GetHighestNeed(npc) > active->CurrentNeed())
             {
-                NPCDebug(npc, 3, "Need to rechedule since a new need is higest");
+                NPCDebug(npc, 3, "Need to reschedule since a new need is highest");
                 continue; // Start the check once more.
             }
 
