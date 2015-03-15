@@ -651,7 +651,7 @@ bool MovementOperation::EndPointChanged(const csVector3 &endPos, const iSector* 
 
 bool PathReachedEndPoint(NPC* npc, iCelHPath* path, const csVector3 &endPos, iSector* endSector)
 {
-    // Check if path end point is at the correct possition
+    // Check if path end point is at the correct position
     iMapNode* finalDest = path->GetLast();
     float deviation = npcclient->GetWorld()->Distance2(endPos, endSector,
                       finalDest->GetPosition(), finalDest->GetSector());
@@ -718,7 +718,7 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC* npc, bool interrupt
     {
         float dummyAngle;
 
-        // Find next local destination and start moving towords local destination
+        // Find next local destination and start moving towards local destination
         iMapNode* dest = path->Next();
         StartMoveTo(npc, dest->GetPosition(), dest->GetSector(), GetVelocity(npc),
                     action, dummyAngle);
@@ -729,7 +729,7 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC* npc, bool interrupt
     }
     else
     {
-        // Have no velocity to compleate any movement
+        // Have no velocity to complete any movement
         return OPERATION_FAILED;
     }
 
@@ -1432,7 +1432,7 @@ gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc, const csVector3 &myPos,
     gemNPCActor* targetEntity = NULL;
 
 
-    // If chaseing nearest and there is a new target within search range the target is changed
+    // If chasing nearest and there is a new target within search range the target is changed
     if(type == NEAREST_PLAYER)
     {
         float dummyRange;
@@ -1530,7 +1530,7 @@ bool ChaseOperation::UpdateEndPosition(NPC* npc, const csVector3 &myPos, const i
     targetPos -= offsetDelta;
     // TODO: Check if new targetPos is within same sector!!!
 
-    // Check if we shold stop chaseing
+    // Check if we should stop chasing
     float distance = npcclient->GetWorld()->Distance(myPos,mySector,targetPos,targetSector);
     if((distance >= INFINITY_DISTANCE) ||
             ((chaseRange > 0) && (distance > chaseRange)))
