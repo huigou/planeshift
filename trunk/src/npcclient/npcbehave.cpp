@@ -738,7 +738,7 @@ void BehaviorSet::Execute(NPC* npc, bool forceRunScript)
             // Store the active behavior
             lastActiveBehavior = active;
 
-            // Dump bahaviour list if changed
+            // Dump behaviour list if changed
             if(npc->IsDebugging(3))
             {
                 csString output;

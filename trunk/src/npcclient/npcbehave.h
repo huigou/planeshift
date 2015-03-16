@@ -369,9 +369,9 @@ protected:
 
     bool     interrupted;               ///< Set to true if this behavior is interruped by another in a BehaviorSet
 
-    bool     minLimitValid;             ///< True if a minimum limit for the need for this bahavior has been set
+    bool     minLimitValid;             ///< True if a minimum limit for the need for this behavior has been set
     float    minLimit;                  ///< The minimum value to limit the need if minLimitValid has been set true.
-    bool     maxLimitValid;             ///< True if a maximum limit for the need for this bahavior has been set
+    bool     maxLimitValid;             ///< True if a maximum limit for the need for this behavior has been set
     float    maxLimit;                  ///< The maximum value to limit the need if maxLimitValid has been set true.
     csString failurePerception;         ///< Perception to fire if any operation fails without own failure perception.
 
