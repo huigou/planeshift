@@ -35,12 +35,12 @@ celHPath::celHPath (csHash<csRef<iCelNavMesh>, csPtrKey<iSector> >& navmeshes)
     : scfImplementationType (this), navMeshes(navmeshes)
 {
   reverse = false;
-  debugMeshes = new csArray<csSimpleRenderMesh*>();
+  debugMeshes = 0;
 }
 
 celHPath::~celHPath ()
 {
-  if (!debugMeshes->IsEmpty()) 
+  if (debugMeshes) 
   { 
     csArray<csSimpleRenderMesh*>::Iterator it = debugMeshes->GetIterator(); 
     while (it.HasNext()) 
@@ -49,14 +49,14 @@ celHPath::~celHPath ()
       delete [] mesh->vertices; 
       delete [] mesh->colors; 
     } 
-    debugMeshes->DeleteAll();
+    delete debugMeshes;
   }
-  delete debugMeshes;
 }
 
 void celHPath::Initialize(iCelPath* highLevelPath)
 {
   hlPath = highLevelPath;
+  size_t llSize = 0;
 
   // calculate path length
   {
@@ -67,20 +67,20 @@ void celHPath::Initialize(iCelPath* highLevelPath)
     iMapNode* dst = hlPath->Next();
     while(1)
     {
-      // cross-sector connections are coincident
+      // cross-sector connections are coincident so
+      // only count distance within a sector.
       if(src->GetSector() == dst->GetSector())
       {
         length += (dst->GetPosition()-src->GetPosition()).Norm();
+        llSize++;
       }
-      if(hlPath->HasNext())
-      {
-        src = hlPath->Next();
-        dst = hlPath->Next();
-      }
-      else
+
+      if(!hlPath->HasNext())
       {
         break;
       }
+      src = dst;
+      dst = hlPath->Next();
     }
 
     // restart path for traversal
@@ -91,54 +91,38 @@ void celHPath::Initialize(iCelPath* highLevelPath)
   firstNode = hlPath->GetFirst();
   lastNode = hlPath->GetLast();
 
-  // Resize low level path array. High level paths always have two nodes for each segment of the
+  // Resize low level path array.
+  // High level paths always have two nodes for each segment of the
   // path in a sector (entry and exit point).
-  size_t llSize = hlPath->GetNodeCount() / 2;
   llPaths.SetSize(llSize);
   currentllPosition = 0;
 
   // Construct first part of the low level path
-  csRef<iMapNode> goal = hlPath->Next();
+  iMapNode* goal = hlPath->Next();
   currentSector = firstNode->GetSector();
   csRef<iCelNavMesh> navMesh = navMeshes.Get(currentSector, 0);
-  csRef<iCelNavMeshPath> path = navMesh->ShortestPath(firstNode->GetPosition(), goal->GetPosition());
-  llPaths[0] = path;
+  llPaths[0] = navMesh->ShortestPath(firstNode->GetPosition(), goal->GetPosition());
 
   // Set current node
   currentNode = firstNode;
 }
 
-bool celHPath::HasNextInternal (bool reverse) const
+bool celHPath::HasNextInternal (bool rev) const
 {
-  if(reverse)
+  if(!llPaths[currentllPosition].IsValid())
   {
-    if(llPaths[currentllPosition].IsValid())
-    {
-      if(llPaths[currentllPosition]->HasPrevious() || currentllPosition > 0)
-      {
-        return true;
-      }
-    }
-    else
-    {
-      return true;
-    }
+    return true;
+  }
+  if(rev)
+  {
+    return llPaths[currentllPosition]->HasPrevious() ||
+           currentllPosition > 0;
   }
   else
   {
-    if(llPaths[currentllPosition].IsValid())
-    {
-      if(llPaths[currentllPosition]->HasNext() || currentllPosition + 1 < llPaths.GetSize())
-      {
-        return true;
-      }
-    }
-    else
-    {
-      return true;
-    }
+    return llPaths[currentllPosition]->HasNext() ||
+           currentllPosition + 1 < llPaths.GetSize();
   }
-  return false;
 }
 
 bool celHPath::HasNext () const
@@ -151,41 +135,34 @@ bool celHPath::HasPrevious () const
   return HasNextInternal(!reverse);
 }
 
-iMapNode* celHPath::NextInternal (bool reverse)
+csPtr<iMapNode> celHPath::NextInternal (bool rev)
 {
-  while(HasNextInternal(reverse))
+  while(HasNextInternal(rev))
   {
     if(!llPaths[currentllPosition].IsValid())
     {
-      csRef<iMapNode> src;
-      csRef<iMapNode> dst;
-      if(reverse)
+      iMapNode* dst;
+      if(rev)
       {
-        src = hlPath->Previous();
         dst = hlPath->Previous();
       }
       else
       {
         dst = hlPath->Next();
-        src = hlPath->Next();
       }
 
-      csRef<iMapNode> target = reverse ? src : dst;
-      currentSector = target->GetSector();
-
-      if(src->GetSector() != dst->GetSector())
+      if(currentNode->GetSector() != dst->GetSector())
       {
         // cross-sector steps are coincident
-        currentNode = csPtr<iMapNode>(new csMapNode(""));
-        currentNode->SetPosition(target->GetPosition());
-        currentNode->SetSector(currentSector);
-        return currentNode;
+        csVector3 pos(dst->GetPosition());
+        currentNode = dst;
+        currentSector = dst->GetSector();
       }
       else
       {
         csRef<iCelNavMesh> navMesh = navMeshes.Get(currentSector, 0);
-        llPaths[currentllPosition] = navMesh->ShortestPath(src->GetPosition(), dst->GetPosition());
-        if(reverse)
+        llPaths[currentllPosition] = navMesh->ShortestPath(currentNode->GetPosition(), dst->GetPosition());
+        if(rev)
         {
           while(llPaths[currentllPosition]->HasNext())
           {
@@ -196,16 +173,16 @@ iMapNode* celHPath::NextInternal (bool reverse)
         CS_ASSERT(llPaths[currentllPosition].IsValid());
       }
     }
-    else if((!reverse && !llPaths[currentllPosition]->HasNext())
-         || (reverse && !llPaths[currentllPosition]->HasPrevious()))
+    else if((!rev && !llPaths[currentllPosition]->HasNext())
+         || (rev && !llPaths[currentllPosition]->HasPrevious()))
     {
       advanced += llPaths[currentllPosition]->Length();
-      currentllPosition += reverse ? -1 : 1;
+      currentllPosition += rev ? -1 : 1;
     }
     else
     {
       csVector3 position;
-      if(reverse)
+      if(rev)
       {
         llPaths[currentllPosition]->Previous(position);
       }
@@ -214,7 +191,7 @@ iMapNode* celHPath::NextInternal (bool reverse)
         llPaths[currentllPosition]->Next(position);
       }
 
-      currentNode = csPtr<iMapNode>(new csMapNode(""));
+      currentNode.AttachNew(new csMapNode(""));
       currentNode->SetPosition(position);
       currentNode->SetSector(currentSector);
 
@@ -225,12 +202,12 @@ iMapNode* celHPath::NextInternal (bool reverse)
   return 0;
 }
 
-iMapNode* celHPath::Next ()
+csPtr<iMapNode> celHPath::Next ()
 {
   return NextInternal(reverse);
 }
 
-iMapNode* celHPath::Previous ()
+csPtr<iMapNode> celHPath::Previous ()
 {
   return NextInternal(!reverse);
 }
@@ -265,9 +242,27 @@ void celHPath::Invert ()
 
 void celHPath::Restart ()
 {
-  while(HasNextInternal(reverse))
+  currentNode = GetFirst();
+  currentSector = currentNode->GetSector();
+  currentllPosition = 0;
+  for(size_t i = 0; i < llPaths.GetSize(); i++)
+    if(llPaths[i])
+      llPaths[i]->Restart();
+  if(reverse)
   {
-    NextInternal(reverse);
+    if(llPaths.GetSize() > 1)
+    {
+      currentllPosition = llPaths.GetSize() - 1;
+      llPaths[currentllPosition].Invalidate();
+    }
+    else
+    {
+      while(llPaths[currentllPosition]->HasNext())
+      {
+        csVector3 pos;
+        llPaths[currentllPosition]->Next(pos);
+      }
+    }
   }
 
   // reset travelled distance
@@ -324,7 +319,8 @@ csArray<csSimpleRenderMesh*>* celHPath::GetDebugMeshes ()
   dd.vertex(currentPosition[0], currentPosition[1] + halfHeight, currentPosition[2], vertexCol);
   while (HasNext())
   {
-    currentPosition = Next()->GetPosition();
+    csRef<iMapNode> next = Next();
+    currentPosition = next->GetPosition();
     dd.vertex(currentPosition[0], currentPosition[1] + halfHeight, currentPosition[2], vertexCol);
   }
   dd.end();
@@ -333,12 +329,12 @@ csArray<csSimpleRenderMesh*>* celHPath::GetDebugMeshes ()
   Restart();
   for (int i = 0; i < backCount; i++)
   {
-    Next();
+    csRef<iMapNode> next = Next();
   }
 
 
   // Clear previous meshes
-  if (!debugMeshes->IsEmpty()) 
+  if (debugMeshes) 
   { 
     csArray<csSimpleRenderMesh*>::Iterator it = debugMeshes->GetIterator(); 
     while (it.HasNext()) 
@@ -347,7 +343,7 @@ csArray<csSimpleRenderMesh*>* celHPath::GetDebugMeshes ()
       delete [] mesh->vertices; 
       delete [] mesh->colors; 
     }
-    debugMeshes->DeleteAll(); 
+    delete debugMeshes;
   }
 
   // Update meshes
@@ -365,12 +361,11 @@ celHNavStruct::celHNavStruct (const iCelNavMeshParams* params, iObjectRegistry* 
 {
   this->objectRegistry = objectRegistry;
   parameters.AttachNew(params->Clone());
-  debugMeshes = new csArray<csSimpleRenderMesh*>();
+  debugMeshes = 0;
 }
 
 celHNavStruct::~celHNavStruct ()
 {
-  debugMeshes->Empty();
   delete debugMeshes;
 }
 
@@ -549,6 +544,7 @@ bool celHNavStruct::BuildHighLevelGraph()
           sector->QueryObject()->GetName());
       continue;
     }
+    csVector3 box = parameters->GetPolygonSearchBox();
     csArray<csRef<iCelNode> > sectorNodes = nodes.GetAll(sector);
     int size = sectorNodes.GetSize();
     for (int i = 0; i < size - 1; i++)
@@ -563,7 +559,6 @@ bool celHNavStruct::BuildHighLevelGraph()
         {
           csVector3 last;
           path->GetLast(last);
-          csVector3 box = parameters->GetPolygonSearchBox();
           // Check if last calculated point is within reach of the last given point
           if (ABS(last[0] - node2->GetPosition()[0]) <= box[0] && 
               ABS(last[1] - node2->GetPosition()[1]) <= box[1] &&
@@ -611,7 +606,7 @@ iCelHPath* celHNavStruct::ShortestPath (const csVector3& from, iSector* fromSect
  * Finding the shortest path in a navigation structure is done in two steps:
  * 1- Add the origin and destination points of the path to the high level graph, and connect
  * them to edges in their sectors. Then, find a path in this graph.
- * 2- For each two adjascent nodes in the high level path, find the corresponding low level
+ * 2- For each two adjacent nodes in the high level path, find the corresponding low level
  * path between those points, using the navigation mesh for their sector.
  * After that, the nodes and edges that were added to the graph can be removed.
  */
@@ -635,8 +630,12 @@ iCelHPath* celHNavStruct::ShortestPath (iMapNode* from, iMapNode* goal)
     hlGraph->RemoveNode(goalNodeIdx);
     return 0;
   }
-  csList<csRef<iCelNode> > tmpEdgesOrigins; // Only for edges from some node to goal node
-  csList<size_t> tmpEdgesIndices;
+  // Save edges added to the graph so we can remove them after finding the path.
+  csArray<iCelNode*> tmpEdgesOriginsF;
+  csArray<size_t> tmpEdgesIndicesF;
+  csArray<iCelNode*> tmpEdgesOriginsB;
+  csArray<size_t> tmpEdgesIndicesB;
+  csVector3 box = parameters->GetPolygonSearchBox();
   size_t size = hlGraph->GetNodeCount();
   for (size_t i = 0; i < size; i++)
   {
@@ -655,13 +654,13 @@ iCelHPath* celHNavStruct::ShortestPath (iMapNode* from, iMapNode* goal)
         {
           csVector3 last;
           tmpPath->GetLast(last);
-          csVector3 box = parameters->GetPolygonSearchBox();
           // Check if last calculated point is within reach of the last given point
           if (ABS(last[0] - node->GetPosition()[0]) <= box[0] && 
               ABS(last[1] - node->GetPosition()[1]) <= box[1] &&
               ABS(last[2] - node->GetPosition()[2]) <= box[2]) 
           {
-            hlGraph->AddEdge(fromNode, node, true, tmpPath->Length());
+            tmpEdgesOriginsF.Push(fromNode);
+            tmpEdgesIndicesF.Push(hlGraph->AddEdge(fromNode, node, true, tmpPath->Length()));
           }
         }
       }
@@ -673,14 +672,13 @@ iCelHPath* celHNavStruct::ShortestPath (iMapNode* from, iMapNode* goal)
         {
           csVector3 last;
           tmpPath->GetLast(last);
-          csVector3 box = parameters->GetPolygonSearchBox();
           // Check if last calculated point is within reach of the last given point
           if (ABS(last[0] - goalNode->GetPosition()[0]) <= box[0] && 
               ABS(last[1] - goalNode->GetPosition()[1]) <= box[1] &&
               ABS(last[2] - goalNode->GetPosition()[2]) <= box[2]) 
           {
-            tmpEdgesOrigins.PushBack(node);
-            tmpEdgesIndices.PushBack(hlGraph->AddEdge(node, goalNode, true, tmpPath->Length()));
+            tmpEdgesOriginsB.Push(node);
+            tmpEdgesIndicesB.Push(hlGraph->AddEdge(node, goalNode, true, tmpPath->Length()));
           }
         }
       }
@@ -693,46 +691,42 @@ iCelHPath* celHNavStruct::ShortestPath (iMapNode* from, iMapNode* goal)
     {
       csVector3 last;
       tmpPath->GetLast(last);
-      csVector3 box = parameters->GetPolygonSearchBox();
       // Check if last calculated point is within reach of the last given point
       if (ABS(last[0] - goalNode->GetPosition()[0]) <= box[0] && 
           ABS(last[1] - goalNode->GetPosition()[1]) <= box[1] &&
           ABS(last[2] - goalNode->GetPosition()[2]) <= box[2]) 
       {
-        hlGraph->AddEdge(fromNode, goalNode, true, tmpPath->Length());
+        tmpEdgesOriginsF.Push(fromNode);
+        tmpEdgesIndicesF.Push(hlGraph->AddEdge(fromNode, goalNode, true, tmpPath->Length()));
       }
     }
   }
 
   // Find path in high level graph
+  bool found = false;
   csRef<iCelPath> hlPath = scfCreateInstance<iCelPath>("cel.celpath");
-  if (!hlPath)
+  if (hlPath)
   {
-    csList<size_t>::Iterator itIndices(tmpEdgesIndices);
-    csList<csRef<iCelNode> >::Iterator itOrigins(tmpEdgesOrigins);
-    while (itIndices.HasNext()) // No need to check both iterators, since they have the same element count
-    {
-      hlGraph->RemoveEdge(itOrigins.Next(), itIndices.Next());
-    }
-    hlGraph->RemoveNode(fromNodeIdx);
-    hlGraph->RemoveNode(goalNodeIdx);
-    return 0;
-  }
-  hlGraph->ShortestPath2(fromNode, goalNode, hlPath);
-
-  // Remove edges that connect any node to the goal node
-  csList<size_t>::Iterator itIndices(tmpEdgesIndices);
-  csList<csRef<iCelNode> >::Iterator itOrigins(tmpEdgesOrigins);
-  while (itIndices.HasNext()) // No need to check both iterators, since they have the same element count
-  {
-    hlGraph->RemoveEdge(itOrigins.Next(), itIndices.Next());
+    found = hlGraph->ShortestPath2(fromNode, goalNode, hlPath);
   }
 
-  // Remove from and goal nodes from the high level graph (and the edges we added and didn't explicitly remove)
+  // Remove edges that were added temporarily.
+  size = tmpEdgesIndicesF.GetSize();
+  for (size_t i = 0; i < size; i++)
+  {
+    hlGraph->RemoveEdge(tmpEdgesOriginsF[i], tmpEdgesIndicesF[i]);
+  }
+  size = tmpEdgesIndicesB.GetSize();
+  for (size_t i = 0; i < size; i++)
+  {
+    hlGraph->RemoveEdge(tmpEdgesOriginsB[i], tmpEdgesIndicesB[i]);
+  }
+
+  // Remove from and goal nodes from the high level graph.
   hlGraph->RemoveNode(goalNodeIdx);
   hlGraph->RemoveNode(fromNodeIdx);  
 
-  if (hlPath->GetNodeCount() == 0)
+  if (!found || hlPath->GetNodeCount() <= 1)
   {
     return 0;
   }
@@ -791,6 +785,7 @@ bool celHNavStruct::Update (const csBox3& boundingBox, iSector* sector)
       sameSectorSize++;
     }
   }
+  csVector3 box = parameters->GetPolygonSearchBox();
   for (int i = 0; i < sameSectorSize; ++i)
   {
     csRef<iCelNode> node = sameSectorNodes[i];
@@ -810,7 +805,6 @@ bool celHNavStruct::Update (const csBox3& boundingBox, iSector* sector)
         {
           csVector3 last;
           path->GetLast(last);
-          csVector3 box = parameters->GetPolygonSearchBox();
           // Check if last calculated point is within reach of the last given point
           if (ABS(last[0] - node2->GetPosition()[0]) <= box[0] && 
               ABS(last[1] - node2->GetPosition()[1]) <= box[1] &&
@@ -851,7 +845,6 @@ bool celHNavStruct::Update (const csBox3& boundingBox, iSector* sector)
         {
           csVector3 last;
           path->GetLast(last);
-          csVector3 box = parameters->GetPolygonSearchBox();
           // Check if last calculated point is within reach of the last given point
           if (ABS(last[0] - node2->GetPosition()[0]) <= box[0] && 
               ABS(last[1] - node2->GetPosition()[1]) <= box[1] &&
@@ -1023,7 +1016,10 @@ bool celHNavStruct::SaveToFile (iVFS* vfs, const char* directory)
   }
 
   csString workingDir(vfs->GetCwd());
-  vfs->ChDir(directory);
+  if (!vfs->ChDir(directory))
+  {
+    return false;
+  }
 
   // Create XML file
   csRef<iDocument> doc = docsys->CreateDocument();
@@ -1052,7 +1048,10 @@ bool celHNavStruct::SaveToFile (iVFS* vfs, const char* directory)
 
   // Write xml file
   const char* log = doc->Write(vfs, "navstruct.xml");
-  vfs->ChDir(workingDir.GetDataSafe());
+  if (!vfs->ChDir(workingDir.GetDataSafe()))
+  {
+    return false;
+  }
   vfs->Sync();
 
   if (log)
@@ -1077,7 +1076,10 @@ csArray<csSimpleRenderMesh*>* celHNavStruct::GetDebugMeshes (iSector* sector /*=
     return nm->GetDebugMeshes ();
   }
 
-  debugMeshes->Empty(); 
+  if (debugMeshes)
+    debugMeshes->Empty(); 
+  else
+    debugMeshes = new csArray<csSimpleRenderMesh*>();
 
   // Copy meshes from all navMeshes
   csHash<csRef<iCelNavMesh>, csPtrKey<iSector> >::GlobalIterator it = navMeshes.GetIterator();
@@ -1315,6 +1317,7 @@ bool celHNavStructBuilder::ParseMeshes (iDocumentNode* node, csHash<csRef<iSecto
           csString msg;
           msg.Format("invalid sector %s in navmesh\n", sectorName);
           CS_ASSERT_MSG(msg.GetData(),false);
+          return false;
       }
     }
 
@@ -1330,7 +1333,7 @@ bool celHNavStructBuilder::ParseMeshes (iDocumentNode* node, csHash<csRef<iSecto
   return true;
 }
 
-bool celHNavStructBuilder::ParseGraph (iDocumentNode* node, iCelGraph* graph, csHash<csRef<iSector>, const char*> sectors)
+bool celHNavStructBuilder::ParseGraph (iDocumentNode* node, iCelGraph* graph, csHash<csRef<iSector>, const char*>& sectors)
 {
   csRef<iDocumentNode> nodesNode = node->GetNode("nodes");
   csRef<iDocumentNodeIterator> it = nodesNode->GetNodes("node");
@@ -1350,6 +1353,7 @@ bool celHNavStructBuilder::ParseGraph (iDocumentNode* node, iCelGraph* graph, cs
         csString msg;
         msg.Format("invalid sector %s in navmesh graph node\n", sectorName);
         CS_ASSERT_MSG(msg.GetData(),false);
+        return false;
     }
 
     // Get position
