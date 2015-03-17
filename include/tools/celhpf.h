@@ -52,11 +52,11 @@ struct iCelHPath : public virtual iBase
   /// Check if the path can be transversed backward from the current position.
   virtual bool HasPrevious () const = 0;
 
-  /// Get next node.
-  virtual iMapNode* Next () = 0;
+  /// Get next node. Note that the reference needs to be released.
+  virtual csPtr<iMapNode> Next () = 0;
   
-  /// Get previous node.
-  virtual iMapNode* Previous () = 0;
+  /// Get previous node. Note that the reference needs to be released.
+  virtual csPtr<iMapNode> Previous () = 0;
     
   /// Get current node.
   virtual iMapNode* Current () = 0;

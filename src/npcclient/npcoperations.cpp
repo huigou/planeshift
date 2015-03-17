@@ -241,14 +241,14 @@ void ScriptOperation::SendCollitionPerception(NPC* npc)
     csString collision = GetCollisionPerception(npc);
     if(!collision.IsEmpty())
     {
-        NPCDebug(npc, 5, "Sending collition perception: " + collision);
+        NPCDebug(npc, 5, "Sending collision perception: " + collision);
 
         Perception perception(collision);
         npc->TriggerEvent(&perception);
     }
     else
     {
-        NPCDebug(npc, 6, "No collition perception to send.");
+        NPCDebug(npc, 6, "No collision perception to send.");
     }
 }
 
@@ -685,6 +685,7 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC* npc, bool interrupt
     if(!GetEndPosition(npc, myPos, mySector, endPos, endSector))
     {
         NPCDebug(npc, 5, "Failed to find target position!");
+        StopMovement(npc);
         return OPERATION_FAILED;  // This operation is complete
     }
 
@@ -692,6 +693,7 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC* npc, bool interrupt
     if(distance < 0.5)
     {
         NPCDebug(npc, 5, "We are done..");
+        StopMovement(npc);
         return OPERATION_COMPLETED;
     }
     path = npcclient->ShortestPath(npc, myPos,mySector,endPos,endSector);
@@ -702,16 +704,19 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC* npc, bool interrupt
                  toString(myPos, mySector).GetData(),
                  toString(endPos, endSector).GetData());
 
+        StopMovement(npc);
         return OPERATION_FAILED;  // This operation is complete
     }
     else if(!PathReachedEndPoint(npc, path, endPos, endSector))
     {
+        StopMovement(npc);
         return OPERATION_FAILED;
     }
-    else if(path->GetDistance() < 0.5)     // Distance allready adjusted for offset
+    else if(path->GetDistance() < 0.5)     // Distance already adjusted for offset
     {
         NPCDebug(npc, 5, "We are done...");
 
+        StopMovement(npc);
         return OPERATION_COMPLETED; // This operation is complete
     }
     else if(GetAngularVelocity(npc) > 0 || GetVelocity(npc) > 0)
@@ -719,7 +724,7 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC* npc, bool interrupt
         float dummyAngle;
 
         // Find next local destination and start moving towards local destination
-        iMapNode* dest = path->Next();
+        csRef<iMapNode> dest = path->Next();
         StartMoveTo(npc, dest->GetPosition(), dest->GetSector(), GetVelocity(npc),
                     action, dummyAngle);
         currentDistance =  npcclient->GetWorld()->Distance2(myPos, mySector,
@@ -730,10 +735,9 @@ ScriptOperation::OperationResult MovementOperation::Run(NPC* npc, bool interrupt
     else
     {
         // Have no velocity to complete any movement
+        StopMovement(npc);
         return OPERATION_FAILED;
     }
-
-    return OPERATION_COMPLETED; // This operation is complete
 }
 
 ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC* npc)
@@ -754,97 +758,104 @@ ScriptOperation::OperationResult MovementOperation::Advance(float timedelta, NPC
     }
 
     // Check if path endpoint has changed and needs to be updated
+    float distance;
+    csRef<iMapNode> dest;
     if(EndPointChanged(endPos, endSector))
     {
         NPCDebug(npc, 8, "target diverged, recalculate path between %s and %s",
                  toString(myPos, mySector).GetData(),
                  toString(endPos, endSector).GetData());
 
+        // Let's check if we are at the end position. The ShortestPath doesn't
+        // seems to work to well if the start and end is the same.
+        distance = npcclient->GetWorld()->Distance2(myPos, mySector, endPos, endSector);
+        if(distance < 0.5)
+        {
+            NPCDebug(npc, 5, "We are done....");
+            StopMovement(npc);
+            return OPERATION_COMPLETED;
+        }
         path = npcclient->ShortestPath(npc, myPos, mySector, endPos, endSector);
         if(!path || !path->HasNext())
         {
-            // Lets check if we are at the end position. The ShortestPath dosn't
-            // seams to work to well if the start and end is the same.
-            float distance = npcclient->GetWorld()->Distance2(myPos, mySector, endPos, endSector);
-            if(distance < 0.5)
-            {
-                NPCDebug(npc, 5, "We are done....");
-                StopMovement(npc);
-                return OPERATION_COMPLETED;
-            }
-            else
-            {
-                // We really failed to find a path between us and the target
-                NPCDebug(npc, 5, "Failed to find a path between %s and %s",
-                         toString(myPos, mySector).GetData(),
-                         toString(endPos, endSector).GetData());
-                StopMovement(npc);
-                return OPERATION_FAILED;
-            }
+            // We really failed to find a path between us and the target
+            NPCDebug(npc, 5, "Failed to find a path between %s and %s",
+                     toString(myPos, mySector).GetData(),
+                     toString(endPos, endSector).GetData());
+            StopMovement(npc);
+            return OPERATION_FAILED;
         }
-
-        if(!PathReachedEndPoint(npc, path, endPos, endSector))
+        else if(!PathReachedEndPoint(npc, path, endPos, endSector))
         {
             StopMovement(npc);
             return OPERATION_FAILED;
         }
+        else if(path->GetDistance() < 0.5)     // Distance already adjusted for offset
+        {
+            NPCDebug(npc, 5, "We are done...");
+
+            StopMovement(npc);
+            return OPERATION_COMPLETED; // This operation is complete
+        }
 
         // Start moving toward new dest
-        iMapNode* dest = path->Next();
+        dest = path->Next();
         StartMoveTo(npc, dest->GetPosition(), dest->GetSector(), GetVelocity(npc),
                     action, angle);
-        currentDistance =  npcclient->GetWorld()->Distance2(myPos, mySector,
+        currentDistance = npcclient->GetWorld()->Distance2(myPos, mySector,
                            dest->GetPosition(), dest->GetSector());
-    }
-
-    iMapNode* dest = path->Current();
-    float distance = npcclient->GetWorld()->Distance2(myPos,mySector,dest->GetPosition(),dest->GetSector());
-    if(distance >= INFINITY_DISTANCE)
-    {
-        NPCDebug(npc, 5, "No connection found..");
-        StopMovement(npc);
-        return OPERATION_FAILED;
-    }
-    else if(distance <= 0.5f || distance > (currentDistance+0.001))
-    {
-        if(distance > (currentDistance+0.001))
-        {
-            NPCDebug(npc, 6, "We passed localDest(dist=%.4f > curr=%.4f)...", distance, currentDistance);
-        }
-        else
-        {
-            NPCDebug(npc, 6, "We are at localDest(dist=%.4f)...", distance);
-        }
-
-        if(!path->HasNext())
-        {
-            NPCDebug(npc, 5, "We are done.....");
-            StopMovement(npc);
-            if(CheckEndPointOk(npc, myPos, mySector, endPos, endSector))
-            {
-                return OPERATION_COMPLETED;
-            }
-            else
-            {
-                return OPERATION_FAILED;
-            }
-        }
-        else
-        {
-            dest = path->Next();
-            if( dest==NULL ) 
-            {
-            NPCDebug(npc, 5, "DEST PATH == NULL.");
-                return OPERATION_NOT_COMPLETED;
-            }
-            NPCDebug(npc, 5, "DEST PATH is good.");
-            StartMoveTo(npc, dest->GetPosition(), dest->GetSector(), GetVelocity(npc), action, angle);
-            currentDistance =  npcclient->GetWorld()->Distance2(myPos, mySector, dest->GetPosition(), dest->GetSector());
-        }
     }
     else
     {
-        TurnTo(npc, dest->GetPosition(), dest->GetSector(), forward, angle);
+        dest = path->Current();
+        distance = npcclient->GetWorld()->Distance2(myPos,mySector,dest->GetPosition(),dest->GetSector());
+        if(distance >= INFINITY_DISTANCE)
+        {
+            NPCDebug(npc, 5, "No connection found..");
+            StopMovement(npc);
+            return OPERATION_FAILED;
+        }
+        else if(distance <= 0.5f || distance > (currentDistance+0.001))
+        {
+            if(distance > (currentDistance+0.001))
+            {
+                NPCDebug(npc, 6, "We passed localDest(dist=%.4f > curr=%.4f)...", distance, currentDistance);
+            }
+            else
+            {
+                NPCDebug(npc, 6, "We are at localDest(dist=%.4f)...", distance);
+            }
+
+            if(!path->HasNext())
+            {
+                NPCDebug(npc, 5, "We are done.....");
+                StopMovement(npc);
+                if(CheckEndPointOk(npc, myPos, mySector, endPos, endSector))
+                {
+                    return OPERATION_COMPLETED;
+                }
+                else
+                {
+                    return OPERATION_FAILED;
+                }
+            }
+            else
+            {
+                dest = path->Next();
+                if(dest == NULL) 
+                {
+                    NPCDebug(npc, 5, "DEST PATH == NULL.");
+                    return OPERATION_NOT_COMPLETED;
+                }
+                NPCDebug(npc, 5, "DEST PATH is good.");
+                StartMoveTo(npc, dest->GetPosition(), dest->GetSector(), GetVelocity(npc), action, angle);
+                currentDistance = npcclient->GetWorld()->Distance2(myPos, mySector, dest->GetPosition(), dest->GetSector());
+            }
+        }
+        else
+        {
+            TurnTo(npc, dest->GetPosition(), dest->GetSector(), forward, angle);
+        }
     }
 
     // Limit time extrapolation so we arrive near the correct place.
@@ -916,7 +927,7 @@ ScriptOperation::OperationResult AssessOperation::Run(NPC* npc, bool interrupted
 {
     if(npc->GetTarget())
     {
-        NPCDebug(npc, 5, "Queing Assement operation to server for %s",npc->GetTarget()->GetName());
+        NPCDebug(npc, 5, "Queuing Assement operation to server for %s",npc->GetTarget()->GetName());
 
         npcclient->GetNetworkMgr()->QueueAssessCommand(npc->GetActor(), npc->GetTarget(),
                 psGameObject::ReplaceNPCVariables(npc, physicalAssessmentPerception),
@@ -925,7 +936,7 @@ ScriptOperation::OperationResult AssessOperation::Run(NPC* npc, bool interrupted
     }
     else
     {
-        NPCDebug(npc, 5, "No target to Queing Assement operation for.");
+        NPCDebug(npc, 5, "No target to Queuing Assement operation for.");
     }
 
     return OPERATION_COMPLETED;  // Nothing more to do for this op.
@@ -1437,7 +1448,7 @@ gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc, const csVector3 &myPos,
     {
         float dummyRange;
 
-        // Switch target if a new entity is withing search range.
+        // Switch target if a new entity is within search range.
         gemNPCActor* newTarget = npc->GetNearestPlayer(searchRange, targetPos, targetSector, dummyRange);
 
         if(newTarget)
@@ -1465,7 +1476,7 @@ gemNPCActor* ChaseOperation::UpdateChaseTarget(NPC* npc, const csVector3 &myPos,
     {
         float dummyRange;
 
-        // Switch target if a new entity is withing search range.
+        // Switch target if a new entity is within search range.
         gemNPCActor* newTarget = npc->GetNearestActor(searchRange, targetPos, targetSector, dummyRange);
 
         if(newTarget)

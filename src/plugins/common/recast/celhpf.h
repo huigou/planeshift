@@ -61,8 +61,8 @@ private:
   float length;
   float advanced;
 
-  virtual bool HasNextInternal (bool reverse) const;
-  virtual iMapNode* NextInternal (bool reverse);
+  virtual bool HasNextInternal (bool rev) const;
+  virtual csPtr<iMapNode> NextInternal (bool rev);
 
 public:
   celHPath (csHash<csRef<iCelNavMesh>, csPtrKey<iSector> >& navMeshes);
@@ -73,8 +73,8 @@ public:
   // API
   virtual bool HasNext () const;
   virtual bool HasPrevious () const;
-  virtual iMapNode* Next ();
-  virtual iMapNode* Previous ();
+  virtual csPtr<iMapNode> Next ();
+  virtual csPtr<iMapNode> Previous ();
   virtual iMapNode* Current ();
   virtual iMapNode* GetFirst ();
   virtual iMapNode* GetLast ();
@@ -146,7 +146,7 @@ private:
   bool ParseParameters (iDocumentNode* node, iCelNavMeshParams* params);
   bool ParseMeshes (iDocumentNode* node, csHash<csRef<iSector>, const char*>& sectors, 
                     celHNavStruct* navStruct, iVFS* vfs, iCelNavMeshParams* params);
-  bool ParseGraph (iDocumentNode* node, iCelGraph* graph, csHash<csRef<iSector>, const char*> sectors);  
+  bool ParseGraph (iDocumentNode* node, iCelGraph* graph, csHash<csRef<iSector>, const char*>& sectors);
 
 public:
   celHNavStructBuilder (iBase* parent);
