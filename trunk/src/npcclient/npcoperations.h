@@ -530,7 +530,7 @@ public:
     /** Calculate any offset from target to stop chase.
      *
      *  The chase support several different modes. The default is that the
-     *  chaser ends up at the top of the target. This function calculate the offset
+     *  chaser ends up at the top of the target. This function calculates the offset
      *  as a 3D vector that represents the distance from the target to the end
      *  point of the chase.
      */
@@ -540,8 +540,8 @@ public:
 
     /** Calculate the end position for this chase.
      *
-     *  Called by the Run funciton in the MovementOperation. Will calculate
-     *  end posiiton for the chase including any offset deltas.
+     *  Called by the Run function in the MovementOperation. Will calculate
+     *  end positon for the chase including any offset deltas.
      */
     virtual bool GetEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
                                 csVector3 &endPos, iSector* &endSector);
@@ -556,7 +556,7 @@ public:
     /** Update end position for moving targets.
      *
      *  Called from advance in the MovementOperation. Will update the end position for
-     *  targets that moves. This may include change of target as well.
+     *  targets that move. This may include change of target as well.
      */
     virtual bool UpdateEndPosition(NPC* npc, const csVector3 &myPos, const iSector* mySector,
                                    csVector3 &endPos, iSector* &endSector);
