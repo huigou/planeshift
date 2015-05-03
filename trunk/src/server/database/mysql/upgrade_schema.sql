@@ -1870,6 +1870,17 @@ INSERT INTO command_group_assignment VALUES( "/version", 21 );
 INSERT INTO command_group_assignment VALUES( "/version", 10 );
 UPDATE `server_options` SET `option_value`='1279' WHERE `option_name`='db_version';
 
+
+#
+# Added new fields for OS version
+#
+ALTER TABLE accounts ADD COLUMN `OS` char(1) DEFAULT NULL AFTER operating_system;
+ALTER TABLE accounts ADD COLUMN `OS_ver_major` int(2) NOT NULL DEFAULT '0' AFTER OS;
+ALTER TABLE accounts ADD COLUMN `OS_ver_minor` int(2) NOT NULL DEFAULT '0' AFTER OS_ver_major;
+ALTER TABLE accounts ADD COLUMN `OS_platform` char(14) DEFAULT NULL AFTER OS_ver_minor;
+ALTER TABLE accounts ADD COLUMN `Machine_type` char(6) DEFAULT NULL AFTER OS_platform;
+UPDATE `server_options` SET `option_value`='1280' WHERE `option_name`='db_version';
+
 # Insert your upgrade before this line. Remember when you set a new db_version
 # to update the server_options.sql file and update psserver.cpp as well.
 # This to ensure that everything is working if you use the create_all.sql to
