@@ -106,8 +106,6 @@ protected:
     void SendGroup(Client* client, psChatMessage &msg);
     void SendShout(Client* client, psChatMessage &msg);
 
-    NpcResponse* CheckNPCResponse(psChatMessage &msg,Client* client,gemNPC* &target);
-
     /// Starts the process of sending the specified file to the client
     void SendAudioFileHash(Client* client, const char* voiceFile, csTicks delay);
     /// Sends the actual file to the client if needed

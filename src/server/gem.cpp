@@ -4822,6 +4822,14 @@ void gemNPC::ShowPopupMenu(Client* client)
     {
         menu.Add(npcmenu);
     }
+    // Check to see if any responses exist by PID instead of 'name'.
+    csString pid_name;
+    pid_name.Format("%u", pid.Unbox());
+    npcmenu = dict->FindMenu(pid_name);
+    if(npcmenu)
+    {
+        menu.Add(npcmenu);
+    }
 
     if(menu.triggers.GetSize())
     {

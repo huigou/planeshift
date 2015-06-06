@@ -96,7 +96,7 @@ public:
 
     /** Setup this manager for a character.
     *
-    *   @param owner The characther that this quest manager is for.
+    *   @param owner The character that this quest manager is for.
     */
     void Initialize(psCharacter* owner);
 

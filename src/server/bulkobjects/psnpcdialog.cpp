@@ -155,8 +155,8 @@ bool psNPCDialog::LoadKnowledgeAreas(PID npcID)
         KnowledgeArea* newarea = new KnowledgeArea;
 
         // Downcase KA area before inserting into tree
-        csString area = result[i]["area"];
-        newarea->area = area.Downcase();
+        newarea->area = result[i]["area"];
+        newarea->area.Downcase();
 
         newarea->priority = result[i].GetInt("priority");
 
@@ -347,7 +347,7 @@ NpcResponse* psNPCDialog::FindResponseWithAllPrior(const char* area,const char* 
         }
 
         if(resp)
-            break;
+            return resp;
     }
     if(!resp)  //else, try old way with general last response
     {

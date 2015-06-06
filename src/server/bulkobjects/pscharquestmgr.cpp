@@ -202,7 +202,7 @@ QuestAssignment* psCharacterQuestManager::AssignQuest(psQuest* quest, PID assign
         q->assigner_id = assigner_id;
         //set last response to current response only if this is the top parent
         q->last_response = quest->GetParentQuest() ? -1 : owner->GetLastResponse();    //This should be the response given when starting this quest
-        q->completionOrder = 0;  //this rappresents the default.
+        q->completionOrder = 0;  //this represents the default.
 
         // assign any skipped parent quests
         if(quest->GetParentQuest() && !IsQuestAssigned(quest->GetParentQuest()->GetID()))
@@ -222,7 +222,7 @@ QuestAssignment* psCharacterQuestManager::AssignQuest(psQuest* quest, PID assign
 
         q->GetQuest()->SetQuestLastActivatedTime(csGetTicks() / 1000);
 
-        Debug3(LOG_QUESTS, owner->GetPID().Unbox(), "Assigned quest '%s' to player '%s'\n", quest->GetName(), owner->GetCharName());
+        Debug4(LOG_QUESTS, owner->GetPID().Unbox(), "Assigned quest '%s' to player '%s' by %u\n", quest->GetName(), owner->GetCharName(), assigner_id.Unbox());
         UpdateQuestAssignments();
     }
     else
@@ -606,7 +606,7 @@ bool psCharacterQuestManager::LoadQuestAssignments()
             return false;
         }
 
-        // Sanity check to see if time for completion is withing
+        // Sanity check to see if time for completion is within
         // lockout time.
         if(q->lockout_end > age + q->GetQuest()->GetPlayerLockoutTime())
             q->lockout_end = age + q->GetQuest()->GetPlayerLockoutTime();

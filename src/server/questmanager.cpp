@@ -112,7 +112,7 @@ bool QuestManager::LoadQuestScripts()
                 return false;
             }
         }
-        // Second pars the scripts, both quests and KAs.
+        // Second parse the scripts, both quests and KAs.
         for(i=0; i<count; i++)
         {
             int id = quests[i].GetInt("quest_id");
@@ -218,7 +218,7 @@ bool QuestManager::PrependPrerequisites(csString &substep_requireop,
         if(quest_assigned_already)
         {
             // If quest has been assigned in the script, we need to have every response
-            // verify that the quest have been assigned.
+            // verify that the quest has been assigned.
             op.AppendFmt("<assigned quest=\"%s\" />", mainQuest->GetName());
         }
         else
@@ -976,7 +976,7 @@ int QuestManager::ParseQuestScript(int quest_id, const char* script)
     {
         GetNextScriptLine(scr,block,start,line_number);
 
-        Debug2(LOG_QUESTS, 0, "Parsing line %s", block.GetData());
+        Debug3(LOG_QUESTS, 0, "Parsing line %d:%s", line_number, block.GetData());
 
 
         // now we have the block to do something with
@@ -1369,7 +1369,8 @@ int QuestManager::GetNPCFromBlock(WordArray words,csString &current_npc)
 
     // First check single name: "Player gives Sharven ..."
     csString first = words.Get(2);
-    select.Format("SELECT * from characters where name='%s' and lastname='' and npc_master_id!=0",first.GetData());
+    select.Format("SELECT * from characters where %s='%s' and lastname='' and npc_master_id!=0",
+                  isdigit(first[0]) ? "id" : "name", first.GetData());
     // check if NPC exists
     Result npc_db(db->Select(select));
     if(npc_db.IsValid() && npc_db.Count()>0)
@@ -1377,7 +1378,7 @@ int QuestManager::GetNPCFromBlock(WordArray words,csString &current_npc)
         current_npc = first;
         return 1;
     }
-    else // Than check double name: "Player gives Menlil Toresun ..."
+    else // Then check double name: "Player gives Menlil Toresun ..."
     {
         csString last = words.Get(3);
 
@@ -1656,7 +1657,16 @@ bool QuestManager::AddTrigger(const csString &current_npc,const char* trigger,in
 {
     // Now that this npc has a trigger associated, we need to make sure it has a KA for itself.
     // These have been added manually in the past, but we will do it here automatically now.
-    gemNPC* npc = dynamic_cast<gemNPC*>(psserver->entitymanager->GetGEM()->FindObject(current_npc));
+    gemNPC* npc;
+    if(isdigit(current_npc[0]))
+    {
+        PID npc_id((uint32_t)strtol(current_npc.GetData(), NULL, 10));
+        npc = psserver->entitymanager->GetGEM()->FindNPCEntity(npc_id);
+    }
+    else
+    {
+        npc = dynamic_cast<gemNPC*>(psserver->entitymanager->GetGEM()->FindObject(current_npc));
+    }
     if(npc)  // specific KA named here
     {
         // First check for no dialog at all on this npc, and create it if needed
