@@ -246,7 +246,7 @@ void ChatManager::HandleChatMessage(MsgEntry* me, Client* client)
                         // The NPC is spoken to so register this client as a speaker
                         targetnpc->RegisterSpeaker(client);
 
-                        NpcResponse* resp = CheckNPCResponse(msg,client,targetnpc);
+                        NpcResponse* resp = CheckNPCEvent(client, msg.sText, targetnpc);
                         if(resp)
                         {
                             csTicks delay = resp->ExecuteScript(client->GetActor(), targetnpc);
@@ -669,11 +669,6 @@ NpcResponse* ChatManager::CheckNPCEvent(Client* client,csString &triggerText,gem
         }
     }
     return NULL;
-}
-
-NpcResponse* ChatManager::CheckNPCResponse(psChatMessage &msg,Client* client,gemNPC* &target)
-{
-    return CheckNPCEvent(client,msg.sText,target);  // <L MONEY="0,0,0,3"></L>
 }
 
 void ChatManager::SendMultipleAudioFileHashes(Client* client, const char* voiceFiles)
