@@ -784,8 +784,18 @@ csString QuestManager::ParseRequireCommand(csString &block, bool &result, psQues
             command.Format("<variable name=\"%s\" value=\"%s\"/>",
                            words[1].GetData(), words[2].GetData());
         else if(words.GetCount() == 4)
-            command.Format("<variable name=\"%s\" min=\"%f\" max=\"%f\"/>",
-                           words[1].GetData(), words.GetFloat(2), words.GetFloat(3));
+        {
+            command.Format("<variable name=\"%s\"", words[1].GetData());
+            if(!words[2].CompareNoCase("none"))
+            {
+                command.AppendFmt(" min=\"%f\"", words.GetFloat(2));
+            }
+            if(!words[3].CompareNoCase("none"))
+            {
+                command.AppendFmt(" max=\"%f\"", words.GetFloat(3));
+            }
+            command.Append("/>");
+        }
         else
             Error1("Require variable command requires 1-3 parameters.");
     }
