@@ -786,13 +786,13 @@ csString psQuestPrereqOpVariable::GetScriptOp()
     csString script;
 
     if(!variableValue.IsEmpty())
-        script.Format("<variableset name=\"%s\" value=\"%s\"/>",
+        script.Format("<variable name=\"%s\" value=\"%s\"/>",
                 variableName.GetData(), variableValue.GetData());
     else if(min != 0.0 || max != 0.0)
-        script.Format("<variableset name=\"%s\" min=\"%g\" max=\"%g\"/>",
+        script.Format("<variable name=\"%s\" min=\"%g\" max=\"%g\"/>",
                 variableName.GetData(), min, max);
     else
-        script.Format("<variableset name=\"%s\"/>", variableName.GetData());
+        script.Format("<variable name=\"%s\"/>", variableName.GetData());
 
     return script;
 }
