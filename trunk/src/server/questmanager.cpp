@@ -777,8 +777,16 @@ csString QuestManager::ParseRequireCommand(csString &block, bool &result, psQues
     }
     else if(!strncasecmp(block,"variable",8))
     {
-        csString variableName = block.Slice(9,block.Length()).Trim();
-        command.Format("<variable name=\"%s\"/>", variableName.GetData());
+        WordArray words(block);
+        if(words.GetCount() == 2)
+            command.Format("<variable name=\"%s\"/>", words[1]);
+        else if(words.GetCount() == 3)
+            command.Format("<variable name=\"%s\" value=\"%s\"/>", words[1], words[2]);
+        else if(words.GetCount() == 4)
+            command.Format("<variable name=\"%s\" min=\"%f\" max=\"%f\"/>",
+                           words[1], words.GetFloat(2), words.GetFloat(3));
+        else
+            Error1("Require variable command requires 1-3 parameters.");
     }
     else if(!strncasecmp(block,"skill",5))  // require skill <buffed> name <startLevel>-<endLevel>
     {
