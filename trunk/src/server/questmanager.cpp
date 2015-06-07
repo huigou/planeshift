@@ -779,12 +779,13 @@ csString QuestManager::ParseRequireCommand(csString &block, bool &result, psQues
     {
         WordArray words(block);
         if(words.GetCount() == 2)
-            command.Format("<variable name=\"%s\"/>", words[1]);
+            command.Format("<variable name=\"%s\"/>", words[1].GetData());
         else if(words.GetCount() == 3)
-            command.Format("<variable name=\"%s\" value=\"%s\"/>", words[1], words[2]);
+            command.Format("<variable name=\"%s\" value=\"%s\"/>",
+                           words[1].GetData(), words[2].GetData());
         else if(words.GetCount() == 4)
             command.Format("<variable name=\"%s\" min=\"%f\" max=\"%f\"/>",
-                           words[1], words.GetFloat(2), words.GetFloat(3));
+                           words[1].GetData(), words.GetFloat(2), words.GetFloat(3));
         else
             Error1("Require variable command requires 1-3 parameters.");
     }
