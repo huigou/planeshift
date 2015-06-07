@@ -595,7 +595,7 @@ public:
 
 
 /**
- * This script operations is used to set character variables from npc dialogs.
+ * This script operation is used to set character variables from npc dialogs.
  * It can set a name and a value to associated to it. Note that each name must
  * be unique for the current character or it will be overwritten.
  */
@@ -622,7 +622,7 @@ public:
     virtual bool Load(iDocumentNode* node);
 
     /**
-     * Gets the script rappresentation of this object (after it has been loaded).
+     * Gets the script representation of this object (after it has been loaded).
      * @return A string with the content of the currently loaded script.
      */
     virtual csString GetResponseScript();
@@ -642,7 +642,7 @@ public:
 
 
 /**
- * This script operations is used to unset character variables from npc dialogs.
+ * This script operation is used to unset character variables from npc dialogs.
  * It can unset a name a variable from its name. Note that each name must
  * be unique for the current character or it will be overwritten.
  */
@@ -669,7 +669,7 @@ public:
     virtual bool Load(iDocumentNode* node);
 
     /**
-     * Gets the script rappresentation of this object (after it has been loaded).
+     * Gets the script representation of this object (after it has been loaded).
      * @return A string with the content of the currently loaded script.
      */
     virtual csString GetResponseScript();
