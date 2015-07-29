@@ -289,10 +289,12 @@ void ScoreContext::Update(const MeasureElement &element)
 
 void ScoreContext::Update(int measureID, const Measure<MeasureElement> &measure)
 {
+    // Update context
     noteContext.ResetContext();
     measureAttributes.UpdateAttributes(measure.GetAttributes());
 
-    if(measure.IsStartRepeat())
+    // If this is the new start of a repeat, save the context
+    if(measure.IsStartRepeat() && measureID != lastStartRepeatID)
     {
         lastStartRepeatID = measureID;
         lastStartRepeatAttributes = measureAttributes;
@@ -301,8 +303,9 @@ void ScoreContext::Update(int measureID, const Measure<MeasureElement> &measure)
         repeatsDone.DeleteAll();
     }
 
-    if(measure.GetNEndRepeat() > 0 && !repeatsDone.Contains(measureID))
+    // If this is the end of a repeat, update the number of repeats done
+    if(measure.GetNEndRepeat() > 0)
     {
-        repeatsDone.Put(measureID, 0);
+        repeatsDone.GetOrCreate(measureID, 0)++;
     }
 }
