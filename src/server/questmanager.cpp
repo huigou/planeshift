@@ -1389,7 +1389,7 @@ int QuestManager::GetNPCFromBlock(WordArray words,csString &current_npc)
     // First check single name: "Player gives Sharven ..."
     csString first = words.Get(2);
     select.Format("SELECT * from characters where %s='%s' and lastname='' and npc_master_id!=0",
-                  isdigit(first[0]) ? "id" : "name", first.GetData());
+                  isdigit(first[0u]) ? "id" : "name", first.GetData());
     // check if NPC exists
     Result npc_db(db->Select(select));
     if(npc_db.IsValid() && npc_db.Count()>0)
@@ -1677,7 +1677,7 @@ bool QuestManager::AddTrigger(const csString &current_npc,const char* trigger,in
     // Now that this npc has a trigger associated, we need to make sure it has a KA for itself.
     // These have been added manually in the past, but we will do it here automatically now.
     gemNPC* npc;
-    if(isdigit(current_npc[0]))
+    if(isdigit(current_npc[0u]))
     {
         PID npc_id((uint32_t)strtol(current_npc.GetData(), NULL, 10));
         npc = psserver->entitymanager->GetGEM()->FindNPCEntity(npc_id);
