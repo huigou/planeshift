@@ -136,6 +136,7 @@ bool BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::Advance(
     isLastElem = (currElementIdx == score->measures[currMeasureIdx].GetNElements() - 1);
     if(IsEndOfMeasure() || (isLastElem && ignoreEndOfMeasure))
     {
+        // we need to move to the first element of the next measure
         currElementIdx = 0;
 
         // in play mode we must take repeats into account and update the context
@@ -147,17 +148,18 @@ bool BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::Advance(
             }
             else
             {
-                // we must skip all the endings that end a repeat
-                // section that has been already performed
+                // update the context with info on previous measures attributes
+                context->Update(currMeasureIdx, score->measures[currMeasureIdx]);
+
+                // we must skip all the endings that end a repeat section that has been
+                // already performed, the context doesn't have to be updated with skipped
+                // endings
                 do
                 {
                     currMeasureIdx++;
                 }while(score->measures[currMeasureIdx].IsEnding() &&
                        score->measures[currMeasureIdx].IsEndRepeat() &&
                        !CheckRepeat());
-
-                // the context doesn't have to be updated with skipped endings
-                context->Update(currMeasureIdx, score->measures[currMeasureIdx]);
             }
         }
         else // mode == EDIT
@@ -167,18 +169,17 @@ bool BaseMusicalScore<MeasureType, MeasureElementType>::Cursor::Advance(
     }
     else
     {
-        // we update the context with the accidentals of the previous element
-        if(score->mode == PLAY)
-        {
-            context->Update(score->measures[currMeasureIdx].GetElement(currElementIdx));
-        }
-
         if(isLastElem) // ignoreEndOfMeasure has been checked before
         {
             currElementIdx = INVALID_CURSOR;
         }
         else
         {
+            // we update the context with the accidentals of the previous element
+            if(score->mode == PLAY)
+            {
+                context->Update(score->measures[currMeasureIdx].GetElement(currElementIdx));
+            }
             currElementIdx++;
         }
     }

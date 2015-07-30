@@ -278,6 +278,7 @@ int ScoreContext::GetNPerformedRepeats(int measureID) const
 
 int ScoreContext::RestoreLastStartRepeat()
 {
+    noteContext.ResetContext();
     measureAttributes = lastStartRepeatAttributes;
     return lastStartRepeatID;
 }
