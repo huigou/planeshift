@@ -623,7 +623,7 @@ public:
     /**
      * Restore the context of the last measure containing a start repeat. If no explicit
      * start repeats have been found, the function assumes it to be the first measure.
-     * Note that you still have to call Update(int, Measure<MeasureElement> &) afterwards.
+     * It is not necessary to call Update(int, Measure<MeasureElement> &) afterwards.
      *
      * @return The ID of the last measure encountered that starts a repeat.
      */
@@ -631,8 +631,8 @@ public:
 
     /**
      * Update the context with the new measure. This resets also previous accidentals.
-     * Note that you still have to call Update(MeasureElement &) to update the list of
-     * previous accidentals with the first element of this measure.
+     * Note that you still have to call Update(MeasureElement &) if you want to update
+     * the list of previous accidentals with the first element of this measure.
      *
      * @param measureID The ID of the updated measure.
      * @param measure The new measure reached by the cursor.

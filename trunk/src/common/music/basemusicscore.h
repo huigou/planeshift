@@ -322,7 +322,12 @@ private:
 
     size_t currElementIdx; ///< Index of the current element.
     size_t currMeasureIdx; ///< Index of the current measure.
-    ScoreContext* context; ///< The context is valid only if it is in play mode.
+
+    /**
+     * The context is valid only if the score is in play mode. This keeps track of attributes
+     * and accidentals of previous measures and notes, not the current ones.
+     */
+    ScoreContext* context;
     BaseMusicalScore<MeasureType, MeasureElementType>* score; ///< The musical score this cursor refers to.
 
     /**
