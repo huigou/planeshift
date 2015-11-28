@@ -2625,7 +2625,7 @@ ADMINCMDFACTORY_IMPLEMENT_MSG_FACTORY_CREATE(AdminCmdDataFog)
 
 csString AdminCmdDataFog::GetHelpMessage()
 {
-    return "Syntax: \"" + command + " [sector] [density [r g b lenght fade]|stop]\"";
+    return "Syntax: \"" + command + " [sector] [density [r g b length fade]|stop]\"";
 }
 
 AdminCmdDataModify::AdminCmdDataModify(AdminManager* msgManager, MsgEntry* me, psAdminCmdMessage &msg, Client* client, WordArray &words)
