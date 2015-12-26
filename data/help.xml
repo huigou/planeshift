@@ -1616,6 +1616,27 @@ Resets your admin level.  Lists and allows you to use various GM/admin commands.
 Awards the player of a positive or negative faction points for a particular faction.
 factionname is the name of the faction of which the player is being changed
 points can be negative or positive and it's relative to the current player faction points.</content></Contents></topic>
+<topic name="/award"><Contents><content type="text">/award [target|pid:&lt;PID&gt;|area:type:range[:name]|me|&lt;player name&gt;|eid:&lt;EID&gt;|&lt;focus select a target&gt;] REWARD &lt;reward specific values&gt;
+
+Reward
+To give experience use - exp &lt;value&gt;
+/award harnquist exp 100
+
+To give an item use - item &lt;count&gt; &lt;item&gt;
+/award harnquist item 1 apple
+
+To give skill levels - skill &lt;skill name&gt;|all [+/-]&lt;value&gt;
+/award harnquist skill cooking +1
+
+To give money - money &lt;circles|hexa|octas|trias&gt; &lt;value&gt;|random
+/award harnquist money circles 1
+
+To give faction - faction &lt;faction name&gt; &lt;value&gt;
+/award harnquist 'Red Order' 5
+
+To give practice points - practice &lt;skill name&gt;|all &lt;value&gt;
+/award harnquist practice cooking 10
+</content></Contents></topic>
 <topic name="/awardexp"><Contents><content type="text">/awardexp target value
 
 Awards progression points to a player for the completion of a GM run event. (enter a negative value to take away PP).</content></Contents></topic>
@@ -1841,10 +1862,6 @@ Alters the settings for an item.  Allowed actions:
 'move' followed by x, y, z and optionally y-rotation coordinates
 
 'collide' - enable/disable collision detection for that item.</content></Contents></topic>
-<topic name="/money"><Contents><content type="text">/money [circles|hexas|octas|trias] [random|quantity value]
-
-Will spawn the specified amount of money items to your inventory. Use random to spawn a random amount of money.
-Example: "/money trias 10" will spawn 10 trias to your inventory.</content></Contents></topic>
 <topic name="/morph"><Contents><content type="text">/morph [target] [mesh name] [scale]
 
 Changes the model used for a player until logout.  Use 'reset' in place of the mesh name to reset the mesh.  Do "/morph list" to see the full list of available meshes.</content></Contents></topic>
