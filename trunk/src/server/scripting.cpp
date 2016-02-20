@@ -1106,8 +1106,15 @@ public:
     }
 
     virtual const csString GetDescription(MathEnvironment* env) {
-	bindings->Evaluate(env);
-	return "";
+        csString descr;
+        bindings->Evaluate(env);
+        csPDelArray<AppliedOp>::Iterator it = ops.GetIterator();
+        while(it.HasNext())
+        {
+            AppliedOp* op = it.Next();
+            descr.Append(op->GetDescription(env));
+        }
+	return descr;
     }
 
 protected:
