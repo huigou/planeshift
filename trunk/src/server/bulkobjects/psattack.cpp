@@ -590,20 +590,23 @@ void psAttack::AffectTarget(gemActor* target, psCombatAttackGameEvent* event, in
                 target->InvokeNearlyDeadScripts(attacker, weapon);
             }
 
-            // If the target wasn't in combat, it is now...
-            // Note that other modes shouldn't be interrupted automatically
-            if(target->GetMode() == PSCHARACTER_MODE_PEACE ||
-               target->GetMode() == PSCHARACTER_MODE_WORK)
-            {
-                if(target->GetClient())   // Set reciprocal target
+            // change target only if there is not target set yet
+            if(!target->GetTargetObject()) {
+                // If the target wasn't in combat, it is now...
+                // Note that other modes shouldn't be interrupted automatically
+                if(target->GetMode() == PSCHARACTER_MODE_PEACE ||
+                   target->GetMode() == PSCHARACTER_MODE_WORK)
                 {
-                    target->GetClient()->SetTargetObject(attacker, true);
-                    target->SendTargetStatDR(target->GetClient());
-                }
+                    if(target->GetClient())   // Set reciprocal target
+                    {
+                        target->GetClient()->SetTargetObject(attacker, true);
+                        target->SendTargetStatDR(target->GetClient());
+                    }
 
-                // The default stance is 'Fully Defensive'.
-                const Stance& initialStance(psserver->GetCombatManager()->GetStance(psserver->GetCacheManager(), "FullyDefensive"));
-                psserver->GetCombatManager()->AttackSomeone(target, attacker, initialStance);
+                    // The default stance is 'Fully Defensive'.
+                    const Stance& initialStance(psserver->GetCombatManager()->GetStance(psserver->GetCacheManager(), "FullyDefensive"));
+                    psserver->GetCombatManager()->AttackSomeone(target, attacker, initialStance);
+                }
             }
 
             weapon->AddDecay(weaponDecay->GetValue());
