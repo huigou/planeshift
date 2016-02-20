@@ -21,7 +21,7 @@ CREATE TABLE loot_modifiers (
 -- Prefixes
 INSERT INTO loot_modifiers VALUES (1,'prefix','Plastic','<ModiferEffect operation="mul" name="item.damage" value="0.90" />',94,'<StatReq name="INT" value="100"/><StatReq name="STR" value="70"/>',0.7,'','','','<str value="10"/><hp-max value="10"/>');
 INSERT INTO loot_modifiers VALUES (2,'prefix','Fabric','<ModiferEffect operation="add" name="item.damage" value="5" />',99,'<StatReq name="STR" value="100"/>',1.2,'','','','<str value="10"/><hp-max value="10"/>');
-INSERT INTO loot_modifiers VALUES (3,'prefix','Plutonium','<ModiferEffect operation="add" name="item.damage" value="4" />',124,'<StatReq name="STR" value="200"/>',1.2,'','','','<str value="10"/><hp-max value="10"/>');
+INSERT INTO loot_modifiers VALUES (3,'prefix','Plutonium','<ModiferEffect operation="VAL" name="var.Attack" value="1.6" />',124,'<StatReq name="STR" value="200"/>',1.2,'','','','<atk value="Attack" />');
 
 -- Adjectives
 INSERT INTO loot_modifiers VALUES (4,'adjective','Torn','<ModiferEffect operation="mul" name="item.damage" value="0.30" />',4,'<StatReq name="STR" value="200"/>',0.2,'','','','<str value="10"/><hp-max value="10"/>');
