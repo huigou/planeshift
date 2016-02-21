@@ -2973,14 +2973,15 @@ bool Skill::Practice(unsigned int amount, unsigned int &actuallyAdded, psCharact
     {
         z+=amount;
         rankup = CheckDoRank(user);
-        if(rankup)
+        /*if(rankup)
         {
             actuallyAdded = -zCost;
         }
         else
         {
             actuallyAdded = amount;
-        }
+        }*/
+        actuallyAdded = amount;
     }
     else
     {
@@ -3369,7 +3370,7 @@ SkillSet::SkillSet(psCharacter* self) : CharacterAttribute(self)
 
 int SkillSet::AddSkillPractice(psSkillInfo* skillInfo, unsigned int val)
 {
-    unsigned int added;
+    unsigned int added = 0;
     bool rankUp;
     csString name;
 
