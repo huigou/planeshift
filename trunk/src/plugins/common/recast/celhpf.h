@@ -73,8 +73,8 @@ public:
   // API
   virtual bool HasNext () const;
   virtual bool HasPrevious () const;
-  virtual csPtr<iMapNode> Next ();
-  virtual csPtr<iMapNode> Previous ();
+  virtual iMapNode* Next ();
+  virtual iMapNode* Previous ();
   virtual iMapNode* Current ();
   virtual iMapNode* GetFirst ();
   virtual iMapNode* GetLast ();
