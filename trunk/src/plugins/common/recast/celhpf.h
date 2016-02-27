@@ -62,7 +62,7 @@ private:
   float advanced;
 
   virtual bool HasNextInternal (bool rev) const;
-  virtual csPtr<iMapNode> NextInternal (bool rev);
+  virtual iMapNode* NextInternal (bool rev);
 
 public:
   celHPath (csHash<csRef<iCelNavMesh>, csPtrKey<iSector> >& navMeshes);

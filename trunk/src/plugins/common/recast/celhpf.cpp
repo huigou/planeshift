@@ -135,7 +135,7 @@ bool celHPath::HasPrevious () const
   return HasNextInternal(!reverse);
 }
 
-csPtr<iMapNode> celHPath::NextInternal (bool rev)
+iMapNode* celHPath::NextInternal (bool rev)
 {
   while(HasNextInternal(rev))
   {
