@@ -202,12 +202,12 @@ csPtr<iMapNode> celHPath::NextInternal (bool rev)
   return 0;
 }
 
-csPtr<iMapNode> celHPath::Next ()
+iMapNode* celHPath::Next ()
 {
   return NextInternal(reverse);
 }
 
-csPtr<iMapNode> celHPath::Previous ()
+iMapNode* celHPath::Previous ()
 {
   return NextInternal(!reverse);
 }
