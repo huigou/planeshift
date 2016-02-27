@@ -53,10 +53,10 @@ struct iCelHPath : public virtual iBase
   virtual bool HasPrevious () const = 0;
 
   /// Get next node. Note that the reference needs to be released.
-  virtual csPtr<iMapNode> Next () = 0;
+  virtual iMapNode* Next () = 0;
   
   /// Get previous node. Note that the reference needs to be released.
-  virtual csPtr<iMapNode> Previous () = 0;
+  virtual iMapNode* Previous () = 0;
     
   /// Get current node.
   virtual iMapNode* Current () = 0;
