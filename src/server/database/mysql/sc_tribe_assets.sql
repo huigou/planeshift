@@ -13,7 +13,7 @@ CREATE TABLE `sc_tribe_assets`
   `coordY` float(5) NOT NULL default '0',
   `coordZ` float(5) NOT NULL default '0',
   `sector_id` int(10) NOT NULL default '3',
-  `itemID` int(10) NOT NULL default '0',
+  `itemID` int(10) NOT NULL default '0', -- 'The ID of an item_instances item, may refer to already deleted items.'
   `quantity` int(10) NOT NULL default '0' COMMENT '-1 if its a building',
   `status` int(1) NOT NULL default '0',
   PRIMARY KEY (`id`)
