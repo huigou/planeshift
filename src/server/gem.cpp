@@ -2787,31 +2787,31 @@ void gemActor::Resurrect()
     if(sector)
         sectorInfo = cacheManager->GetSectorInfoByName(sector->QueryObject()->GetName());
 
+    // if the player is older than "avoidtime" go to death realm
+    float x,y,z,yrot;
+    optionEntry* deathentry = cacheManager->getOptionSafe("death","");
+    if(psChar->GetTotalOnlineTime() > (unsigned int)(deathentry->getOptionSafe("avoidtime", "0")->getValueAsInt()))
+    {
+        csString sectorName = deathentry->getOptionSafe("sectorname", "DR01")->getValue();
+        x = deathentry->getOptionSafe("sectorx", "-29.2")->getValueAsDouble();
+        y = deathentry->getOptionSafe("sectory", "-119.0")->getValueAsDouble();
+        z = deathentry->getOptionSafe("sectorz", "28.2")->getValueAsDouble();
+        yrot = deathentry->getOptionSafe("sectoryrot", "0.0")->getValueAsDouble();
+        Teleport(sectorName, csVector3(x, y, z), yrot, DEFAULT_INSTANCE);
+    }
+    // if there is no sector specified move to default spawn point
+    else if(!sectorInfo || sectorInfo->GetDeathSector().Length()==0)
+    {
+        csString message = deathentry->getOptionSafe("avoidtext", "")->getValue();
+        // respawn in the deafult location, for players is set to "hydlaa_plaza" in race_info table
+        MoveToSpawnPos();
+        if(message.Length())
+            psserver->SendSystemInfo(GetClientID(), message.GetData());
+    }
     //if the sector was found and there is text in the sector try teleporting there.
-    if(sectorInfo && sectorInfo->GetDeathSector().Length())
+    else if(sectorInfo && sectorInfo->GetDeathSector().Length())
     {
         Teleport(sectorInfo->GetDeathSector(), sectorInfo->GetDeathCord(), sectorInfo->GetDeathRot(), DEFAULT_INSTANCE);
-    }
-    else
-    {
-        float x,y,z,yrot;
-        optionEntry* deathentry = cacheManager->getOptionSafe("death","");
-        if(psChar->GetTotalOnlineTime() > (unsigned int)(deathentry->getOptionSafe("avoidtime", "0")->getValueAsInt()))
-        {
-            csString sectorName = deathentry->getOptionSafe("sectorname", "DR01")->getValue();
-            x = deathentry->getOptionSafe("sectorx", "-29.2")->getValueAsDouble();
-            y = deathentry->getOptionSafe("sectory", "-119.0")->getValueAsDouble();
-            z = deathentry->getOptionSafe("sectorz", "28.2")->getValueAsDouble();
-            yrot = deathentry->getOptionSafe("sectoryrot", "0.0")->getValueAsDouble();
-            Teleport(sectorName, csVector3(x, y, z), yrot, DEFAULT_INSTANCE);
-        }
-        else
-        {
-            csString message = deathentry->getOptionSafe("avoidtext", "")->getValue();
-            MoveToSpawnPos();
-            if(message.Length())
-                psserver->SendSystemInfo(GetClientID(), message.GetData());
-        }
     }
 
     //reset mana only in sectors restoring it, to prevent exploits using /die in death maps or for
