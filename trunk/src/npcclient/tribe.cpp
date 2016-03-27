@@ -614,7 +614,7 @@ void Tribe::SetHome(const csVector3 &pos, float radius, iSector* sector)
     homeSectorName = sector->QueryObject()->GetName();
     homeRadius = radius;
 
-    // Consider adding storrage of this new position to DB here
+    // Consider adding storage of this new position to DB here
     // TODO: Store to DB.
 }
 

@@ -377,6 +377,29 @@ bool RecipeManager::AddTribe(Tribe* tribe)
                 tribe->AddRecipe(newRecipe, newTribe.tribalRecipe, false);
             }
         }
+        //Load a cyclic recipe
+        else if(keyword == "loadCyclicRecipe")
+        {
+            if(keywords.GetSize() != 3)
+            {
+                Error2("Recipe loadCyclicRecipe(%s) with wrong number of arguments.",keywords.Get(1));
+                return false;
+            }
+            
+            Recipe* newRecipe = GetRecipe(csString(keywords.Get(1)));
+
+            if(!newRecipe)
+            {
+                Error2("Recipe not found for loadCyclicRecipe(%s)",keywords.Get(1));
+                return false;
+            
+            }
+            else
+            {
+                
+                tribe->AddCyclicRecipe(newRecipe, atoi(keywords.Get(2)));
+            }
+        }
         else
         {
             Error2("Unknown tribe stat: '%s'. Abandon ship.", keywords[0]);
