@@ -1,4 +1,4 @@
-#include "MpfrFloat.hh"
+#include "MpfrFloat.h"
 #include <stdio.h>
 #include <mpfr.h>
 #include <deque>

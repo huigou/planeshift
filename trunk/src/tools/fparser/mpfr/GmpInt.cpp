@@ -1,4 +1,4 @@
-#include "GmpInt.hh"
+#include "GmpInt.h"
 #include <gmp.h>
 #include <deque>
 #include <vector>
