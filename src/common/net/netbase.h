@@ -87,11 +87,11 @@ typedef GenericRefQueue <psNetPacketEntry> NetPacketQueue;
  * Microsoft sockets do not use Berkeley error codes or functions in all cases.
  * This is the workaround.
  * http://msdn.microsoft.com/en-us/library/ms737828(VS.85).aspx
+ *	Ravna 19/3/2016: This breaks msvc2015, since various internal libraries like String use errno, and can't assign to it if it is not a value, 
+ *	so I changed the 3 values the macro originally replaced. Left this for reference.
  */
-#ifdef CS_PLATFORM_WIN32
-#undef errno
-#define errno WSAGetLastError()
-#else
+
+#ifndef CS_PLATFORM_WIN32
 #define WSAEWOULDBLOCK EAGAIN
 #endif
 
@@ -400,7 +400,11 @@ protected:
          *  It's possible that the buffer will free between the sendto call and the select
          *  leaving the select hanging forever if not for the timeout value.
          */
-        while (retries++ < SENDTO_MAX_RETRIES && sentbytes==-1 && (errno==EAGAIN || errno==WSAEWOULDBLOCK))
+#ifdef CS_PLATFORM_WIN32 
+        while (retries++ < SENDTO_MAX_RETRIES && sentbytes == -1 && (WSAGetLastError() == EAGAIN || WSAGetLastError() == WSAEWOULDBLOCK))
+#else
+		while (retries++ < SENDTO_MAX_RETRIES && sentbytes == -1 && (errno == EAGAIN || errno == WSAEWOULDBLOCK))
+#endif
         {
             printf("In while loop on EAGAIN... retry #%d.\n", retries);
 
@@ -430,7 +434,11 @@ protected:
         }
         else
         {
-            Error2("NetBase::SendTo() gave up trying to send a packet with errno=%d.",errno);
+#ifdef CS_PLATFORM_WIN32
+            Error2("NetBase::SendTo() gave up trying to send a packet with errno=%d.", WSAGetLastError());
+#else
+			Error2("NetBase::SendTo() gave up trying to send a packet with errno=%d.", errno);
+#endif
         }
 
         return sentbytes;
