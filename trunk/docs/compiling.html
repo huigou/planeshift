@@ -673,9 +673,9 @@ continue as indicated.<br /></p>
 <div class="Linux-Ubuntu">
     <p> Make sure the universe repository is enabled.<br />
     Fetch all the required packages using the following command:
-    <p class="commandBox"># sudo apt-get --assume-yes install libjpeg-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal1 libopenal-dev subversion zlibc libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev libspeex-dev libxcursor-dev</p>
+    <p class="commandBox"># sudo apt-get --assume-yes install libjpeg-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev xserver-xorg-dev libxt-dev libopenal1 libopenal-dev subversion zlibc libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev libspeex-dev libxcursor-dev</p>
     In case you are using intrepid, we can fetch all the required packages using the following command:<br />
-    <p class="commandBox"># sudo apt-get --assume-yes install libjpeg-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev libglu1-xorg-dev xserver-xorg-dev libxt-dev libopenal1 libopenal-dev subversion zlibc libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev libspeex-dev libxcursor-dev</p>
+    <p class="commandBox"># sudo apt-get --assume-yes install libjpeg-dev x11proto-gl-dev autoconf jam bison flex-old automake1.9 libcurl4-openssl-dev libmng-dev libmikmod2-dev libogg-dev libvorbis-dev zlib1g-dev libpng12-dev build-essential libtool libglu1-mesa-dev xserver-xorg-dev libxt-dev libopenal1 libopenal-dev subversion zlibc libfreetype6-dev libfreetype6 libasound2-dev alsa-oss libxxf86vm-dev libxext-dev x11proto-xext-dev libspeex-dev libxcursor-dev</p>
 
 
 <strong> ALL of these above commands are assuming you do not need a server if you do please follow directions in the <a href="#mysql">mysql</a> section for installing other required packages</strong>
@@ -731,7 +731,7 @@ continue as indicated.<br /></p>
     </div>
     <div class="Linux-Ubuntu">
 
-    If you are on Hardy or Intrepid you can
+    If you are on Hardy or Intrepid you can (ubuntu version 8 or better)
     <p><i class="command"># sudo apt-get install nvidia-cg-toolkit</i></p>
     <p> Otherwise you MUST do this</p>
     <div class="commandBox"># wget -c http://developer.download.nvidia.com/cg/Cg_2.2/Cg-2.2_February2010_x86.tgz<br />
@@ -864,17 +864,17 @@ then<br /><br />
 <br />
         <b><a name="mysql">MySQL:</a></b><br />
         If you have the intentions to run the server you have to install <a href="http://www.mysql.org/">MySQL</a> as well.
-        PlaneShift uses MySQL version 5.0.
+        PlaneShift uses MySQL version 5.5.
         <div class="Linux-Generic">
         <p> For your distro install the mysql package and the -dev package, It might be named mysql-dev or libmysqlclient-dev or something similar.</p>
               <p>If after building if you see that mysql was not found when running the server and you get the following error:<br /><br />
           <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i> <br /><br />make sure you have  the dev package installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p>
         </div>
             <div class="Linux-Ubuntu">
-        <p>for Hardy via apt-get: <i class="commandBox"># sudo apt-get --assume-yes install libdbd-mysql-perl libdbi-perl libnet-daemon-perl libplrpc-perl mysql-client-5.1 mysql-server-5.1 libmysqlclient16-dev libmysqlclient-dev </i></p>
+        <p>for Hardy (ubuntu version 8 or better) via apt-get: <i class="commandBox"># sudo apt-get --assume-yes install libdbd-mysql-perl libdbi-perl libnet-daemon-perl libplrpc-perl mysql-client-5.5 mysql-server-5.5 libmysqlclient-dev </i></p>
 
         <p>If after building if you see that mysql was not found when running the server and you get the following error:<br /><br />
-        <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i><br /><br /> make sure you have libmysqlclient15-dev installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p>
+        <i class="command">WARNING: could not load plugin 'planeshift.database.mysql'</i><br /><br /> make sure you have libmysqlclient-dev installed, if it was not installed, ./autogen.sh, ./configure, and recompile the server again, according to the documentation below.</p>
     </div>
         <div class="Linux-Gentoo">
             <p>via portage: <i class="command">#emerge mysql</i></p>
@@ -905,8 +905,9 @@ then<br /><br />
         <div class="Windows">
                 <p>From the download page, select the Community Server option. You will end up in another page where you should select
             one of the available Windows downloads between Windows (x86) ZIP/Setup.EXE and the Without Installer version.
+            Notice that if you are trying to compile on 64 bit, you will need the 64 zip/installer.
                  It is recommend to select the "Without Installer version", since you have just to unzip the file in c:\ and rename the folder
-                (which should resemble mysql-5.0.xx) to simply mysql. At the end of these steps, you should have: c:\mysql\</p>
+                (which should resemble mysql-5.5.xx) to simply mysql. At the end of these steps, you should have: c:\mysql\</p>
 
                 <div class="MINGW">
                     <p>Also, we need to create MinGW compatible libraries from the standard
@@ -1724,7 +1725,7 @@ You can start your MySQL server in this way:</div>
 
 <div class="Linux">
     <p class="Linux-Debian"><i class="command"># /etc/rc.d/rc.mysqld start</i></p>
-    <p class="Linux-Ubuntu"><i class="command"># /etc/rc.d/rc.mysqld start</i></p>
+    <p class="Linux-Ubuntu"><i class="command"># sudo service mysql start</i></p>
     <p class="Linux-Slackware"><i class="command"># /etc/rc.d/rc.mysqld start</i></p>
     <p class="Linux-OpenSUSE"><i class="command"># /etc/rc.d/rc.mysqld start</i></p>
     <p class="Linux-Gentoo"><i class="command"># /etc/init.d/mysql start</i></p>
@@ -1936,24 +1937,26 @@ If you want to generate your own navmesh, you can launch the navgen program.<br/
     <p>You might want to create some script so that you don't have to manually type in the environment variables every
     time. In this way you can also have multiple versions of CS coexisting peacefully.</p>
 
+    <p>Make a file "PlaneShiftserver.sh" in the <span class="command">$HOME/development</span> folder, and copy/past the following script in it:</p>
     <p class="commandBox">
-        $ cd $HOME/development<br />
-        $ echo \#\!/bin/sh > PlaneShiftserver.sh<br />
-        $ echo "export LD_LIBRARY_PATH="$PWD/cal3d/src/cal3d/.libs/:$PWD/cs/:"$LD_LIBRARY_PATH" >> PlaneShiftserver.sh<br />
-        $ echo "export CRYSTAL=$PWD/cs/" >> PlaneShiftserver.sh<br />
-        $ echo "cd $PWD/planeshift" >> PlaneShiftserver.sh<br />
-        $ echo "./psserver \$@" >>  PlaneShiftserver.sh<br />
-        $ chmod +x PlaneShiftserver.sh
+        #!/bin/sh <br />
+        export LD_LIBRARY_PATH=$PWD/cal3d/src/cal3d/.libs/:$PWD/cs/:$LD_LIBRARY_PATH <br />
+        export CRYSTAL=$PWD/cs/ <br />
+        cd $PWD/planeshift <br />
+        ./psserver $@ <br />
     </p>
-
+    <p>Next make a file called "PlaneShiftclient.sh" in the same directory, and put the following script in it:</p>
     <p class="commandBox">
-        $ cd $HOME/development<br />
-        $ echo \#\!/bin/sh > PlaneShiftclient.sh<br />
-        $ echo "export LD_LIBRARY_PATH="$PWD/cal3d/src/cal3d/.libs/:$PWD/cs/:"$LD_LIBRARY_PATH" >> PlaneShiftclient.sh<br />
-        $ echo "export CRYSTAL=$PWD/cs/" >> PlaneShiftclient.sh<br />
-        $ echo "cd $PWD/planeshift/" >> PlaneShiftclient.sh<br />
-        $ echo "./psclient \$@" >>  PlaneShiftclient.sh<br />
-        $ chmod +x PlaneShiftclient.sh
+        #!/bin/sh <br />
+        export LD_LIBRARY_PATH=$PWD/cal3d/src/cal3d/.libs/:$PWD/cs/:$LD_LIBRARY_PATH <br />
+        export CRYSTAL=$PWD/cs/ <br />
+        cd $PWD/planeshift/ <br />
+        ./psclient $@ <br />
+    </p>
+    <p>Finally we need to set the right permissions on the scripts:</p>
+    <p class="commandBox">
+        $ chmod +x PlaneShiftserver.sh <br />
+        $ chmod +x PlaneShiftclient.sh <br />
     </p>
 </div>
 
@@ -1964,7 +1967,8 @@ If you want to generate your own navmesh, you can launch the navgen program.<br/
 <p>
     To have the client running you need at least two parts, described in the next chapters:<br />
     - ensure you are using the Crystal Space base configuration files<br />
-    - ensure you are using some client art, better if the released art.<br />
+    - ensure you are using some client art, better if the released art.<br /><br />
+    Note: If you just want to run the client and use it to connect to the main server, you can copy/paste the /art and the /data folder from the release client, and skip the rest of this section.<br/>
 
 <h3>Pointing to Crystal Space configuration files</h3>
     For the first point you need to open the vfs.cfg in your planeshift directory and change this line: <br />
