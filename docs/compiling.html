@@ -361,9 +361,9 @@ Choose "Developer" if you want to develop on latest code, which is most likely n
         version of MSVS, it is recommended you obtain an older version of this guide from: 
         <a href="https://sourceforge.net/p/planeshift/code/9871/log/?path=/trunk/docs/compiling.html">the SVN</a>
         Additionally, this guide can be used for both 32 and 64 bit compilations, but it should 
-        be noted that most projects default to 32. If you want to compile on 64 bit, be sure 
-        to compile all projects on 64 bit, and likewise obtain 64 bit versions of all other programs 
-        (like mysql). You cannot mix 32 and 64 bit.<br /><br />
+        be noted that most projects default to 32, and <b>for most normal users, 32 bit is strongly recommended</b> as some projects don't have a 64 bit compile target.
+        If you want to compile on 64 bit, be sure to compile all projects on 64 bit, and likewise obtain 64 bit 
+        versions of all other programs (like mysql). You cannot mix 32 and 64 bit.<br /><br />
 
         </div>
     </div>
@@ -640,8 +640,9 @@ continue as indicated.<br /></p>
         Get curl from: <a href="https://curl.haxx.se/download.html">curl.haxx.se</a>, pick the Source Archive, not any package. (curl-7.48.0.zip)<br/>
         Unzip it in your development folder, (in a folder called curl-7.48.0 or something similar) and find the "winbuild" folder.<br/>
         <br/>
-        From visual studio click in the menu on Tools -> visual studio command promt.<br/>
-        Change the promt to your winbuild folder using cd /path/to/winbuild<br/>
+        From Visual Studio click in the menu on Tools -> Visual Studio Command Prompt.<br/>
+        If you cannot find the command prompt there, check <a href="https://msdn.microsoft.com/en-us/library/ms229859%28v=vs.110%29.aspx">this msdn article</a> to find it.<br/>
+        Change the prompt to your winbuild folder using cd c:\development\curl-7.48.0\winbuild<br/>
         Then type: <span class="command">nmake /f Makefile.vc mode=dll</span> (add MACHINE=x64 as parameter to compile in 64bit instead of 32.)<br/>
         Your output should be in a folder called "curl-7.48.0\builds\libcurl-vc-x86-release-dll-ipv6-sspi-winssl" (exact name may vary).
         Copy the contents of that folder (the \lib \bin and \include folders) into a newly made folder in your development folder called: curl (c:\development\curl).
