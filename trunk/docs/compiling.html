@@ -356,9 +356,14 @@ Choose "Developer" if you want to develop on latest code, which is most likely n
         </div>
         <div class="MSVC">
         This guide lists the steps necessary to download all the tools and compile PlaneShift.
-            This guide assumes that Visual C++.NET or Visual Studio.NET is installed. Some tools
-            need glut, Directx 9 SDK, and python. These features are not needed so they won't be
-            covered here. As a result there will be some compilation errors due to missing files.<br /><br />
+        This guide was written using MS Visual Studio 2015 community edition. Most steps should 
+        be identical for MSVS 2010, 2012 and 2013. If you are planning to use an even older 
+        version of MSVS, it is recommended you obtain an older version of this guide from: 
+        <a href="https://sourceforge.net/p/planeshift/code/9871/log/?path=/trunk/docs/compiling.html">the SVN</a>
+        Additionally, this guide can be used for both 32 and 64 bit compilations, but it should 
+        be noted that most projects default to 32. If you want to compile on 64 bit, be sure 
+        to compile all projects on 64 bit, and likewise obtain 64 bit versions of all other programs 
+        (like mysql). You cannot mix 32 and 64 bit.<br /><br />
 
         </div>
     </div>
@@ -455,19 +460,11 @@ $HOME is a system environment variable that will always point to your users home
 <h2><a name="tools">Install Tools</a></h2>
 <div class="Windows">
     <div class="MSVC">
-        <h3>Platform SDK for MSVC 8</h3>
+        <h3>Microsoft Visual Studio</h3>
 
-        <p>This step is necessary if you are using VC8 Express Edition.
-        You should download and install the Platform SDK from this location:<br />
-        <a href="http://www.microsoft.com/express/2005/platformsdk/default.aspx">http://www.microsoft.com/express/2005/platformsdk/default.aspx</a><br />
-        Remember to follow all the listed steps to get things working: this includes to update the directories for Visual C++ and
-        edit corewin_express.vsprops as indicated.</p>
-
-        <h3>MSVC 8 Full Edition</h3>
-        <p>If you are using this version of the build environment, you need to update it with the Service Pack 1!</p>
-
-        <h3>MSVC 9 Express/Full Edition</h3>
-        <p>If you are using this version of the build environment, you might want to update it to Service Pack 1!</p>
+        <p>MSVS Community edition can be obtained from <a href="https://www.visualstudio.com/products/visual-studio-community-vs">
+        visualstudio.com</a> It requires an account, but you can make a new one for free during installation. C++ is not a standard 
+        option in MSVS anymore, so be sure to select it during "custom" setup, or you'll need to add it later.</p>
     </div>
     <div class="MINGW">
         <h3>MinGW32 and MSYS</h3>
@@ -544,8 +541,8 @@ continue as indicated.<br /></p>
 
     <h3>Set Environment Variables</h3>
     <p>Right-Click My Computer on your desktop and choose Properties. Under Advanced choose Environmental Variables.
-    Click New under either User or System variables depending on how you want it setup. If you choose System, you will have
-    to log off to make the changes.</p>
+    Click New under either User (this user only) or System (set variable for all users of this computer) variables 
+    depending on how you want it setup. If you choose System, you will have to log off to make the changes.</p>
 
     <p><i>Variable Name</i>: CRYSTAL (all caps)<br />
     <i>Variable Value</i>: C:\development\cs</p>
@@ -637,19 +634,22 @@ continue as indicated.<br /></p>
     </div>
     <div class="MSVC">
         <h3>cURL</h3>
-        <p>To build the updater, you need the libcURL library. This is the library that is used for the HTTP protocol which the updater
-        application uses to connect to a repository for updating the client. 
-        You can download the cURL devel package (which contains the library and header files as well)
-        at <a href="http://curl.haxx.se/">http://curl.haxx.se/</a>.
-        In the download section, scroll down the list until you reach the Win32- MSVC area. It doesn't matter if you 
-        pick the devel package with or without ssl. Choose the latest version of the package. 
-        Unzip this into C:\development\curl. <br/>
-        URL I've used is <a href="http://curl.haxx.se/latest.cgi?curl=win32-devel-msvc">this</a> <br/>
-        The package you download should contain both the curl.h and the libcurl.lib (without this last one you will have to compile curl yourself!).
-     </div>
+        <p>To build the updater (and thus pslaunch), you need the libcURL library. This is the library that is used for the HTTP 
+        protocol which the updater application uses to connect to a repository for updating the client. <br/>
+        <br/>
+        Get curl from: <a href="https://curl.haxx.se/download.html">curl.haxx.se</a>, pick the Source Archive, not any package. (curl-7.48.0.zip)<br/>
+        Unzip it in your development folder, (in a folder called curl-7.48.0 or something similar) and find the "winbuild" folder.<br/>
+        <br/>
+        From visual studio click in the menu on Tools -> visual studio command promt.<br/>
+        Change the promt to your winbuild folder using cd /path/to/winbuild<br/>
+        Then type: <span class="command">nmake /f Makefile.vc mode=dll</span> (add MACHINE=x64 as parameter to compile in 64bit instead of 32.)<br/>
+        Your output should be in a folder called "curl-7.48.0\builds\libcurl-vc-x86-release-dll-ipv6-sspi-winssl" (exact name may vary).
+        Copy the contents of that folder (the \lib \bin and \include folders) into a newly made folder in your development folder called: curl (c:\development\curl).
+    </div>
     <h3>SVN client</h3>
-    <p>PS and CS use SVN for their source repositories, so you will need an SVN client.<br />
-       The SVN client for Windows is <a href="http://tortoisesvn.tigris.org/">TortoiseSVN</a>.</p>
+    <p>PS, CS and CAL3d use SVN for their source repositories, so you will need an SVN client.<br />
+       The SVN client for Windows is <a href="https://tortoisesvn.net/downloads.html">TortoiseSVN</a>. Pick 32 or 64 bit depending on what CPU/OS you
+       currently have, this is not depending on wether you are compiling planeshift on 32 or 64 bits.</p>
 </div>
 <div class="Linux-Gentoo">
     <p>Note: This section is incomplete and untested, but contains the Gentoo specific build information that was previously in the manual.</p>
@@ -858,6 +858,8 @@ then<br /><br />
 <i class="command">sudo make install</i><br />
 </div>
 <br />
+
+
 <h3>Server Databases</h3>
 <i>Required only if you want to compile also the PlaneShift Server</i>
 <br />
@@ -906,7 +908,7 @@ then<br /><br />
                 <p>From the download page, select the Community Server option. You will end up in another page where you should select
             one of the available Windows downloads between Windows (x86) ZIP/Setup.EXE and the Without Installer version.
             Notice that if you are trying to compile on 64 bit, you will need the 64 zip/installer.
-                 It is recommend to select the "Without Installer version", since you have just to unzip the file in c:\ and rename the folder
+                 It is recommend to select the "Without Installer version", since you only have to unzip the file in c:\ and rename the folder
                 (which should resemble mysql-5.5.xx) to simply mysql. At the end of these steps, you should have: c:\mysql\</p>
 
                 <div class="MINGW">
@@ -1056,22 +1058,24 @@ If you update a repository, you will need to recompile that repository and each 
     </p>
 </div>
 <div class="Windows">
+    
     <h3>Crystal Space (CS)</h3>
     <p>Crystal Space is the 3D Software Development Kit (SDK) that is used in PlaneShift mainly for rendering and sound.</p>
     <div>
         Create a subdirectory in development called CS. Right-click on the CS directory and select "SVN Checkout". Specify the URL as:
-    <div class="User">
-    <p class="commandBox">http://svn.code.sf.net/p/crystal/code/CS/trunk</p>
-        Verify the checkout directory is "C:\development\CS", select "Revision", and paste the current
-        CS revision number: CS_SOURCE_REV + for windows only manually apply 39918 as patch to fix startup crashes
+        <p class="commandBox">http://svn.code.sf.net/p/crystal/code/CS/trunk
+        </p>
+        Verify the checkout directory is "C:\development\CS", select "Revision", and paste the current CS revision number: CS_SOURCE_REV  <br/>
     </div>
-    <div class="Developer">
-    <p class="commandBox">http://svn.code.sf.net/p/crystal/code/CS/trunk</p>
-        Verify the checkout directory is "C:\development\CS", select "Revision", and paste the current
-        CS revision number: CS_SOURCE_REV_HEAD + for windows only manually apply 39918 as patch to fix startup crashes
-    </div>
-    </div>
-
+    <p>Next, to apply patch 39918: Find cs\include\csutil\csuctransform.h and open it in visual studio, go to line #497 and replace the 
+        text <span class="command">if ((srcSize == 0) || (source == 0))		\</span> with <span class="command">if (source == 0)	\</span> <br/>
+        <br/>
+        Then open: cs\includes\cstype.h and comment out line #191 (change <span class="command">typedef wchar_t wint_t;</span> into 
+        <span class="command">//typedef wchar_t wint_t;</span>) <br/>
+        <br/>
+        To show line numbers in Visual Studio, click on tools -&gt; options in the menu, and then go to "text editor" -&gt; "all languages" 
+        and check "line numbers", leave the menu by clicking "ok".
+    </p>
 
 <h3>CS Windows Libraries</h3>
     <p>Rather than having to install CS dependant components manually, Microsoft Visual C++, MinGW/MSYS and Cygwin
@@ -1079,86 +1083,84 @@ If you update a repository, you will need to recompile that repository and each 
     libraries in pre-compiled form from the Crystal Space website, http://www.crystalspace3d.org/.</p>
 
     <div>The latest version of such libraries is available at:
-    <div class="Normal">
-    <a href="http://www.crystalspace3d.org/downloads/cs-win32libs/">http://www.crystalspace3d.org/downloads/cs-win32libs/</a><br/>
+        <div class="Normal">
+        <a href="http://www.crystalspace3d.org/downloads/cs-win32libs/">http://www.crystalspace3d.org/downloads/cs-win32libs/</a><br/>
+        </div>
+        <div class="Static">
+        <a href="http://www.crystalspace3d.org/downloads/cs-win32libs/static/">http://www.crystalspace3d.org/downloads/cs-win32libs/static/</a><br/>
+        </div>
+        The currently used CS revision needs version <b>LIBS_VER_STAB</b>. Don't mix up with other versions!
     </div>
-    <div class="Static">
-    <a href="http://www.crystalspace3d.org/downloads/cs-win32libs/static/">http://www.crystalspace3d.org/downloads/cs-win32libs/static/</a><br/>
+    
+    <div class="MSVC">
+      <p>Run the program and install the libraries. The Default name is fine. </p>
     </div>
-    <div class="User">
-    The currently used CS revision needs version <b>LIBS_VER_STAB</b>. Don't mix up with other versions!
+    <div class="MINGW">
+      <p>Run the program and install the libraries in C:\CSLibs. </p>
     </div>
-    <div class="Developer">
-    The currently used CS revision needs version <b>LIBS_VER</b>. Don't mix up with other versions!
-    </div>
-    </div>
-   <div class="MSVC">
- <p>Run the program and install the libraries. The Default name is fine. </p></div>
-<div class="MINGW">
-<p>Run the program and install the libraries in C:\CSLibs. </p></div>
 
-<div>When it asks you for the CS directory, enter
+    <div>When it asks you for the CS directory, enter
     <b>C:\development\CS</b>.<br />
-    When you have to select the components, you can select the options you prefer through the check boxes.<br />
 
     <div class="MINGW">
     Be sure that you are selecting also the MinGW Win32 Libraries and the support files for MSYS and Cygwin.<br />
     </div>
     <div class="MSVC">
-    Be sure that you are selecting also the MSVC Win32 Libraries and the support files for your version of MSVC.<br />
+    Be sure that you are selecting also the MSVC Win32 Libraries and the support files for version 2010 of MSVC.<br />
     </div>
-
-    Be sure that you are installing both DirectX 9 headers and libraries files.<br />
-    Continue the installation.
-    If this is the first time you are installing the libraries and you do not yet have an SVN checkout of CS uncheck
-    'Copy DLL's to CS directory' when prompted, otherwise check the box and set the dir to C:\development\CS.
+    When you are promted to 'Copy DLL's to CS directory' set the dir to C:\development\CS. <br/>
     To copy the files later, you can do so via the option in the folder from the start menu.
     <div class="MINGW">Make sure 'Set up MSYS support' is checked when prompted.</div>
 </div>
 
-    <div class="MSVC">Make sure 'Set up VisualC support' is checked when prompted.</div>
+    <div class="MSVC">Make sure 'Set up VisualC support' is checked when prompted. <br/>
+     <br/>
+     Notice: The CS libs were compiled for MSVC 2010, so not all of them will work on 2013/2015, this is not a problem since the ones we really need
+     DO work. <br/>
+    </div>
 
-    <p>
+    <p class="MINGW">
         You should now copy your CS Win Libs DLLs over to your new CS directory, if you haven't done that
         earlier, during the installation of the CS Winlibs.
       Goto the start menu, go to Programs and then to CrystalSpace Win32 libraries.
         Select "Copy DLLs to a CS directory".  Set the directory to C:\development\CS when prompted.
-        <span class="MINGW">
-            Next, copy CrystalSpaceLibs MinGW directory into a new generic directory.
-         </span>
+         
+         Next, copy CrystalSpaceLibs MinGW directory into a new generic directory.
     </p>
-
+    
+    <h3>CAL3d</h3>
+    <p>Cal3d is a library that is used for handling skeleton systems. </p>
+        Create a subdirectory in development called "cal3d". Right-click on the cal3d directory and select "SVN Checkout". Specify the URL as:
+    <p class="commandBox">svn://svn.gna.org/svn/cal3d/trunk/cal3d</p>
+    Verify the checkout directory is "C:\development\cal3d", select "Revision", and enter 507.
+    <p>
+    Open (in the cal3d directory) cal3d.sln in Visual Studio and if asked to convert/updgrade, do so. <br/>
+    Set build config to release (in the menu at the top) and build the Cal3D project.<br/>
+    Notice that if you are building 64 bit, you will also need to make a new "solution platform" (x64, you can copy the rest from the 32 version).<br/> 
+    After building, rename cal3d\bin\Release\Cal3D.dll to "libcal3d-csvc10.dll" and copy it to the CS directory (overwriting the file there).<br/>
+    Do the same for cal3d\bin\debug\Cal3D.pdb, rename it to "libcal3d-csvc10.pdb" and copy it to the CS directory as well. <br/>
+    </p>
+    
     <h3>PlaneShift</h3>
     <p>Lastly, download PlaneShift source code:</p>
     <div>
         Create a subdirectory in development called planeshift. Right-click on the planeshift directory and select "SVN Checkout".<br />
 		Verify the checkout directory is "C:\development\PlaneShift".<br />
         Enter the following as the URL:       
-        <div class="User">
-            <p class="commandBox">https://svn.code.sf.net/p/planeshift/code/trunk</p>
-        </div>
-        <div class="Developer">
-            <p class="commandBox">https://svn.code.sf.net/p/planeshift/code/trunk</p>
-        </div>
+        <p class="commandBox">https://svn.code.sf.net/p/planeshift/code/trunk</p>
     </div>
 
     <h3>Updating Sources</h3>
-    <p>If in the future you have the intentions to update CS or PS because the team has decided to use
+    <p>If in the future you have the intentions to updatePS because the team has decided to use
     another revision or because you feel like you want to update it, instead of doing a checkout you have simply to update.
-    Please, remember that CS must be the exact revision specified above (or near the top of this <a name="dates">guide</a>) while PS can be newer.</p>
-
-    <p>
-        <i>CS SVN:</i><br />
-        Right-click on the folder of the module you want and go to TortoiseSVN->"Update to Revision".
-        Enter a new revsion number or select HEAD to get latest, there is a possibility that HEAD may not work with PS so keep that in mind. Click ok, and the files will be updated.
-        <span class="MSVC">If you rebuild CS, copy the dlls as described in the section : Compile the Code - Planeshift</span>
-    </p>
+    Please, remember that CS must be the exact revision specified above, while PS can be newer.</p>
 
     <p>
         <i>PlaneShift</i><br />
         Right-click on the PlaneShift folder and click "SVN Update".
     </p>
 </div>
+
 <div class="MacOSX">
     <h3>Cal3D</h3>
     <p>We need to build cal3d from source before we can start on Crystal Space. Cal3d is a library that is used for
@@ -1221,7 +1223,6 @@ If you update a repository, you will need to recompile that repository and each 
 <!--************************************************************************************************-->
 
 <h2><a name="compile">Compile the Code</a></h2>
-
 Please note that PlaneShift uses Breakpad as crash reporting tool. If you don't want to compile with breakpad, please do the following:<br/>
 <br/>
 1) Edit src/client/crashreport.cpp and remove this line:<br/>
@@ -1348,6 +1349,7 @@ We should export the CRYSTAL environment variable so applications outside the Cr
              tree know where to find the .so's.
              <p><i class="command">export CRYSTAL=$HOME/development/cs</i></p>
 
+ 
 <h3>PlaneShift</h3>
 <br />
 <div class="commandBox">
@@ -1517,53 +1519,21 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
 </div>
 
 <div class="MSVC">
-
-    <h3>Setup MSVC Environment</h3>
-
-    <p><b>Note for MSVC 2005 (also known as Visual Studio 8.0, MSVC 8.0 or Visual Studio .NET 2005)
-    (Full Edition Only)</b>: Make sure the "Show all settings" checkbox is checked in
-    Tools->Options before continuing.<br />
-    If you have MSCV 2008, you might know it as MSVC 9.0, Visual Studio 9.0 or Visual Studio .NET 2008.<br />
-    Here we will add all the directories containing all the include and libraries files that we will need to
-    use for compiling PlaneShift.<br /> Under Tools->Options in you MSVC look on the left hand side for the Projects
-    folder. Under Projects choose "VC++ Directories". In the "Show Directories for" choose "Include Files".
-    Click the new folder icon and add the following directories, one by one:</p>
-    <p>
-        C:\development\CS\include<br />
-        C:\development\CS\include\csutil\win32<br />
-        C:\development\CS\win32libs\include<br />
-         C:\development\curl\include<br />
-        C:\mysql\include
-    </p>
-
-    <p>In the "Show Directories for" choose "Library Files". Click the new folder icon
-    to add the following directories:</p>
-    <p>
-        C:\mysql\lib\opt<br />
-         C:\development\curl<br />
-        C:\development\CS\win32libs\lib<br />
-    </p>
-
-    If you have MSCV 2010, you might know it as MSVC 10.0, Visual Studio 10.0 or Visual Studio .NET 2010 or 2010 Express Edition<br />
-    Version 2010 does not have anymore the VC Directories setting under Option, but it's per "Project". To add the include or libraries directories above, right click on a "Project" (NOT the solution) and select "Properties", then navigate the tree Configuration Properties->VC Directories.<br />
-    Then add there all the directories mentioned above if not yet present. Use the same technique for any other similar problem you encounter.<br />
-
     
     <h3>Crystal Space (CS)</h3>
     <p>
+        Make sure that the 'msvc10' folder has the 'read only' box unchecked (right click on the folder
+        and select Properties, 'read only' is one of the attributes in the General tab) before continuing.
+    </p>
+    <p>
         <span class="Normal">
-        If you have MSVC 8.0 open C:\development\CS\mk\msvc8\wkstypical.sln<br />
-        If you have MSVC 9.0 open C:\development\CS\mk\msvc9\wkstypical.sln<br />
-        If you have MSVC 10.0 open C:\development\CS\mk\msvc10\wkstypical.sln<br />
+        Open C:\development\CS\mk\msvc10\wkstypical.sln<br />
         </span>
         <span class="Static">
-        If you have MSVC 8.0 open C:\development\CS\mk\msvc8\wksstatic.sln<br />
-        If you have MSVC 9.0 open C:\development\CS\mk\msvc9\wksstatic.sln<br />
-        If you have MSVC 10.0 open C:\development\CS\mk\msvc10\wksstatic.sln<br />
+        Open C:\development\CS\mk\msvc10\wksstatic.sln<br />
         </span>
+        For any version other than 2010, Visual Studio will ask you to upgrade the project, do so.
     </p>
-    <p>Make sure that your specific 'msvc' folder has the 'read only' box unchecked (right click on the folder
-and select Properties, 'read only' is one of the attributes in the General tab) before continuing.</p>
 
     <div class="User">
     Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to :
@@ -1584,63 +1554,31 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
       </span>
     </div>
     <p>Right click on the solution and select 'Build Solution'. To test the build of CS, run walktest.exe in C:\development\CS.<br />
+    In any Visual Studio version other than 2010, 5 of the 238 projects will fail due to dlls not being made for your version of Visual Studio.
+    This can be ignored, since we do not need those 5 for planeshift.<br/>
     If you encounter any errors, check you have done everything correctly, and then if the problem persists, you can
     ask for help in the CS IRC channel:<br />
-    irc.freenode.net #crystalspace</p>
+    irc.freenode.net #crystalspace
+    </p>
 
     <h3>PlaneShift</h3>
     
-    <div>Execute the following commands :
-        <div class="commandBox">
-            <div class="User">
-            xcopy "C:\Development\CS\crystalspace-2.1-vc9_d.dll" "C:\Development\PlaneShift" /D /Y<br />
-            </div>
-            <div class="Developer">
-            xcopy "C:\Development\CS\crystalspace-2.1-vc9_d.dll" "C:\Development\PlaneShift" /D /Y<br />
-            </div>
-            xcopy "C:\Development\CS\libcal3d-csvc9_d.dll" "C:\Development\PlaneShift" /D /Y<br />
-            xcopy "C:\Development\CS\libz-cs.dll" "C:\Development\PlaneShift" /D /Y</div><br />
-        Note that the exact name of the first two dlls may vary, depending on your version of MSVC.
-    </div>
-    
-    <p>Under Tools-&gt;Options in you MSVC look on the left hand side for the Projects
-    folder. Under Projects choose "VC++ Directories". In the Show Directories for: choose
-    "Library Files". Click the new folder icon to add the following directories:</p>
-    <div>
-        <div class="User">
-        C:\development\CS\out\releaseX\libs<br />
-        </div>
-        <div class="Developer">
-        C:\development\CS\out\debugX\libs<br />
-        </div>
-    </div>
-    <p>You have to change X (in the path concerning CS) to these
-    values, depending from the version you have of MSVC:</p>
     <p>
-        8 for Visual Studio .NET 2005/MSVC 8<br />
-        9 for Visual Studio .NET 2005/MSVC 9<br />
-        10 for Visual Studio .NET 2010/MSVC 10<br />
+        Copy the following 3 files (crystalspace-2.1-vc10.dll  libcal3d-csvc10.dll and libz-cs.dll) from your CS directory to your planeshift directory.<br/>
+        Note that the exact name of the first two dlls may vary, depending on you building static, debug or normal. This guide assumes you are making a normal user version.<br/>
+        Then copy libcurl.dll from your curl\bin directory into your planeshift directory.</br>
+        If you are compiling the server as well, you will need to copy libmysql.dll from c:\mysql\lib to your planeshift folder as well.
     </p>
-
+    
     <div>
         <div class="Normal">
-        If you have MSVC.NET 2005/VC 8.0 open c:\development\PlaneShift\mk\msvc8\wkspstypical.sln<br />
-        If you have MSVC.NET 2008/VC 9.0 open c:\development\PlaneShift\mk\msvc9\wkspstypical.sln<br />
-        If you have MSVC.NET 2010/VC 10.0 open c:\development\PlaneShift\mk\msvc10\wkspstypical.sln<br />
+        Open c:\development\PlaneShift\mk\msvc10\wkspstypical.sln<br />
         </div>
         <div class="Static">
-        If you have MSVC.NET 2005/VC 8.0 open c:\development\planeshift\mk\msvc8\wkspsstatic.sln<br />
-        If you have MSVC.NET 2008/VC 9.0 open c:\development\planeshift\mk\msvc9\wkspsstatic.sln<br />
-        If you have MSVC.NET 2010/VC 10.0 open c:\development\PlaneShift\mk\msvc10\wkspsstatic.sln<br />
+        Open c:\development\PlaneShift\mk\msvc10\wkspsstatic.sln<br />
         </div>
+        For any version other than 2010, Visual Studio will ask you to upgrade the project, do so.
     </div>
-
-    <p>Do the following if you put mysql somewhere else than C:\mysql:<br />
-    Right-click plgdbmysql, under properties->linker->general, change the "C:\mysql\lib\opt"
-    in Additional Library Directories to whatever your location of mysql is.</p>
-    
-    <p>If you get linker errors of projects which require psutils (example dbmysql or plgsoundmngr )<br />
-     right-click>Properties>Configuration Properties>Linker>Input>Additional Dependencies> add zlib.lib and libpsutil.lib</p>
 
     <div class="User">
     Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Release(with DLLs)'.<br />
@@ -1649,37 +1587,59 @@ and select Properties, 'read only' is one of the attributes in the General tab) 
     Go into the 'Build' menu, and select 'configuration manager'. Change the 'Active Solution Configuration' to 'Debug(with DLLs)'.<br />
     </div>
 
+    <p>
+    We will need to edit a few of the projects before they can compile. To open a properties menu of a specific project, right click on the project
+    name and select properties. To change a property (like include directories, or additional dependencies, click on the property, and at the far
+    right of it, a small arrow will appear, click on that and select "edit". These instructions are implied throughout this section.
+    </p>
+    <p>
+    <b>plgsoundmngr:</b><br/>
+    Needs libpsmusic.lib and libpsutil.lib added in properties -&gt; linker -&gt; input -&gt; additional dependencies<br/>
+    Needs c:\development\planeshift\out\release10\libs added in properties -&gt; vcc directories -&gt; library directories<br/>
+    </p>
+    <p>
+    <b>apppsclient:</b><br/>
+    Needs c:\development\planeshift\out\release10\libs and c:\development\cs\out\release10\libs added in properties -&gt; vcc directories -&gt; library directories.
+    </p>
+    <p>
+    <b>apppslaunch:</b><br/>
+    Needs c:\development\curl\include added in properties -&gt; vcc directories -&gt; include directories<br/>
+    Needs c:\development\curl\lib added in properties -&gt; vcc directories -&gt; library directories<br/>
+    </p>
+    <p>
+    <b>plgdbmysql:</b><br/>
+    You can skip this one if you only want the client.<br/>
+    Needs libpsutil.lib added in properties -&gt; linker -&gt; input -&gt; additional dependencies: 
+    Needs C:\mysql\include added in properties -&gt; vcc directories -&gt; include directories<br/>
+    Needs C:\mysql\lib and c:\development\planeshift\out\release10\libs added in properties -&gt; vcc directories -&gt; library directories<br/>
+    </p>
+    
     <p>If you are only interested in the client,
-    right-click the apppsclient project in the solution explorer window and select Rebuild;<br />
-    else, Build solution.</p>
-</div>
-<div class="Windows">
-    <p>Note: If you built the server, you may need to copy libmySQL.dll.</p>
+    right-click the apppsclient project in the solution explorer window and select Build;<br />
+    else, Build solution.<br/>
+    Notice that both plgsoundmngr and plgdbmysql fail the first time you build, because libpsutil.lib does not exist yet. Just click "build" a second 
+    time and they will work just fine. <br/>
+    Also notice that before running the client, you will need to get the art files (see the next chapter).
+    </p>
 
-</div>
-<div class="MSVC">
+    
     <h3>Setting Up For Debugging</h3>
     <p>Now before you can debug the programs, you need to change some properties of the project.<br />
     For each application you are interested in debugging (e.g. apppsclient):<br />
-    Right-Click on the project.<br /> Under properties->debugging change:<br />
+    Right-Click on the project.<br /> Under properties-&gt;debugging change:<br />
     Command to: C:\development\planeshift\(name).exe<br />
     Working directory to: C:\development\planeshift\<br />
     You should be good to go now.</p>
 </div>
+
 <!--************************************************************************************************-->
 <!--************************************************************************************************-->
 
 <h2><a name="update">Get PS Art</a></h2>
 <p>
-You can choose to run your local client and server with the official artwork or with the SVN one.</p><p>
-The SVN artwork is rather incomplete and it doesn't contain any fancy piece of art. It is however necessary
-to have one or the other if you want to run your client.
-
-<h3>Minimal Art from SVN</h3>
-<b>IMPORTANT: At this time SVN art is broken, so you need PS released art to run your compiled client.</b><br>
-
-If you want just to have your client running with minimal art you can to do this by fetching the SVN art. You need to collect it from SVN and put it in
-a <i>art</i> subdirectory in your PlaneShift directory. </p>
+    <h3>Minimal Art from SVN</h3>
+    <b>IMPORTANT: At this time SVN art is broken, so you need PS released art to run your compiled client.</b><br>
+</p>
 
 <div class="Linux">
 <p><i class="command">$HOME/development/planeshift$ svn co https://svn.code.sf.net/p/planeshift/code/art</i></p>
@@ -1696,12 +1656,14 @@ a <i>art</i> subdirectory in your PlaneShift directory. </p>
 
 <h3>Released Art from a PlaneShift installation</h3>
 <p>
-If you want your compiled client to have all art (icons, skins, characters, ...) then you need to get the art from an official released client.
+If you want your compiled client to have all art (icons, skins, characters, ...) then you need to get the art from an official released client.<br/>
 If you have previously downloaded a release package, you can use it to get the needed files. The files are in the "art" and
 "data" directories. However you should keep the following folders in data because the contents from the SVN are
-usually more recent and updated: gui, shader, shader-snippets and renderlayers.
-
-See "Pointing to PlaneShift release art files" below.
+usually more recent and updated: gui, shader, shader-snippets and renderlayers.<br/>
+<br/>
+For those who seek to only build the client, this is all you need. Start the client, and go enjoy the game.<br/>
+<br/>
+Notice: you will also need this art to run the (SVN) server.<br/>
 </p>
 
 <!--************************************************************************************************-->
@@ -1759,7 +1721,7 @@ mysql -u root -pyourpasswordhere<br />
 </div>
 </div>
 <div class="Windows">
-Start a command prompt (Start->Run and then type "cmd") and type:
+Start a command prompt (Start-&gt;Run and then type "cmd") and type:
     <p class="commandBox">C:\mysql\bin\mysqld --console</p>
     Start another command prompt and then login to the MySQL client using (the default username is root with no password):
     <p class="commandBox">C:\mysql\bin\mysql -u root</p>
@@ -1767,9 +1729,9 @@ Start a command prompt (Start->Run and then type "cmd") and type:
 
 How to create a new PS database:
 <p class="commandBox">
-    mysql> create database planeshift;<br />
-    mysql> GRANT ALL PRIVILEGES ON planeshift.* TO planeshift@localhost IDENTIFIED BY 'planeshift';<br />
-    mysql> quit
+    mysql&gt; create database planeshift;<br />
+    mysql&gt; GRANT ALL PRIVILEGES ON planeshift.* TO planeshift@localhost IDENTIFIED BY 'planeshift';<br />
+    mysql&gt; quit
 </p>
 
 <div class="Linux">
@@ -1797,9 +1759,9 @@ How to create a new PS database:
     </p>
 </div>
 <p class="commandBox">
-    mysql> use planeshift;<br />
-    mysql> source create_all.sql;<br />
-    mysql> quit
+    mysql&gt; use planeshift;<br />
+    mysql&gt; source create_all.sql;<br />
+    mysql&gt; quit
 </p>
 
 The database PlaneShift has now been created for PlaneShift to use.
@@ -1808,12 +1770,15 @@ The database PlaneShift has now been created for PlaneShift to use.
 In this case the file psserver.cfg has to be updated with the changed values. To change the database
 name the file create_all.sql also has to be modified.</p>
 
-NOTE: If you have upgraded MySQL server to 4.1 or superior (while the client is still 4.0) please write this in your MySQL console:
-<p class="commandBox">SET PASSWORD FOR planeshift@localhost = OLD_PASSWORD('planeshift');</p>
 
 <h3>Running the Server</h3>
 <div>
     <div class="Windows">
+        <p>
+            If you have not installed mysql as a service, you need to start it manual each time before running the server.<br/>
+            Start a command prompt (Start-&gt;Run and then type "cmd") and type:
+            <span class="commandBox">C:\mysql\bin\mysqld --console</span>
+        </p>
         <div class="MINGW">
             Go to your PlaneShift directory (C:\development\planeshift) and run psserver, this will start the server.<br />
             Note: psserver requires the DOS Command Prompt to run. psclient does not.<br />
@@ -1834,8 +1799,9 @@ NOTE: If you have upgraded MySQL server to 4.1 or superior (while the client is 
 </div>
 
 <div class="Windows">
-    <p>Note: If you get any problems with psserver, make sure you have the latest version of MySQL 5.0
-    and that your libMySQL.dll file in windows\system32 is the same as the one in mysql\lib\opt.</p>
+    <p>Note: If you get any problems with psserver, make sure you have the latest version of MySQL 5.5
+    and that your libMySQL.dll file in windows\system32 (if any) is the same as the one in mysql\lib.
+    </p>
 </div>
 
 Type the following to load the correct map and spawn all items and NPCs:
@@ -1964,6 +1930,10 @@ If you want to generate your own navmesh, you can launch the navgen program.<br/
 <!--************************************************************************************************-->
 
 <h2><a name="runclient">Get the Client Running</a></h2>
+<div class="Windows">
+    <b>WINDOWS USERS:</b> You already have a working client since the "getting the art" chapter, use this chapter as reference on how to edit config
+    files only. You do *NOT* need anything from it.
+</div>
 <p>
     To have the client running you need at least two parts, described in the next chapters:<br />
     - ensure you are using the Crystal Space base configuration files<br />
@@ -2055,6 +2025,20 @@ If you want to generate your own navmesh, you can launch the navgen program.<br/
 
 <h2><a name="troubleshooting">Common Problems / Troubleshooting</a></h2>
 
+<h3>Generic Problems</h3>
+<p>
+    If sounds does not work: change to Open AL in pslaunch.
+</p>
+<p>
+    If you get errors about art/skins/default.zip, change it to elves.zip in psclient.cfg. (there is no default.zip in the production art.
+</p>
+<p>
+    If your client crashes right after loading, or when looking at spells/effects being cast, add: 
+    Video.OpenGL.UseExtension.GL_ARB_vertex_buffer_object = true  to your psclient.cfg (notice that sometimes a client prefers to take the file 
+    located in %appdata%) It seems some graphics cards cannot handle fancy effects without it. You can also set this by starting the 
+    launcher and clicking options. (Notice this also applies to ATI cards, ignore what pslaunch says about them.)
+</p>
+
 <h3> LINUX </h3>
 <p><b>Problem:</b> You are getting this error:</p>
 /home/luke/ps/planeshift/./out/linux/debug/src/client/static/_cs_static_use_CRYSTAL.cpp:44: undefined reference to `csStaticPluginInit::glshader_cg::glshader_cg()'<br/>
@@ -2093,7 +2077,8 @@ There is an IRC channel dedicated to providing help with building PlaneShift:</p
         Steve Cook, author of the guide to compiling with Mingw32.<br />
         Platyna, author of the first compiling guide for Slackware distribution.<br />
         Mike Gist, author of the static compiling guide.<br />
-        Andrew Craig, author of the first Linux guides<br />
+        Andrew Craig, author of the first Linux guides.<br />
+        Gijs Hofstee, rewriting the windows guide for MSVC 2015 and general maintenance.<br />
 
 </body>
 </html>
