@@ -1136,10 +1136,12 @@ If you update a repository, you will need to recompile that repository and each 
     Verify the checkout directory is "C:\development\cal3d", select "Revision", and enter 507.
     <p>
     Open (in the cal3d directory) cal3d.sln in Visual Studio and if asked to convert/updgrade, do so. <br/>
-    Set build config to release (in the menu at the top) and build the Cal3D project.<br/>
+    If the Solution Explorer does not show on the left side of your screen, select from the menu: View -> Solution Explorer. <br/>
+    Set build config to release (in the menu at the top) and right-click on the CAL3D project in the Solution Explorer, then click on "build" to build the Cal3D project.<br/>
     Notice that if you are building 64 bit, you will also need to make a new "solution platform" (x64, you can copy the rest from the 32 version).<br/> 
     After building, rename cal3d\bin\Release\Cal3D.dll to "libcal3d-csvc10.dll" and copy it to the CS directory (overwriting the file there).<br/>
-    Do the same for cal3d\bin\debug\Cal3D.pdb, rename it to "libcal3d-csvc10.pdb" and copy it to the CS directory as well. <br/>
+    If you are making a debug build, you will need to do the same for the following file. Additionally, in case of debug/static builds, the exact file name differs.<br/>
+    cal3d\bin\debug\Cal3D.pdb, rename it to "libcal3d-csvc10.pdb" and copy it to the CS directory as well (debug build only). <br/>
     </p>
     
     <h3>PlaneShift</h3>
@@ -1554,7 +1556,9 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
       DebugWithStaticLibs <br />
       </span>
     </div>
-    <p>Right click on the solution and select 'Build Solution'. To test the build of CS, run walktest.exe in C:\development\CS.<br />
+    <p>
+    If the Solution Explorer does not show on the left side of your screen, select from the menu: View -&gt; Solution Explorer. <br />
+    Right click on the solution and select 'Build Solution'. To test the build of CS, run walktest.exe in C:\development\CS.<br />
     In any Visual Studio version other than 2010, 5 of the 238 projects will fail due to dlls not being made for your version of Visual Studio.
     This can be ignored, since we do not need those 5 for planeshift.<br/>
     If you encounter any errors, check you have done everything correctly, and then if the problem persists, you can
@@ -1589,6 +1593,7 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
     </div>
 
     <p>
+    If the Solution Explorer does not show on the left side of your screen, select from the menu: View -&gt; Solution Explorer. <br />
     We will need to edit a few of the projects before they can compile. To open a properties menu of a specific project, right click on the project
     name and select properties. To change a property (like include directories, or additional dependencies, click on the property, and at the far
     right of it, a small arrow will appear, click on that and select "edit". These instructions are implied throughout this section.
@@ -1596,16 +1601,16 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
     <p>
     <b>plgsoundmngr:</b><br/>
     Needs libpsmusic.lib and libpsutil.lib added in properties -&gt; linker -&gt; input -&gt; additional dependencies<br/>
-    Needs c:\development\planeshift\out\release10\libs added in properties -&gt; vcc directories -&gt; library directories<br/>
+    Needs c:\development\planeshift\out\release10\libs added in properties -&gt; vcc++ directories -&gt; library directories<br/>
     </p>
     <p>
     <b>apppsclient:</b><br/>
-    Needs c:\development\planeshift\out\release10\libs and c:\development\cs\out\release10\libs added in properties -&gt; vcc directories -&gt; library directories.
+    Needs c:\development\planeshift\out\release10\libs and c:\development\cs\out\release10\libs added in properties -&gt; vcc++ directories -&gt; library directories.
     </p>
     <p>
     <b>apppslaunch:</b><br/>
-    Needs c:\development\curl\include added in properties -&gt; vcc directories -&gt; include directories<br/>
-    Needs c:\development\curl\lib added in properties -&gt; vcc directories -&gt; library directories<br/>
+    Needs c:\development\curl\include added in properties -&gt; vcc++ directories -&gt; include directories<br/>
+    Needs c:\development\curl\lib added in properties -&gt; vcc++ directories -&gt; library directories<br/>
     </p>
     <p>
     <b>plgdbmysql:</b><br/>
@@ -1616,9 +1621,9 @@ psclient.exe -cfgset=PlaneShift.UserConfigPath=C:\development\pssettings</div>
     </p>
     
     <p>If you are only interested in the client,
-    right-click the apppsclient project in the solution explorer window and select Build;<br />
+    right-click the apppsclient project in the solution explorer window and select Build (you may also need to manually build plgsoundmngr for sound support);<br />
     else, Build solution.<br/>
-    Notice that both plgsoundmngr and plgdbmysql fail the first time you build, because libpsutil.lib does not exist yet. Just click "build" a second 
+    Notice that both plgsoundmngr and plgdbmysql fail the first time you build the whole solution, because libpsutil.lib does not exist yet. Just click "build" a second 
     time and they will work just fine. <br/>
     Also notice that before running the client, you will need to get the art files (see the next chapter).
     </p>
