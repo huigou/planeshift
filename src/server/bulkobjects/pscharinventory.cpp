@@ -545,14 +545,14 @@ bool psCharacterInventory::CheckSlotRequirements(psItem* item, INVENTORY_SLOT_NU
         INVENTORY_SLOT_NUMBER otherSlot =
             proposedSlot == PSCHARACTER_SLOT_RIGHTHAND ?
                 PSCHARACTER_SLOT_LEFTHAND : PSCHARACTER_SLOT_RIGHTHAND;
-        if(item->FitsInSlot(PSCHARACTER_SLOT_BOTHHANDS))
+        if(proposedSlot == PSCHARACTER_SLOT_BOTHHANDS)
         {
             psItem *other = GetInventoryItem(otherSlot);
             if(other && other != item)
                 return false;
         }
-        else if(item->FitsInSlot(PSCHARACTER_SLOT_LEFTHAND) ||
-                item->FitsInSlot(PSCHARACTER_SLOT_RIGHTHAND))
+        else if(proposedSlot == PSCHARACTER_SLOT_LEFTHAND ||
+            proposedSlot == PSCHARACTER_SLOT_RIGHTHAND)
         {
             psItem *other = GetInventoryItem(otherSlot);
             if(other && other->FitsInSlot(PSCHARACTER_SLOT_BOTHHANDS))
