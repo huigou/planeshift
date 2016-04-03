@@ -1437,7 +1437,10 @@ const char* psItem::GetModifiersDescription()
     if(!script)
         return "";
 
-    return script->GetDescription();
+    MathEnvironment env;
+    env.Define("Item", this);
+
+    return script->GetDescription(&env);
 }
 
 bool psItem::CheckStackableWith(const psItem* otheritem, bool precise, bool checkStackCount, bool checkWorld) const
