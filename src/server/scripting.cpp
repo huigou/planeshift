@@ -411,6 +411,11 @@ public:
         csString descr = skillname;
         
         int val = (int)value->Evaluate(env);
+        // This prevents lines like "Sword: 0" from showing up in item descriptions. They can be caused by mathscripts like: <skill name="Sword" value="if(Item:Skill1 = 0,10,0)"/>
+        if (val == 0)
+        {
+            return "";
+        }
         descr.AppendFmt(": %d\n",val);
         return descr;
     }
@@ -1448,18 +1453,16 @@ ActiveSpell* ApplicativeScript::Apply(MathEnvironment* env, bool registerCancelE
     return asp;
 }
 
-const csString &ApplicativeScript::GetDescription()
+const csString &ApplicativeScript::GetDescription(MathEnvironment* env)
 {
     if(!description.IsEmpty())
         return description;
-    
-    MathEnvironment env;
 
     csPDelArray<AppliedOp>::Iterator it = ops.GetIterator();
     while(it.HasNext())
     {
         AppliedOp* op = it.Next();
-        description += op->GetDescription(&env);
+        description += op->GetDescription(env);
     }
 
     return description;

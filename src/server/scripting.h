@@ -190,7 +190,7 @@ public:
      * retrieve the description of the Applicativescripts commands
      * @return csString containing a description of the scripts effect
      */
-    const csString &GetDescription();
+    const csString &GetDescription(MathEnvironment* env);
 
     void SetImage( csString tImage ) { image=tImage; }
 
