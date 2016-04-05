@@ -1432,8 +1432,17 @@ ActiveSpell* ApplicativeScript::Apply(MathEnvironment* env, bool registerCancelE
     gemActor* target = GetActor(env, aim);
     CS_ASSERT(target);
 
+    // Attempt to find the name in the math event (might be set by <let>)
+    MathVar* nameVar = env->Lookup(name);
+    csString varName;
+
+    if (nameVar) // if found, use it.
+        varName = nameVar->GetString();
+    else //if the variable was not found, take it at face value. (not in <let>)
+        varName = name;
+
     csTicks dticks = duration ? (csTicks) duration->Evaluate(env) : 0;
-    ActiveSpell* asp = new ActiveSpell(name, type, dticks, image);
+    ActiveSpell* asp = new ActiveSpell(varName, type, dticks, image);
 
     csPDelArray<AppliedOp>::Iterator it = ops.GetIterator();
     while(it.HasNext())
