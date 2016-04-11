@@ -416,25 +416,27 @@ public:
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
         MathVar* nameVar = env->Lookup(skillname);
-        if (nameVar)
-        {
-            skillname = nameVar->GetString();
-        }
-        //else: nothing changes, we use skillname as plain text.
+        csString varName;
 
-        psSkillInfo* info = cachemanager->GetSkillByName(skillname);
+        if (nameVar)
+            varName = nameVar->GetString();
+        else //if the variable was not found try getting the value associated directly (not in <let>)
+            varName = skillname;
+
+        psSkillInfo* info = cachemanager->GetSkillByName(varName);
+
         if (!info)
         {
-            Error2("Found <skill name=\"%s\">, but no such skill exists.", skillname.GetDataSafe());
+            Error2("Found <skill name=\"%s\">, but no such skill exists.", varName.GetDataSafe());
             return;
         }
-        skill = info->id;
 
+        skill = info->id;
         int val = (int) value->Evaluate(env);
         SkillRank &buffable = target->GetCharacterData()->GetSkillRank(skill);
         buffable.Buff(asp, val);
 
-        asp->Add(buffable, "<skill name=\"%s\" value=\"%d\"/>", skillname.GetData(), val);
+        asp->Add(buffable, "<skill name=\"%s\" value=\"%d\"/>", varName.GetData(), val);
     }
 
 protected:
