@@ -396,13 +396,6 @@ public:
     bool Load(iDocumentNode* node)
     {
         skillname = node->GetAttributeValue("name");
-        psSkillInfo* info = cachemanager->GetSkillByName(skillname);
-        if(!info)
-        {
-            Error2("Found <skill name=\"%s\">, but no such skill exists.", node->GetAttributeValue("name"));
-            return false;
-        }
-        skill = info->id;
         return Applied1::Load(node);
     }
 
@@ -422,11 +415,26 @@ public:
 
     void Run(MathEnvironment* env, gemActor* target, ActiveSpell* asp)
     {
+        MathVar* nameVar = env->Lookup(skillname);
+        if (nameVar)
+        {
+            skillname = nameVar->GetString();
+        }
+        //else: nothing changes, we use skillname as plain text.
+
+        psSkillInfo* info = cachemanager->GetSkillByName(skillname);
+        if (!info)
+        {
+            Error2("Found <skill name=\"%s\">, but no such skill exists.", skillname.GetDataSafe());
+            return;
+        }
+        skill = info->id;
+
         int val = (int) value->Evaluate(env);
         SkillRank &buffable = target->GetCharacterData()->GetSkillRank(skill);
         buffable.Buff(asp, val);
 
-        asp->Add(buffable, "<skill name=\"%s\" value=\"%d\"/>", name.GetData(), val);
+        asp->Add(buffable, "<skill name=\"%s\" value=\"%d\"/>", skillname.GetData(), val);
     }
 
 protected:
