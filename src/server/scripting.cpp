@@ -1440,6 +1440,11 @@ ActiveSpell* ApplicativeScript::Apply(MathEnvironment* env, bool registerCancelE
 {
     // TODO: Handle non-actor targets...
     gemActor* target = GetActor(env, aim);
+    if (!target)
+    {
+        Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+        return NULL;
+    }
     CS_ASSERT(target);
 
     // Attempt to find the name in the math event (might be set by <let>)
@@ -1813,6 +1818,11 @@ public:
     virtual void Run(MathEnvironment* env)
     {
         gemActor* actor = GetActor(env, aim);
+        if (!actor)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
 
         if(actor && actor->GetClientID())
         {
@@ -1866,6 +1876,11 @@ public:
     virtual void Run(MathEnvironment* env)
     {
         gemNPC* npc = GetNPC(env, aim);
+        if (!npc)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
 
         if(npc)
         {
@@ -1949,6 +1964,11 @@ public:
     virtual void Run(MathEnvironment* env)
     {
         gemActor* actor = GetActor(env, aim);
+        if (!actor)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
         CS_ASSERT(actor);
 
         // Find which potentially cancellable spells are actually active
@@ -2207,6 +2227,11 @@ public:
     void Run(MathEnvironment* env)
     {
         gemObject* obj = GetObject(env, aim);
+        if (!obj)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
         psserver->GetEventManager()->Push(new psEntityEvent(entitymanager, psEntityEvent::DESTROY, obj));
     }
 protected:
@@ -2331,6 +2356,11 @@ public:
     void Run(MathEnvironment* env)
     {
         gemActor* actor = GetActor(env, aim);
+        if (!actor)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
         //holds the value calculated of the delay in case it's needed
         int32_t loadDelayInt = 0;
         //holds the value calculated of the origin point of the anim
@@ -2431,6 +2461,11 @@ public:
     void Run(MathEnvironment* env)
     {
         psCharacter* c = GetCharacter(env, aim);
+        if (!c)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
         float val = value->Evaluate(env);
         if(vital == "mana")
             c->AdjustMana(val);
@@ -2473,6 +2508,11 @@ public:
     void Run(MathEnvironment* env)
     {
         gemActor* target = GetActor(env, aim);
+        if (!target)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
         gemActor* atk = GetActor(env, attacker); // may be NULL
         float val = value->Evaluate(env);
 
@@ -2534,6 +2574,11 @@ public:
     void Run(MathEnvironment* env)
     {
         psCharacter* c = GetCharacter(env, aim);
+        if (!c)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
         int val = (int) value->Evaluate(env);
         PSSKILL skill = statToSkill(stat);
         if (skill != PSSKILL_NONE)
@@ -2584,6 +2629,11 @@ public:
     {
         Faction* currentFaction = faction;
         psCharacter* c = GetCharacter(env, aim);
+        if (!c)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
         int val = (int) value->Evaluate(env);
         //we didn't find a valid faction name during load: it means it's a variable.
         if(!currentFaction)
@@ -2647,6 +2697,11 @@ public:
     void Run(MathEnvironment* env)
     {
         psCharacter* c = GetCharacter(env, aim);
+        if (!c)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
         //evaluate the variables so we can get it's value
         MathVar* nameVar = env->Lookup(variableName);
         MathVar* valueVar = env->Lookup(variableValue);
@@ -2697,6 +2752,11 @@ public:
     void Run(MathEnvironment* env)
     {
         psCharacter* c = GetCharacter(env, aim);
+        if (!c)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
         //evaluate the variables so we can get it's value
         MathVar* nameVar = env->Lookup(variableName);
         csString varName;
@@ -2740,6 +2800,11 @@ public:
     void Run(MathEnvironment* env)
     {
         psCharacter* c = GetCharacter(env, aim);
+        if (!c)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
 
         //evaluate the variables so we can get it's value
         MathVar* nameVar = env->Lookup(skillName);
@@ -2838,6 +2903,11 @@ public:
     void Run(MathEnvironment* env)
     {
         psCharacter* chr = GetCharacter(env, aim);
+        if (!chr)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
 
         // Parse the string into an XML document.
         //     <category attribute="Type|Lifecycle|AttackTool|AttackType|..." name="" value="" />
@@ -2947,6 +3017,11 @@ public:
     {
         // Get character data
         psCharacter* c = GetCharacter(env, aim);
+        if (!c)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
 
         // Returns the next inactive entrance action location
         psActionLocation* actionLocation = psserver->GetActionManager()->FindAvailableEntrances(sector);
@@ -3078,6 +3153,11 @@ public:
     {
         // Get character data
         psCharacter* c = GetCharacter(env, aim);
+        if (!c)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
 
         switch(function)
         {
@@ -3329,6 +3409,11 @@ public:
     void Run(MathEnvironment* env)
     {
         gemActor* actor = GetActor(env, aim);
+        if (!actor)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
         if(!actor->GetClientID())
         {
             Error2("Error: <createfamiliar/> needs a valid client for actor '%s'.\n", actor->GetName());
@@ -3448,7 +3533,10 @@ public:
 
         gemActor* actor = GetActor(env, aim);
         if(!actor || !actor->GetClientID())
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
             return;
+        }
 
         // send message to client about mechanism activated
         {
