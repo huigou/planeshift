@@ -41,6 +41,7 @@
 #include "rpgrules/factions.h"
 #include "bulkobjects/pstrait.h"
 #include "bulkobjects/activespell.h"
+#include "bulkobjects/psRaceInfo.h"
 
 //=============================================================================
 // Application Includes
@@ -2836,6 +2837,83 @@ protected:
 //----------------------------------------------------------------------------
 
 /**
+* TraitOp - imperative skills.
+*
+* \<trait aim="Target" name="traitX" /\> (sets traitX on actor.)
+*
+* This is a permanent change.
+*/
+class TraitOp : public ImperativeAim
+{
+public:
+    TraitOp(CacheManager* cachemanager) : ImperativeAim()
+    {
+        this->cachemanager = cachemanager;
+    }
+    virtual ~TraitOp() { }
+
+    bool Load(iDocumentNode* node)
+    {
+        traitName = node->GetAttributeValue("name");
+        return ImperativeAim::Load(node);
+    }
+
+    void Run(MathEnvironment* env)
+    {
+        gemActor* actor = GetActor(env, aim);
+        psCharacter* c = GetCharacter(env, aim);
+        gemObject* obj = GetObject(env, aim);
+        if (!c || !actor || !obj)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
+
+        //evaluate the variables so we can get it's value
+        MathVar* nameVar = env->Lookup(traitName);
+        csString varName;
+
+        if (nameVar)
+            varName = nameVar->GetString();
+        else //if the variable was not found try getting the value associated directly (not in <let>)
+            varName = traitName;
+
+        CacheManager::TraitIterator ti = psserver->GetCacheManager()->GetTraitIterator();
+        while (ti.HasNext())
+        {
+            psTrait* currTrait = ti.Next();
+            if (currTrait->gender == c->GetRaceInfo()->gender &&
+                currTrait->race == c->GetRaceInfo()->race &&
+                currTrait->name.CompareNoCase(traitName))
+            {
+                c->SetTraitForLocation(currTrait->location, currTrait);
+
+                csString str("<traits>");
+                do
+                {
+                    str.Append(currTrait->ToXML());
+                    currTrait = currTrait->next_trait;
+                } while (currTrait);
+                str.Append("</traits>");
+
+                psTraitChangeMessage message(obj->GetClient()->GetClientNum(), c->GetActor()->GetEID(), str);
+                message.Multicast(c->GetActor()->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
+                //update everything needed for bgloader to pick changes correctly.
+                obj->UpdateProxList(true);
+
+                psserver->SendSystemOK(obj->GetClient()->GetClientNum(), "Trait successfully changed");
+                return;
+            }
+        }
+    }
+protected:
+    CacheManager* cachemanager;
+    csString traitName;
+};
+
+//----------------------------------------------------------------------------
+
+/**
  * ExpOp - grant experience points.
  *
  * \<exp aim="Actor" value="200" notify="false" /\>
@@ -3686,6 +3764,10 @@ ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager, Cache
         else if(elem == "skill")
         {
             op = new SkillOp(cachemanager);
+        }
+        else if (elem == "trait")
+        {
+            op = new TraitOp(cachemanager);
         }
         else if(elem == "faction")
         {
