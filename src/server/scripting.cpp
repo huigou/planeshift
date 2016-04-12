@@ -396,7 +396,7 @@ public:
     bool Load(iDocumentNode* node)
     {
         skillname = node->GetAttributeValue("name");
-        return Applied1::Load(node);
+        return Applied2::Load(node);
     }
 
     virtual const csString GetDescription(MathEnvironment* env)
@@ -442,7 +442,7 @@ public:
 protected:
     PSSKILL skill;
     CacheManager* cachemanager;
-    csString skillname;             /// < used for description
+    csString skillname;             /// < used for description and for run().
 };
 
 //----------------------------------------------------------------------------
