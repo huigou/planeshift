@@ -2268,6 +2268,22 @@ void NetworkManager::QueueEmoteCommand(gemNPCActor* npc, gemNPCObject* target,  
     cmd_count++;
 }
 
+void NetworkManager::QueueAnimationCommand(gemNPCActor* npc, const csString &cmd)
+{
+    CheckCommandsOverrun(100);
+
+    outbound->msg->Add((int8_t)psNPCCommandsMessage::CMD_ANIMATION);
+    outbound->msg->Add(npc->GetEID().Unbox());
+    outbound->msg->Add(cmd);
+
+    if (outbound->msg->overrun)
+    {
+        CS_ASSERT(!"NetworkManager::QueueEmoteCommand put message in overrun state!\n");
+    }
+
+    cmd_count++;
+}
+
 
 void NetworkManager::QueueEquipCommand(gemNPCActor* entity, csString item, csString slot, int count)
 {

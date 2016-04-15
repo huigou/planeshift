@@ -378,6 +378,26 @@ bool UserManager::LoadEmotes(const char* xmlfile, iVFS* vfs)
     return true;
 }
 
+bool UserManager::Animation(csString animation, gemActor* actor)
+{
+    if (!animation)
+    {
+        Error1("invalid animation");
+        return false;
+    }
+    if (!actor)
+    {
+        Error1("invalid animation actor");
+        return false;
+    }
+
+    // send an action override message which runs the animation
+    // Notice that the client is responsible for finding the animation and determining if it exists at all.
+    psUserActionMessage msg(actor->GetClientID(), actor->GetEID(), animation, animation);
+    msg.Multicast(actor->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
+    return true;
+}
+
 void UserManager::HandleCharDetailsRequest(MsgEntry* me,Client* client)
 {
     psCharacterDetailsRequestMessage msg(me);

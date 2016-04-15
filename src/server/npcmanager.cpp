@@ -1532,6 +1532,38 @@ void NPCManager::HandleCommandList(MsgEntry* me,Client* client)
 
                 break;
             }
+            case psNPCCommandsMessage::CMD_ANIMATION:
+            {
+                EID  npcId = EID(list.msg->GetUInt32()); // NPC
+                csString cmd = list.msg->GetStr();
+
+                Debug3(LOG_SUPERCLIENT, npcId.Unbox(), "-->Got animation cmd for entity %s with %s\n", ShowID(npcId), cmd.GetData());
+
+                // Make sure we haven't run past the end of the buffer
+                if (list.msg->overrun)
+                {
+                    Debug2(LOG_SUPERCLIENT, me->clientnum, "Received incomplete CMD_ANIMATION from NPC client %u.\n", me->clientnum);
+                    break;
+                }
+
+                if (!cmd)
+                {
+                    Debug2(LOG_SUPERCLIENT, me->clientnum, "Received empty animation from NPC client %u.\n", me->clientnum);
+                    break;
+                }
+
+                gemNPC* npc = dynamic_cast<gemNPC*>(gemSupervisor->FindObject(npcId));
+                if (npc)
+                {
+                    psserver->usermanager->Animation(cmd, npc);
+                }
+                else
+                {
+                    Error1("NPC Client tries to run an animation with no existing npc");
+                }
+
+                break;
+            }
             case psNPCCommandsMessage::CMD_EQUIP:
             {
                 EID entity_id = EID(list.msg->GetUInt32());

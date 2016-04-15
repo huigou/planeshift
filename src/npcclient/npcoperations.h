@@ -262,6 +262,10 @@ public:
      *
      */
     void AddRandomRange(csVector3 &dest, float radius, float margin = 0.0);
+
+    /**
+     * This function will set an animation for the NPC, the animation will play once.
+     */
     void SetAnimation(NPC* npc, const char* name);
 
     virtual const char* GetName() const

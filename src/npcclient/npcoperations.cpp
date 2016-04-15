@@ -573,7 +573,17 @@ void ScriptOperation::AddRandomRange(csVector3 &dest, float radius, float margin
 
 void ScriptOperation::SetAnimation(NPC* npc, const char* name)
 {
-    //npc->GetActor()->pcmesh->SetAnimation(name, false);
+    if (!npc)
+    {
+        Error1("SetAnimation called without a proper NPC.");
+        return;
+    }
+    if (!name)
+    {
+        return;
+    }
+    // send the animation command directly to the server (npc client does not have a screen anyway).
+    npcclient->GetNetworkMgr()->QueueAnimationCommand(npc->GetActor(), name);
 }
 
 void ScriptOperation::Failure(NPC* npc)
