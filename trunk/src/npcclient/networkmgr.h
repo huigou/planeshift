@@ -385,6 +385,14 @@ public:
     void QueueEmoteCommand(gemNPCActor* npc, gemNPCObject* target, const csString &cmd);
 
     /**
+    * Send an animation command to server
+    *
+    * @param npc             The npc that has an animation
+    * @param cmd             The animation
+    */
+    void QueueAnimationCommand(gemNPCActor* npc, const csString &cmd);
+
+    /**
      * Send a command to equip an equipment.
      */
     void QueueEquipCommand(gemNPCActor* entity, csString item, csString slot, int count);

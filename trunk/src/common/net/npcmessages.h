@@ -220,6 +220,7 @@ public:
         CMD_DRDATA,
         CMD_DROP,
         CMD_EMOTE,
+        CMD_ANIMATION,
         CMD_EQUIP,
         CMD_TEMPORARILY_IMPERVIOUS,
         CMD_INFO_REPLY,

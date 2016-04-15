@@ -225,6 +225,12 @@ public:
     void Emote(csString general, csString specific, csString animation, gemActor* actor);
 
     /**
+     * This function will start an animation on the actor, it will not repeat, so if you need an animation 
+     * loop, just call it repeatedly from a script.
+     */
+    bool UserManager::Animation(csString animation, gemActor* actor);
+
+    /**
      * Handles the /mount command
      * @param rider The actor which is going to mount
      * @param mount The actor which is going to be mounted.
