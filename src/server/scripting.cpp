@@ -2869,6 +2869,12 @@ public:
             return;
         }
 
+        // we do not want to set traits on any morphed/etc player, because the trait are tried to the player, not the overrridable race.
+        if (c->GetOverridableRace().Base() != c->GetOverridableRace().Current())
+        {
+            return;
+        }
+
         //evaluate the variables so we can get it's value
         MathVar* nameVar = env->Lookup(traitName);
         csString varName;
