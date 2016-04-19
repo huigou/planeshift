@@ -2920,6 +2920,58 @@ protected:
 //----------------------------------------------------------------------------
 
 /**
+* AnimationOp - imperative skills.
+*
+* \<animation aim="Target" name="animationX" /\> (runs animationX on actor, runs once.)
+*
+* This is a run once animation. Animation is not validated, only client knows if it has the animation. If it does not exist, nothing happens.
+*/
+class AnimationOp : public ImperativeAim
+{
+public:
+    AnimationOp(CacheManager* cachemanager) : ImperativeAim()
+    {
+        this->cachemanager = cachemanager;
+    }
+    virtual ~AnimationOp() { }
+
+    bool Load(iDocumentNode* node)
+    {
+        animationName = node->GetAttributeValue("name");
+        return ImperativeAim::Load(node);
+    }
+
+    void Run(MathEnvironment* env)
+    {
+        gemActor* actor = GetActor(env, aim);
+        psCharacter* c = GetCharacter(env, aim);
+        gemObject* obj = GetObject(env, aim);
+        if (!c || !actor || !obj)
+        {
+            Error2("Invalid Aim >%s< - check if you mixed up Actor and Target", aim.GetData());
+            return;
+        }
+
+        //evaluate the variables so we can get it's value
+        MathVar* nameVar = env->Lookup(animationName);
+        csString varName;
+
+        if (nameVar)
+            varName = nameVar->GetString();
+        else //if the variable was not found try getting the value associated directly (not in <let>)
+            varName = animationName;
+
+        psUserActionMessage msg(actor->GetClientID(), actor->GetEID(), varName);
+        msg.Multicast(actor->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
+    }
+protected:
+    CacheManager* cachemanager;
+    csString animationName;
+};
+
+//----------------------------------------------------------------------------
+
+/**
  * ExpOp - grant experience points.
  *
  * \<exp aim="Actor" value="200" notify="false" /\>
@@ -3774,6 +3826,10 @@ ProgressionScript* ProgressionScript::Create(EntityManager* entitymanager, Cache
         else if (elem == "trait")
         {
             op = new TraitOp(cachemanager);
+        }
+        else if (elem == "animation")
+        {
+            op = new AnimationOp(cachemanager);
         }
         else if(elem == "faction")
         {
