@@ -391,9 +391,9 @@ bool UserManager::Animation(csString animation, gemActor* actor)
         return false;
     }
 
-    // send an action override message which runs the animation
+    // send an action message which runs the animation
     // Notice that the client is responsible for finding the animation and determining if it exists at all.
-    psUserActionMessage msg(actor->GetClientID(), actor->GetEID(), animation, animation);
+    psUserActionMessage msg(actor->GetClientID(), actor->GetEID(), animation);
     msg.Multicast(actor->GetMulticastClients(), 0, PROX_LIST_ANY_RANGE);
     return true;
 }
