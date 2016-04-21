@@ -2046,6 +2046,9 @@ unsigned int WorkManager::IsTransformable(uint32 patternId, uint32 targetId, int
     }
     psTradeTransformations* transCandidate;
     psTradeProcesses* procCandidate;
+    // a place holder for candidates using 0 ore -> 2 ingot, 2 -> 0 and 0 -> 0 transformations (0 means repeats this transform as many times as possible)
+    psTradeTransformations* transCandidateMultiple = NULL; 
+    psTradeProcesses* procCandidateMultiple = NULL;
     for(size_t i=0; i<transArray->GetSize(); i++)
     {
         transCandidate = transArray->Get(i);
@@ -2075,7 +2078,9 @@ unsigned int WorkManager::IsTransformable(uint32 patternId, uint32 targetId, int
 
             // Check if we do not have the correct quantity
             int itemQty = transCandidate->GetItemQty();
-            if(itemQty != 0 && itemQty != targetQty)
+            int resultQty = transCandidate->GetResultQty();
+            // targetQty is the stack count of the item we are trying to transform. This check allows us to check if the stack size is usable when result qty is 0 (match as many as possible)
+            if(itemQty != 0 && !(resultQty == 0 && targetQty % itemQty == 0) && itemQty != targetQty)
             {
                 if(secure) psserver->SendSystemInfo(clientNum,"No match, transformation for wrong quantity candidateQty=%d itemQty=%d.", transCandidate->GetItemQty(), itemQty);
                 match |= TRANSFORM_BAD_QUANTITY;
@@ -2120,12 +2125,38 @@ unsigned int WorkManager::IsTransformable(uint32 patternId, uint32 targetId, int
                 continue;
             }
 
+            // if this is a candidate with 0 result or 0 source items, we prefer a perfect match, so save this one for later if it wasn't found.
+            if (itemQty == 0 || resultQty == 0)
+            {
+                // if we already have a candidate, and our new candidate uses two 0 modifiers, we prefer the more specific one.
+                if (transCandidateMultiple && transCandidate->GetItemQty() == 0 && transCandidate->GetResultQty() == 0)
+                {
+                    // trash transforms have no source or result id, they are least prefered.
+                    if (transCandidateMultiple->GetItemId() == 0 || transCandidateMultiple->GetResultId() == 0)
+                    {
+                        transCandidateMultiple = transCandidate;
+                        procCandidateMultiple = procCandidate;
+                    }
+                    continue;
+                }
+                transCandidateMultiple = transCandidate;
+                procCandidateMultiple = procCandidate;
+                continue;
+            }
             // Good match
             if(secure) psserver->SendSystemInfo(clientNum,"Good match for transformation id=%u.\n", transCandidate->GetId());
             trans = transCandidate;
             process = procCandidate;
             return TRANSFORM_MATCH;
         }
+    }
+    // check if we found a match using 0 source or result items, if we do, return that now as a match.
+    if (transCandidateMultiple)
+    {
+        if (secure) psserver->SendSystemInfo(clientNum, "Good match for transformation id=%u.\n", transCandidateMultiple->GetId());
+        trans = transCandidateMultiple;
+        process = procCandidateMultiple;
+        return TRANSFORM_MATCH;
     }
 
     // Return all the errors
@@ -3555,11 +3586,27 @@ void WorkManager::HandleWorkEvent(psWorkGameEvent* workEvent)
         }
     }
 
-    //  Check for 0 quantity transformations
+    //  Check for 0 quantity transformations (note: workEvent->getResultQuantity returns the stack count of the input item (for whatever reason))
     if(itemQty == 0)
     {
-        resultQty = workEvent->GetResultQuantity();
-        itemQty = resultQty;
+        // 0 ore -> 0 ingot means match as many as possible and transform them 1:1
+        if (resultQty == 0)
+        {
+            resultQty = workEvent->GetResultQuantity();
+            itemQty = resultQty;
+            QtyMultiplier = resultQty;
+        }
+        else // 0 ore -> 2 ingot means match as many as possible, and transform them 1:2
+        {
+            itemQty = workEvent->GetResultQuantity();
+            resultQty *= itemQty;
+            QtyMultiplier = itemQty;
+        }
+    }
+    else if (resultQty == 0) // 2 ore -> 0 ingot means we want it to make as many as possible and transform them 2:1 (0->0 won't trigger this because it takes the other if)
+    {
+        resultQty = workEvent->GetResultQuantity() / itemQty;  // itemQty still contains transformation source quantity here
+        itemQty = workEvent->GetResultQuantity();
         QtyMultiplier = resultQty;
     }
 
