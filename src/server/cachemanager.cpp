@@ -1386,7 +1386,7 @@ csPDelArray<psTradeTransformations>* CacheManager::FindTransformationsList(uint3
     transHash = tradeTransformations_IDHash.Get(patternid,NULL);
     if(!transHash)
     {
-        Error2("No data in trade_transformations for pattern %d", patternid);
+        Debug2(LOG_TRADE, 0, "No data in trade_transformations for pattern %d", patternid);
         return NULL;
     }
 
@@ -1394,7 +1394,7 @@ csPDelArray<psTradeTransformations>* CacheManager::FindTransformationsList(uint3
     csPDelArray<psTradeTransformations>* transArray = transHash->Get(targetid,NULL);
     if(!transArray)
     {
-        Error2("No data in trade_transformations array for item %d", targetid);
+        Debug2(LOG_TRADE, 0, "No data in trade_transformations array for item %d", targetid);
         return NULL;
     }
 
