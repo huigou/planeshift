@@ -1678,32 +1678,35 @@ bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &result
         // Get all possible combinations for those patterns and group
         csArray<csPDelArray<CombinationConstruction>*> combArray;
         csArray<csPDelArray<CombinationConstruction>*> combGroupArray;
+        csArray<csPDelArray<CombinationConstruction>*> patternlessArray;
 
 
-        for(size_t i = 0; i < patterns.GetSize(); i++)
+        for (size_t i = 0; i < patterns.GetSize(); i++)
         {
             //get the combinations for the pattern
             csPDelArray<CombinationConstruction>* result = cacheManager->FindCombinationsList(patterns.Get(i)->GetId());
-            if(result) //if it's not null we add it to the valid results
+            if (result) //if it's not null we add it to the valid results
             {
                 combArray.Push(result);
             }
             //get the combinations for the group id
             result = cacheManager->FindCombinationsList(patterns.Get(i)->GetGroupPatternId());
-            if(result) //if it's not null we add it to the valid results
+            if (result) //if it's not null we add it to the valid results
             {
                 combGroupArray.Push(result);
             }
+            result = cacheManager->FindCombinationsList(0);
+            if (result)
+            {
+                patternlessArray.Push(result);
+            }
         }
 
-        if(combArray.IsEmpty())
+        if(combArray.IsEmpty() && combGroupArray.IsEmpty() && patternlessArray.IsEmpty())
         {
             // Check for group pattern combinations
-            if(combGroupArray.IsEmpty())
-            {
-                if(secure) psserver->SendSystemInfo(clientNum,"Failed to find any combinations in patterns and groups.");
-                return false;
-            }
+            if(secure) psserver->SendSystemInfo(clientNum,"Failed to find any combinations in patterns and groups.");
+            return false;
         }
 
         // Go through all of the combinations looking for exact match
@@ -1743,6 +1746,25 @@ bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &result
                     resultId = current->resultItem;
                     resultQty = current->resultQuantity;
                     if(secure) psserver->SendSystemInfo(clientNum,"Found matching group combination.");
+                    return true;
+                }
+            }
+        }
+
+        // Check all the possible combination in patternless data set
+        for (size_t u = 0; u < patternlessArray.GetSize(); u++)
+        {
+            if (secure) psserver->SendSystemInfo(clientNum, "Checking combinations for patternless.");
+            for (size_t i = 0; i<patternlessArray.Get(u)->GetSize(); i++)
+            {
+                // Check for matching lists
+                CombinationConstruction* current = patternlessArray.Get(u)->Get(i);
+                if (secure) psserver->SendSystemInfo(clientNum, "Checking combinations for result id %u quantity %d.", current->resultItem, current->resultQuantity);
+                if (MatchCombinations(itemArray, current))
+                {
+                    resultId = current->resultItem;
+                    resultQty = current->resultQuantity;
+                    if (secure) psserver->SendSystemInfo(clientNum, "Found matching patternless combination.");
                     return true;
                 }
             }
