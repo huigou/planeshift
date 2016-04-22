@@ -2242,7 +2242,8 @@ void WorkManager::StartTransformationEvent(int transType, INVENTORY_SLOT_NUMBER 
     psWorkGameEvent* oldEvent = item->GetTransformationEvent();
     if(oldEvent)
     {
-        Error1("Had to kill old event in StartTransformationEvent.");
+        // log it in case it proves to be relevant to some bug.
+        Debug1(LOG_TRADE, 0, "Had to kill old event in StartTransformationEvent.");
         item->SetTransformationEvent(NULL);
         oldEvent->Interrupt();
     }
