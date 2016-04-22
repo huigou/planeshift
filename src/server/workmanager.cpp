@@ -1366,49 +1366,14 @@ bool WorkManager::CombineWork()
     // Find out if anything can be combined in container
     uint32 combinationId = 0;
     int combinationQty = 0;
-    int resultQuality = 0;
     if(IsContainerCombinable(combinationId, combinationQty))
     {
-        //now we know the result quality as this function is going to destroy it we take a copy
-        //TODO: loadlocalvariables is a big nuinseance which should it does unexpected effect to the environment.
-        resultQuality = currentQuality;
         // Transform all items in container into the combination item
         psItem* newItem = CombineContainedItem(combinationId, combinationQty, currentQuality, workItem);
         if(newItem)
         {
-            //restore the valid current quality
-            currentQuality = resultQuality;
-            if (!ValidateMind()) //unfortunately the bad loadlocalvariables is damaging this data so we restore it
-            {
-                return false;
-            }
-            // Find out if we can do a combination transformation
-            unsigned int transMatch = AnyTransform(patterns, patternKFactor, combinationId, combinationQty);
-            if((transMatch == TRANSFORM_MATCH) || (transMatch == TRANSFORM_GARBAGE))
-            {
-                // Set up event for transformation
-                if(workItem->GetCanTransform())
-                {
-                    StartTransformationEvent(
-                        TRANSFORMTYPE_AUTO_CONTAINER, PSCHARACTER_SLOT_NONE,
-                        combinationQty, currentQuality, newItem);
-                }
-                else
-                {
-                    StartTransformationEvent(
-                        TRANSFORMTYPE_CONTAINER, PSCHARACTER_SLOT_NONE,
-                        combinationQty, currentQuality, newItem);
-                }
-                psserver->SendSystemOK(clientNum,"You start to work on combining items.");
-                return true;
-            }
-            else
-            {
-                // The transform could not be created so send "wrong" message and the reason back to the user.
-                psserver->SendSystemError(clientNum, "You start to combine items, but could not go any further.");
-                SendTransformError(clientNum, transMatch, combinationId, combinationQty);
-                return true;
-            }
+            psserver->SendSystemOK(clientNum,"You start to work on combining items and make %i %s of quality %.0f.", combinationQty, newItem->GetName(), newItem->GetItemQuality());
+            return true;
         }
     }
     else
