@@ -478,10 +478,11 @@ protected:
      *
      * @param itemArray The array of items that need to be checked.
      * @param current The combination structure that includes an array of items
+     * @param multiplier this value will tell how many times this combination is run
      *
      * @return False if combination is not possible.
      */
-    bool MatchCombinations(csArray<psItem*> itemArray, CombinationConstruction* current);
+    bool MatchCombinations(csArray<psItem*> itemArray, CombinationConstruction* current, int &multiplier);
 
     /**
      * Check to see if there is a possible trasnform available.

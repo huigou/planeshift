@@ -1712,6 +1712,8 @@ bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &result
         // Go through all of the combinations looking for exact match
         resultId = 0;
         resultQty = 0;
+        uint32 tempId = 0;
+        int tempQty = 0;
 
         // Check all the possible combination in this data set
         for(size_t u = 0; u < combArray.GetSize(); u++)
@@ -1719,17 +1721,31 @@ bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &result
             if(secure) psserver->SendSystemInfo(clientNum,"Checking combinations for patterns.");
             for(size_t i=0; i<combArray.Get(u)->GetSize(); i++)
             {
+                int multiplier = 0;
                 // Check for matching lists
                 CombinationConstruction* current = combArray.Get(u)->Get(i);
                 if(secure) psserver->SendSystemInfo(clientNum,"Checking combinations for result id %u quantity %d.", current->resultItem, current->resultQuantity);
-                if(MatchCombinations(itemArray,current))
+                if(MatchCombinations(itemArray,current,multiplier))
                 {
+                    if (multiplier)
+                    {
+                        tempId = current->resultItem;
+                        tempQty = (current->resultQuantity ? current->resultQuantity * multiplier : multiplier);
+                        continue;
+                    }
                     resultId = current->resultItem;
                     resultQty = current->resultQuantity;
                     if(secure) psserver->SendSystemInfo(clientNum,"Found matching combination.");
                     return true;
                 }
             }
+        }
+        if (tempId)
+        {
+            resultId = tempId;
+            resultQty = tempQty;
+            if (secure) psserver->SendSystemInfo(clientNum, "Found matching multiplier combination.");
+            return true;
         }
 
         // Check all the possible combination in this data set
@@ -1738,17 +1754,31 @@ bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &result
             if(secure) psserver->SendSystemInfo(clientNum,"Checking combinations for group patterns.");
             for(size_t i=0; i<combGroupArray.Get(u)->GetSize(); i++)
             {
+                int multiplier = 0;
                 // Check for matching lists
                 CombinationConstruction* current = combGroupArray.Get(u)->Get(i);
                 if(secure) psserver->SendSystemInfo(clientNum,"Checking combinations for result id %u quantity %d.", current->resultItem, current->resultQuantity);
-                if(MatchCombinations(itemArray,current))
+                if(MatchCombinations(itemArray,current,multiplier))
                 {
+                    if (multiplier)
+                    {
+                        tempId = current->resultItem;
+                        tempQty = (current->resultQuantity ? current->resultQuantity * multiplier : multiplier);
+                        continue;
+                    }
                     resultId = current->resultItem;
                     resultQty = current->resultQuantity;
                     if(secure) psserver->SendSystemInfo(clientNum,"Found matching group combination.");
                     return true;
                 }
             }
+        }
+        if (tempId)
+        {
+            resultId = tempId;
+            resultQty = tempQty;
+            if (secure) psserver->SendSystemInfo(clientNum, "Found matching multiplier group combination.");
+            return true;
         }
 
         // Check all the possible combination in patternless data set
@@ -1757,17 +1787,31 @@ bool WorkManager::ValidateCombination(csArray<psItem*> itemArray, uint32 &result
             if (secure) psserver->SendSystemInfo(clientNum, "Checking combinations for patternless.");
             for (size_t i = 0; i<patternlessArray.Get(u)->GetSize(); i++)
             {
+                int multiplier = 0;
                 // Check for matching lists
                 CombinationConstruction* current = patternlessArray.Get(u)->Get(i);
                 if (secure) psserver->SendSystemInfo(clientNum, "Checking combinations for result id %u quantity %d.", current->resultItem, current->resultQuantity);
-                if (MatchCombinations(itemArray, current))
+                if (MatchCombinations(itemArray, current,multiplier))
                 {
+                    if (multiplier)
+                    {
+                        tempId = current->resultItem;
+                        tempQty = (current->resultQuantity ? current->resultQuantity * multiplier : multiplier);
+                        continue;
+                    }
                     resultId = current->resultItem;
                     resultQty = current->resultQuantity;
                     if (secure) psserver->SendSystemInfo(clientNum, "Found matching patternless combination.");
                     return true;
                 }
             }
+        }
+        if (tempId)
+        {
+            resultId = tempId;
+            resultQty = tempQty;
+            if (secure) psserver->SendSystemInfo(clientNum, "Found matching multiplier patternless combination.");
+            return true;
         }
     }
     else
@@ -1843,7 +1887,7 @@ bool WorkManager::AnyCombination(csArray<psItem*> itemArray, uint32 &resultId, i
 
 /////////////////////////////////////////////////////////////////////////////////////////////////////////////
 // Checks for matching combination list to item array
-bool WorkManager::MatchCombinations(csArray<psItem*> itemArray, CombinationConstruction* current)
+bool WorkManager::MatchCombinations(csArray<psItem*> itemArray, CombinationConstruction* current, int &multiplier)
 {
     // If the items count match then this is a possible valid combination.
     if(itemArray.GetSize() == current->combinations.GetSize())
@@ -1852,12 +1896,36 @@ bool WorkManager::MatchCombinations(csArray<psItem*> itemArray, CombinationConst
         csArray<psItem*> itemsMatched;
         csArray<psItem*> itemsLeft = itemArray;
 
+        // should be unable to get empty combinations, and this function should not be called without any items being present either, so using [0] "should" be safe.
+        // set up the multiplier if minqty=maxqty=0.
+        if (current->combinations[0]->GetMinQty() == 0 && current->combinations[0]->GetMinQty() == current->combinations[0]->GetMaxQty())
+        {
+            multiplier = itemArray[0]->GetStackCount();
+        }
+        // set up the multiplier if  result = 0 and min/max qty are identical and stack count is an exact multiple of min qty (all input stacks need to be in the same multiple, but we'll check that later.
+        else if (current->combinations[0]->GetResultQty() == 0 && current->combinations[0]->GetMinQty() == current->combinations[0]->GetMaxQty() &&
+            itemArray[0]->GetStackCount() % current->combinations[0]->GetMinQty() == 0)
+        {
+            multiplier = itemArray[0]->GetStackCount() / current->combinations[0]->GetMinQty();
+        }
+        
+
         // Iterate over the items in the construction set looking for matches.
         for(size_t j = 0; j < current->combinations.GetSize(); j++)
         {
             uint32 combId  = current->combinations[j]->GetItemId();
             int combMinQty = current->combinations[j]->GetMinQty();
             int combMaxQty = current->combinations[j]->GetMaxQty();
+            if (multiplier && combMinQty != combMaxQty)
+            {
+                break; // we only allow multipliers to be used when all input of the combination has min=max qty.
+            }
+            if (multiplier)
+            { 
+                // we just determined they're identical, so we can use either one. We change these for the stack check coming up, if stacks are in different multiples, 
+                //the first different will fail the stack check.
+                combMinQty = combMaxQty = (combMinQty == 0 ? multiplier : combMinQty * multiplier);
+            }
 
             // Iterate again over all items left in match set.
             for(size_t z = 0; z < itemsLeft.GetSize(); z++)
