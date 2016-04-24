@@ -41,7 +41,7 @@
 #include "rpgrules/factions.h"
 #include "bulkobjects/pstrait.h"
 #include "bulkobjects/activespell.h"
-#include "bulkobjects/psRaceInfo.h"
+#include "bulkobjects/psraceinfo.h"
 
 //=============================================================================
 // Application Includes

@@ -228,7 +228,7 @@ public:
      * This function will start an animation on the actor, it will not repeat, so if you need an animation 
      * loop, just call it repeatedly from a script.
      */
-    bool UserManager::Animation(csString animation, gemActor* actor);
+    bool Animation(csString animation, gemActor* actor);
 
     /**
      * Handles the /mount command
