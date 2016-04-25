@@ -3650,6 +3650,10 @@ float psItem::CalculateItemRarity()
     // get adjective probability (index 2)
     float adjectiveProbability = psserver->GetSpawnManager()->GetLootRandomizer()->GetModifierPercentProbability(modifierIds[2],2);
 
+    // if any probability is 0 or less while the modifierId exists, it can't be looted, thus it was crafted or GM given, and doesn't have a rarity, rarity 0 does not get displayed.
+    if ((prefixProbability <= 0 && modifierIds[0]) || (suffixProbability <= 0 && modifierIds[1]) || (adjectiveProbability <= 0 && modifierIds[2]))
+        return 0;
+
     // calculate rarity of all current modifiers
     if(prefixProbability!=0)
         calcRarity *= prefixProbability;
