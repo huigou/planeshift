@@ -417,7 +417,7 @@ bool LoadPrerequisiteXML(iDocumentNode* topNode, psQuest* self, csRef<psQuestPre
             Error1("No name given for trait prerequisite operation");
             return false;
         }
-        csString location = topNode->GetAttributeValue("name");
+        csString location = topNode->GetAttributeValue("location");
         if(location.IsEmpty())
         {
             Error1("No location given for trait prerequisite operation");
