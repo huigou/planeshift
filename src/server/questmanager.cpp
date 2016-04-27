@@ -630,7 +630,7 @@ csString QuestManager::ParseRequireCommand(csString &block, bool &result, psQues
     else if(!strncasecmp(block,"trait",5))  //require trait name in place
     {
         csString arguments = block.Slice(6,block.Length()).Trim();
-        size_t delimiter = arguments.FindFirst(" in",0);
+        size_t delimiter = arguments.FindStr(" in",0);
         csString name = arguments.Slice(0,delimiter).Trim();
         csString location = arguments.Slice(delimiter+4, block.Length()).Trim();
         command.Format("<trait name=\"%s\" location=\"%s\"/>", name.GetData(), location.GetData());
