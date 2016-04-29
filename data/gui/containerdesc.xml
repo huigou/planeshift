@@ -1,7 +1,9 @@
 <widget_description>
 
-    <widget name="ContainerDescWindow" factory="pawsContainerDescWindow" visible="no" movable="yes" savepositions="yes" style="New Standard GUI">
+    <widget name="ContainerDescWindow" factory="pawsContainerDescWindow" visible="no" movable="yes" savepositions="yes" style="New Standard GUI" resizable="yes" keepaspect="no">
         <frame x="100" y="100" width="300" height="365" border="yes"/>
+            <minframe width="300" height="365" />
+            <maxframe width="300" height="558" />
         <title resource="Scaling Title Bar" text="Container" align="left" close_button="yes"/>
         <!-- Name and name edit widgets -->
         <frame x="70" y="10" width="390" height="40" r="40" g="30" b="0" border="yes"/>
@@ -52,7 +54,7 @@
         </widget>
 
         <widget name="ItemImage" factory="pawsWidget" visible="yes" >
-            <frame x="10" y="35" width="48" height="48" border="no"/>
+            <frame x="10" y="30" width="48" height="48" border="no"/>
         </widget>
         <widget name="ItemDescription" factory="pawsMultiLineTextBox" >
             <frame x="80" y="45" width="210" height="100" border="no"/>
