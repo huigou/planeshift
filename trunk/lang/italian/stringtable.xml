@@ -65,7 +65,7 @@
   <item orig="Active" trans="Attivo" />
   <item orig="Creatures:" trans="Creature:" />
   <item orig="says" trans="dice" />
-  <item orig="Chose Color (c)" trans="Seleziona Colore (c)" />
+  <item orig="Choose Color (c)" trans="Seleziona Colore (c)" />
   <item orig="View" trans="Vedi" />
   <item orig="PATHS" trans="VIE" />
   <item orig="Wait" trans="" />
@@ -449,7 +449,6 @@ chiamato " />
   <item orig="Upload" trans="Carica" />
   <item orig="Group Alignment" trans="Allineamento gruppo" />
   <item orig="Tell" trans="" />
-  <item orig="Sei sicuro di voler caricare il tuo personaggio?" trans="" />
   <item orig="Save the password in configurations files for easier login" trans="" />
   <item orig="Exchange" trans="Scambia" />
   <item orig="Combat Skills List:" trans="" />
