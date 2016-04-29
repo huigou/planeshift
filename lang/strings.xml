@@ -61,7 +61,7 @@
   <string name="Description">Description</string>
   <string name="Creatures:">Creatures:</string>
   <string name="says">says</string>
-  <string name="Chose Color (c)">Chose Color (c)</string>
+  <string name="Choose Color (c)">Choose Color (c)</string>
   <string name="View">View</string>
   <string name="PATHS">PATHS</string>
   <string name="Wait">Wait</string>
@@ -420,7 +420,7 @@ of you named ]]></string>
   <string name="Upload">Upload</string>
   <string name="Group Alignment">Group Alignment</string>
   <string name="Tell">Tell</string>
-  <string name="Sei sicuro di voler caricare il tuo personaggio?">Sei sicuro di voler caricare il tuo personaggio?</string>
+  <string name="Are you sure you want to upload your character?">Are you sure you want to upload your character?</string>
   <string name="Exchange">Exchange</string>
   <string name="Combat Skills List:">Combat Skills List:</string>
   <string name="GM Spawn interface">GM Spawn interface</string>
