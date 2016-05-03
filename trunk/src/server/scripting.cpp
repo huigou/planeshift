@@ -2890,7 +2890,7 @@ public:
             psTrait* currTrait = ti.Next();
             if (currTrait->gender == c->GetRaceInfo()->gender &&
                 currTrait->race == c->GetRaceInfo()->race &&
-                currTrait->name.CompareNoCase(traitName))
+                currTrait->name.CompareNoCase(varName))
             {
                 c->SetTraitForLocation(currTrait->location, currTrait);
 
