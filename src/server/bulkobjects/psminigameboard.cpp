@@ -473,10 +473,13 @@ void psMiniGameBoard::Setup(psMiniGameBoardDef* newGameDef, uint8_t* preparedLay
     if(layout)
         delete[] layout;
 
-    gameBoardDef = newGameDef;
+    if (newGameDef)
+        gameBoardDef = newGameDef;
+
+    if (!gameBoardDef)
+        return; // if it was called with a NULL board, and none has been set before, proceeding will crash us.
 
     layout = new uint8_t[gameBoardDef->layoutSize];
-
     if(!preparedLayout)
         memcpy(layout, gameBoardDef->layout, gameBoardDef->layoutSize);
     else

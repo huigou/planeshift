@@ -628,7 +628,8 @@ bool psMiniGameSession::Load(csString &responseString)
 
 void psMiniGameSession::Restart()
 {
-
+    // setting up the board without a definition or layout will reset it (if it was initialised before).
+    gameBoard.Setup(NULL, NULL);
 }
 
 void psMiniGameSession::AddPlayer(Client* client)
@@ -733,6 +734,14 @@ void psMiniGameSession::RemovePlayer(Client* client)
             p->playerName = NULL;
             playerCount--;
             playerRemoved = true;
+            if (playerCount == 0)
+            {
+                Restart();
+                psSystemMessage resetMsg = psSystemMessage(clientID, MSG_INFO, "The board '%s' was reset because no one was %s it.",
+                    name.GetData(), (minigameStyle == MG_GAME ? "playing" : "solving"));
+                resetMsg.Multicast(client->GetActor()->GetMulticastClients(), 0, CHAT_SAY_RANGE);
+                Broadcast(); // show any watchers the new board layout.
+            }
             delete newmsg;
 
             break;
