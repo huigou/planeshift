@@ -12642,7 +12642,7 @@ void AdminManager::HandleSetTrait(psAdminCmdMessage &msg, AdminCmdData* cmddata,
         while(ti.HasNext())
         {
             psTrait* currTrait = ti.Next();
-            if(currTrait->race == raceInfo->race && currTrait->gender == data->gender && message.Find(currTrait->name.GetData()) == (size_t)-1)
+            if(currTrait->race == raceInfo->race && currTrait->gender == data->gender)
             {
                 message.Append(currTrait->name+", ");
                 found = true;
