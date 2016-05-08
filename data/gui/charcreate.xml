@@ -67,19 +67,9 @@
             <font name="LiberationSans-Regular.ttf" r="255" g="255" b="255" sr="0" sg="0" sb="0" shadow="yes" size="12" resizetoscreen="yes" />
             <radio on="radioon2" off="radiooff2" size="25"/>
 
-            <widget name="race3" factory="pawsRadioButton" id="3">
-                <frame x="0" y="10" width="175" height="24"/>
-                <text string="Ylian" position="right"/>
-            </widget>
-
             <widget name="race6" factory="pawsRadioButton" id="6">
                 <frame x="0" y="34" width="175" height="24"/>
                 <text string="Dermorian" position="right"/>
-            </widget>
-
-            <widget name="race0" factory="pawsRadioButton" id="0">
-                <frame x="0" y="58" width="175" height="24"/>
-                <text string="Stonehammer" position="right"/>
             </widget>
 
             <widget name="race1" factory="pawsRadioButton" id="1">
@@ -96,19 +86,30 @@
                 <frame x="0" y="130" width="175" height="24"/>
                 <text string="Kran" position="right"/>
             </widget>
-
-            <widget name="race2" factory="pawsRadioButton" id="2">
-                <frame x="0" y="154" width="175" height="24"/>
-                <text string="Ynnwn" position="right"/>
+			
+            <widget name="race10" factory="pawsRadioButton" id="10">
+                <frame x="0" y="202" width="175" height="24"/>
+                <text string="Lemur" position="right"/>
             </widget>
 
             <widget name="race5" factory="pawsRadioButton" id="5">
                 <frame x="0" y="178" width="175" height="24"/>
                 <text string="Nolthrir" position="right"/>
             </widget>
-            <widget name="race10" factory="pawsRadioButton" id="10">
-                <frame x="0" y="202" width="175" height="24"/>
-                <text string="Lemur" position="right"/>
+
+            <widget name="race0" factory="pawsRadioButton" id="0">
+                <frame x="0" y="58" width="175" height="24"/>
+                <text string="Stonehammer" position="right"/>
+            </widget>
+
+            <widget name="race3" factory="pawsRadioButton" id="3">
+                <frame x="0" y="10" width="175" height="24"/>
+                <text string="Ylian" position="right"/>
+            </widget>
+
+            <widget name="race2" factory="pawsRadioButton" id="2">
+                <frame x="0" y="154" width="175" height="24"/>
+                <text string="Ynnwn" position="right"/>
             </widget>
 <!--
             <widget name="race7" factory="pawsRadioButton" id="7">
