@@ -68,47 +68,47 @@
             <radio on="radioon2" off="radiooff2" size="25"/>
 
             <widget name="race6" factory="pawsRadioButton" id="6">
-                <frame x="0" y="34" width="175" height="24"/>
+                <frame x="0" y="10" width="175" height="24"/>
                 <text string="Dermorian" position="right"/>
             </widget>
 
             <widget name="race1" factory="pawsRadioButton" id="1">
-                <frame x="0" y="82" width="175" height="24"/>
+                <frame x="0" y="34" width="175" height="24"/>
                 <text string="Enkidukai" position="right"/>
             </widget>
 
             <widget name="race11" factory="pawsRadioButton" id="11">
-                <frame x="0" y="106" width="175" height="24"/>
+                <frame x="0" y="58" width="175" height="24"/>
                 <text string="Klyros" position="right"/>
             </widget>
 
             <widget name="race9" factory="pawsRadioButton" id="9">
-                <frame x="0" y="130" width="175" height="24"/>
+                <frame x="0" y="82" width="175" height="24"/>
                 <text string="Kran" position="right"/>
             </widget>
 			
             <widget name="race10" factory="pawsRadioButton" id="10">
-                <frame x="0" y="202" width="175" height="24"/>
+                <frame x="0" y="106" width="175" height="24"/>
                 <text string="Lemur" position="right"/>
             </widget>
 
             <widget name="race5" factory="pawsRadioButton" id="5">
-                <frame x="0" y="178" width="175" height="24"/>
+                <frame x="0" y="130" width="175" height="24"/>
                 <text string="Nolthrir" position="right"/>
             </widget>
 
             <widget name="race0" factory="pawsRadioButton" id="0">
-                <frame x="0" y="58" width="175" height="24"/>
+                <frame x="0" y="154" width="175" height="24"/>
                 <text string="Stonehammer" position="right"/>
             </widget>
 
             <widget name="race3" factory="pawsRadioButton" id="3">
-                <frame x="0" y="10" width="175" height="24"/>
+                <frame x="0" y="178" width="175" height="24"/>
                 <text string="Ylian" position="right"/>
             </widget>
 
             <widget name="race2" factory="pawsRadioButton" id="2">
-                <frame x="0" y="154" width="175" height="24"/>
+                <frame x="0" y="202" width="175" height="24"/>
                 <text string="Ynnwn" position="right"/>
             </widget>
 <!--
