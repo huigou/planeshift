@@ -630,6 +630,7 @@ void psMiniGameSession::Restart()
 {
     // setting up the board without a definition or layout will reset it (if it was initialised before).
     gameBoard.Setup(NULL, NULL);
+    endgameReached = false;
 }
 
 void psMiniGameSession::AddPlayer(Client* client)
