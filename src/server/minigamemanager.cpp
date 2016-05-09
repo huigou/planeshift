@@ -58,8 +58,8 @@ using namespace psMiniGame;
 /// Tick interval (10 seconds)
 #define MINIGAME_TICK_INTERVAL  10*1000
 
-/// Maximum idle time for players (10 minutes)
-#define MINIGAME_IDLE_TIME      60
+/// Maximum idle time for players (5 minutes)
+#define MINIGAME_IDLE_TIME      30
 //#define MINIGAME_IDLE_TIME      6
 
 // TODO these are temp
