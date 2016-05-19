@@ -76,6 +76,7 @@ psUtilityCommands::psUtilityCommands(ClientMsgHandler *mh,
     //cmdsource->Subscribe("/dumpmovements",this);
     cmdsource->Subscribe("/testanim",this);
     cmdsource->Subscribe("/version", this);
+    cmdsource->Subscribe("/logout", this);
 }
 
 psUtilityCommands::~psUtilityCommands()
@@ -92,6 +93,7 @@ psUtilityCommands::~psUtilityCommands()
     //cmdsource->Unsubscribe("/dumpmovements",this);
     cmdsource->Unsubscribe("/testanim",this);
     cmdsource->Unsubscribe("/version", this);
+    cmdsource->Unsubscribe("/logout", this);
 }
 
 const char *psUtilityCommands::HandleCommand(const char *cmd)
@@ -216,6 +218,12 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
     else if (words[0] == "/version" )
     {
         return APPNAME;
+    }
+    else if (words[0] == "/logout")
+    {
+        // authentclient will catch this message and return us to server selection.
+        psDisconnectMessage msgb(0, 0, "Logout succesfull.");
+        msgb.FireEvent();
     }
     return "Unimplemented command received by psUtilityCommands.";
 }

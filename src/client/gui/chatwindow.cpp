@@ -2312,6 +2312,8 @@ void pawsChatWindow::SendChatLine(csString& textToSend)
         }
 
         const char* errorMessage = cmdsource->Publish(textToSend);
+        if (textToSend.StartsWith("/logout")) // in case of logout, we are already gone, to continue is to invite null pointers.
+            return;
         if (errorMessage)
             ChatOutput(errorMessage);
 
