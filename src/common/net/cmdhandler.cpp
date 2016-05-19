@@ -124,6 +124,10 @@ const char *CmdHandler::Publish(const csString & cmd)
         if(subscribers[x]->cmd == command)
         {
             found = true;
+            if (command == "/logout")
+            {
+                return subscribers[x]->subscriber->HandleCommand(fullLine); // the return value is BS, but it does stop the execution. :)
+            }
             const char* ret = subscribers[x]->subscriber->HandleCommand(fullLine);
             if(ret)
                 err = ret;

@@ -2311,23 +2311,29 @@ void pawsChatWindow::SendChatLine(csString& textToSend)
 
         }
 
-        const char* errorMessage = cmdsource->Publish(textToSend);
-        if (textToSend.StartsWith("/logout")) // in case of logout, we are already gone, to continue is to invite null pointers.
-            return;
-        if (errorMessage)
-            ChatOutput(errorMessage);
-
-        // Insert the command into the history
-        chatHistory->Insert(textToSend);
-
-        // Now special handling for showing /tellnpc commands locally, since these are not reflected to the client from the server anymore
-        if (textToSend.StartsWith("/tellnpc"))
+        if (!textToSend.StartsWith("/logout")) // in case of logout, this object gets deleted, to continue is to invite null pointers. So it needs to be last.
         {
-            textToSend.Insert(8,"internal");
+            const char* errorMessage = cmdsource->Publish(textToSend);
+
+            if (errorMessage)
+                ChatOutput(errorMessage);
+
+            // Insert the command into the history
+            chatHistory->Insert(textToSend);
+
+            // Now special handling for showing /tellnpc commands locally, since these are not reflected to the client from the server anymore
+            if (textToSend.StartsWith("/tellnpc"))
+            {
+                textToSend.Insert(8, "internal");
+                cmdsource->Publish(textToSend);
+            }
+
+            currLine.Free(); // Set to NULL
+        }
+        else
+        {
             cmdsource->Publish(textToSend);
         }
-
-        currLine.Free(); // Set to NULL
     }
 }
 
