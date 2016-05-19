@@ -358,6 +358,113 @@ void psEngine::Cleanup()
 
 // ----------------------------------------------------------------------------
 
+void psEngine::ResetEngine()
+{
+    // this should be all we need to reset, the game can re-use any other objects.
+    psengine->GetCelClient()->GetClientDR()->ResetMsgStrings(); // Remove the message to prevent big CRASH in the client
+    if (GetCharControl())
+    {
+        GetCharControl()->CancelMouseLook();
+    }
+    gameLoaded = false;
+    actorRequested = false;
+    loadedMap = false;
+    gameLoaded = false;
+    loadstate = LS_NONE;
+    loadError = false;
+    Disconnect();
+
+    //these get remade when needed.
+    delete charController;
+    charController = NULL;
+    delete chatBubbles;
+    chatBubbles = NULL;
+
+    // these get remade below
+    delete charmanager;
+    delete questionclient;
+    delete inventoryCache;
+    delete guiHandler;
+    celclient.Invalidate();
+    delete slotManager;
+    modehandler.Invalidate();
+    actionhandler.Invalidate();
+    zonehandler.Invalidate();
+    netmanager.Invalidate();
+    delete camera;
+    
+    // Initialize Networking
+    netmanager.AttachNew(new psNetManager);
+
+    if (!netmanager->Initialize(object_reg))
+    {
+        lasterror = "Couldn't init Network Manager.";
+        Error2("FATAL ERROR: %s", lasterror.GetData());
+        PS_PAUSEEXIT(1);
+    }
+    psMessageCracker::msghandler = netmanager->GetMsgHandler();
+
+    inventoryCache = new psInventoryCache();
+    guiHandler = new GUIHandler();
+    celclient.AttachNew(new psCelClient());
+    slotManager = new psSlotManager();
+    modehandler.AttachNew(new ModeHandler(celclient, netmanager->GetMsgHandler(), object_reg));
+    actionhandler.AttachNew(new ActionHandler(netmanager->GetMsgHandler(), object_reg));
+    zonehandler.AttachNew(new ZoneHandler(netmanager->GetMsgHandler(), celclient));
+    questionclient = new psQuestionClient(GetMsgHandler(), object_reg);
+
+    if (!zonehandler->IsValid())
+    {
+        lasterror = "Couldn't init Zone Handler.";
+        Error2("FATAL ERROR: %s", lasterror.GetData());
+        PS_PAUSEEXIT(1);
+    }
+    if (!celclient->Initialize(object_reg, GetMsgHandler()))
+    {
+        lasterror = "Couldn't init Cel Manager.";
+        Error2("FATAL ERROR: %s", lasterror.GetData());
+        PS_PAUSEEXIT(1);
+    }
+
+
+    if (!modehandler->Initialize())
+    {
+        lasterror = "ModeHandler failed init.";
+        Error2("FATAL ERROR: %s", lasterror.GetData());
+        PS_PAUSEEXIT(1);
+    }
+
+    camera = new psCamera();
+    // reset effect manager. We didn't delete it because it registers various callbacks deep into CS that we can't (be bothered) to unset. Reset is also faster than new.
+    effectManager->Clear();
+    if (!effectManager->LoadFromDirectory("/this/data/effects", true, camera->GetView()))
+    {
+        FatalError("Failed to load effects!");
+        return;
+    }
+
+    // reset the main widget (this (SetMainWidget) deletes the old one and all content (handled by psMainWidget and pawsWidget)).
+    mainWidget = new psMainWidget();
+    paws->SetMainWidget(mainWidget); 
+    // Init the main widget
+    mainWidget->SetupMain();
+
+    paws->LoadWidget("ok.xml");
+    paws->LoadWidget("quitinfo.xml");
+    LoadPawsWidget("Yes / No dialog", "yesno.xml");
+
+    charmanager = new psClientCharManager(object_reg);
+
+    if (!charmanager->Initialize(GetMsgHandler(), celclient))
+    {
+        lasterror = "Couldn't init Character Manager.";
+        Error2("FATAL ERROR: %s", lasterror.GetData());
+        PS_PAUSEEXIT(1);
+    }
+}
+
+// ----------------------------------------------------------------------------
+
 /**
  *
  * psEngine::Initialize
