@@ -141,6 +141,11 @@ public:
     */
     void Cleanup();
 
+    /**
+    * Resets the engine to a state in which we can login again, without requiring a reload of the entire application or CS stuff.
+    */
+    void ResetEngine();
+
     /// Do anything that needs to happen after the frame is rendered each time.
     void UpdatePerFrame();
 

@@ -512,6 +512,14 @@ public:
      */
     virtual void PostLoad(bool /*nullmesh*/) { }
 
+    /* we need to invoke this when we destroy the celClient itself, so the reference to the (now gone) celClient gets unset.
+     * Never call this from any other place, since it will unset the celClient reference for *all* GEMClientObjects
+     */
+    static void UnsetCelClient()
+    {
+        cel = NULL;
+    }
+
 protected:
     static psCelClient* cel;
 

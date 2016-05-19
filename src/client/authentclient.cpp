@@ -133,6 +133,8 @@ void psAuthenticationClient::HandleMessage(MsgEntry *me)
             if ( psengine->GetNetManager()->IsConnected() )
             {
 #ifndef CS_DEBUG
+                // Disconnect will reset a whole host of variables, including the ref to authentclient itself, we need to preserve it till we are done.
+                csRef<psAuthenticationClient> myRef = csRef<psAuthenticationClient>(this);
                 HandleDisconnect(me);
 #else
                 // If debugging leave time to experiment, only drop the network.
@@ -342,40 +344,8 @@ void psAuthenticationClient::HandleAuthApproved( MsgEntry* me )
 void psAuthenticationClient::HandleDisconnect( MsgEntry* me )
 {
     psDisconnectMessage dc(me);
-        
-    // Special case to drop login failure reply from server immediately after we have already logged in.
-    if (dc.actor == 0 || dc.actor == (uint32_t)-1)
-    {
-        if (rejectmsg.IsEmpty())
-        {
-            if (!dc.msgReason.IsEmpty())
-            {
-                rejectmsg = dc.msgReason;
-            }
-            else
-            {
-                if (dc.actor.IsValid())
-                {
-                    rejectmsg = 
-                        "Cannot connect to the PlaneShift server.  "
-                        "Please double-check IP address and firewall.";
-                }
-                else
-                {
-                    rejectmsg = 
-                        "Server dropped us for an unknown reason, and is probably down.  "
-                        "Please contact technical support.";
-                }
-                
-            }
-        }
-                
-        ShowError();
-                              
-        return;
-    }
-    
-    // We are the only possible receiver
+
+    // assign error message
     if (dc.msgReason.IsEmpty())
     {
         rejectmsg = "Server dropped us. (Invalid error message)";
@@ -385,9 +355,14 @@ void psAuthenticationClient::HandleDisconnect( MsgEntry* me )
         rejectmsg = dc.msgReason;
     }
                 
-    // are we expecting the disconnect message?
-    if(psengine->loadstate != psEngine::LS_ERROR)
-    {
-        ShowError();  
-    }
+    // we do not want to quit the game, instead we would like to just return to the server selection window.
+    psengine->ResetEngine();
+
+    // make and obtain the login window, then show it.
+    PawsManager::GetSingleton().LoadWidget("loginwindow.xml");
+    pawsLoginWindow* loginWindow = (pawsLoginWindow*)PawsManager::GetSingleton().FindWidget("LoginWindow");
+    loginWindow->Show();
+    // show disconnect reason as a pop-up
+    PawsManager::GetSingleton().CreateWarningBox("You have been disconnected: " + rejectmsg);
+    Bug1("Client was disconnected, returning to server selection.\n");
 }

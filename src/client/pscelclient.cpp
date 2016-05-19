@@ -143,6 +143,8 @@ psCelClient::~psCelClient()
         delete i.Next();
     }
     effectItems.DeleteAll();
+    // reset the static reference to self among all GEM objects.
+    GEMClientObject::UnsetCelClient();
 }
 
 
