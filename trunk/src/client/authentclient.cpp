@@ -132,14 +132,9 @@ void psAuthenticationClient::HandleMessage(MsgEntry *me)
 
             if ( psengine->GetNetManager()->IsConnected() )
             {
-#ifndef CS_DEBUG
                 // Disconnect will reset a whole host of variables, including the ref to authentclient itself, we need to preserve it till we are done.
                 csRef<psAuthenticationClient> myRef = csRef<psAuthenticationClient>(this);
                 HandleDisconnect(me);
-#else
-                // If debugging leave time to experiment, only drop the network.
-                psengine->GetNetManager()->Disconnect();
-#endif
             }
             else
             {

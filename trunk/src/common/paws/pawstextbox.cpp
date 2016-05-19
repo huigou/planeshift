@@ -1463,6 +1463,9 @@ bool pawsEditTextBox::OnKeyDown(utf32_char code, utf32_char key, int modifiers)
         parent->OnChange(this);
     }
 
+    // don't check spelling when we hit enter.
+    if (key == CSKEY_ENTER)
+        return pawsWidget::OnKeyDown(code, key, modifiers);
     if((key < 128 && !isprint(key)) || CSKEY_IS_SPECIAL(key))
         pawsWidget::OnKeyDown(code, key, modifiers);
 
