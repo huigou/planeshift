@@ -224,6 +224,7 @@ const char *psUtilityCommands::HandleCommand(const char *cmd)
         // authentclient will catch this message and return us to server selection.
         psDisconnectMessage msgb(0, 0, "Logout succesfull.");
         msgb.FireEvent();
+        return "";
     }
     return "Unimplemented command received by psUtilityCommands.";
 }

@@ -339,7 +339,7 @@ void psAuthenticationClient::HandleAuthApproved( MsgEntry* me )
 void psAuthenticationClient::HandleDisconnect( MsgEntry* me )
 {
     psDisconnectMessage dc(me);
-
+    Warning1(LOG_STARTUP, "Client was disconnected, logged out or failed to login. Returning to server selection.\n");
     // assign error message
     if (dc.msgReason.IsEmpty())
     {
@@ -347,7 +347,15 @@ void psAuthenticationClient::HandleDisconnect( MsgEntry* me )
     }
     else
     {
-        rejectmsg = dc.msgReason;
+        // if game is not loaded, the message is something like "invalid password", we don't need the "you have been disconnected" there. Same for logout.
+        if (!psengine->IsGameLoaded() || dc.msgReason.StartsWith("Logout"))
+        {
+            rejectmsg = dc.msgReason;
+        }
+        else
+        {
+            rejectmsg = "You have been disconnected: " + dc.msgReason;
+        }
     }
                 
     // we do not want to quit the game, instead we would like to just return to the server selection window.
@@ -358,6 +366,5 @@ void psAuthenticationClient::HandleDisconnect( MsgEntry* me )
     pawsLoginWindow* loginWindow = (pawsLoginWindow*)PawsManager::GetSingleton().FindWidget("LoginWindow");
     loginWindow->Show();
     // show disconnect reason as a pop-up
-    PawsManager::GetSingleton().CreateWarningBox("You have been disconnected: " + rejectmsg);
-    Bug1("Client was disconnected, returning to server selection.\n");
+    PawsManager::GetSingleton().CreateWarningBox(rejectmsg);
 }
