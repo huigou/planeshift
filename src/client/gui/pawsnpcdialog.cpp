@@ -51,6 +51,7 @@ pawsNpcDialogWindow::pawsNpcDialogWindow() : targetEID(0)
     npcMsgTimeoutScale = 1.0f;
     npcMsgTimeoutScaleMax = 5.0f;
     ticks = 0;
+    triesNewMenu = 0;
     cameraMode = 0;
     loadOnce = 0;
     questIDFree = -1;
