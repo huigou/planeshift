@@ -1,7 +1,7 @@
 <widget_description>
 <widget name="MerchantWindow" factory="pawsMerchantWindow" visible="no" movable="yes" keepaspect="no" resizable="yes" style="New Standard GUI" savepositions="yes" >
  
-    <frame x="100" y="100" width="620" height="400" border="yes" />
+    <frame x="100" y="100" width="625" height="400" border="yes" />
     <minframe width="550" height="165" />
     <title resource="Scaling Title Bar" text="Merchant" align="left" close_button="yes"/>
     <font  r="121" g="147" b="42" size="15"/>
@@ -22,27 +22,31 @@
         </attachpoints>
     </widget>
  
-    <widget name="AllLabel" factory="pawsTextBox">
-            <frame x="560" y="100" width="48" height="20" />
-            <font name="LiberationSans-Regular.ttf" r="246" g="223" b="166" size="8" scalefont="no" />
-            <text string="ALL" horizAdjust="CENTRE" />
+    <widget name="AllLabel" factory="pawsMultiLineTextBox">
+	        <bgimage resource="" alpha="0" />
+            <frame x="560" y="110" width="70" height="40" />
+            <font name="LiberationSans-Regular.ttf" r="246" g="223" b="166" size="10" scalefont="no" />
+            <text string="SELL/BUY 
+    ALL" horizAdjust="CENTRE" />
         <attachpoints>
             <attach point="ATTACH_RIGHT" />
         </attachpoints>
     </widget>
  
      <widget name="TransactSingle" factory="pawsButton" id="120" tooltip="Buy/Sell one item">
-       <frame x="560" y="114" width="48" height="48" border="no" />
+       <frame x="560" y="134" width="48" height="48" border="no" />
        <bgimage resource="MerchantTrade" alpha="0" />
         <attachpoints>
             <attach point="ATTACH_RIGHT" />
         </attachpoints>
     </widget>
  
-    <widget name="SingleLabel" factory="pawsTextBox">
-            <frame x="560" y="150" width="48" height="20" />
-            <font name="LiberationSans-Regular.ttf" r="246" g="223" b="166" size="8" scalefont="no" />
-            <text string="SINGLE" horizAdjust="CENTRE" />
+    <widget name="SingleLabel" factory="pawsMultiLineTextBox">
+	        <bgimage resource="" alpha="0" />
+            <frame x="560" y="180" width="70" height="40" />
+            <font name="LiberationSans-Regular.ttf" r="246" g="223" b="166" size="10" scalefont="no" />
+            <text string="SELL/BUY 
+    ONE" horizAdjust="CENTRE" />
         <attachpoints>
             <attach point="ATTACH_RIGHT" />
         </attachpoints>
