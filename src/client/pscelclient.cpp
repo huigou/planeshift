@@ -690,9 +690,19 @@ void psCelClient::HandleMecsActivate(MsgEntry* me)
     {
         // name of the sequence needs to be unique
         csString sequenceName = msg.meshName.Append(msg.move).Append(msg.rot);
-        // creates a sequence to move/rotate the object
+        
         csRef<iEngineSequenceManager> sequenceMngr = csQueryRegistryOrLoad<iEngineSequenceManager> (object_reg,"crystalspace.utilities.sequence.engine", false);
-        csRef<iSequenceWrapper> sequence = sequenceMngr->CreateSequence(sequenceName);
+
+        // check if this sequence was previously executed, if it is, remove it, since it can point to objects that now have a different ID (rejoining a map does that).
+        csRef<iSequenceWrapper> sequence = sequenceMngr->FindSequenceByName(sequenceName);
+        if (sequence.IsValid())
+        {
+            sequenceMngr->RemoveSequence(sequence);
+            sequence.Invalidate();
+        }
+
+        // creates a sequence to move/rotate the object
+        sequence = sequenceMngr->CreateSequence(sequenceName);
         csRef<iParameterESM> meshParam = sequenceMngr->CreateParameterESM(objectWrapper);
         const int ANIM_DURATION = 5000;
         // move the object
