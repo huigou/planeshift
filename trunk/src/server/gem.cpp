@@ -2533,9 +2533,14 @@ int gemActor::GetTargetType(gemObject* target)
     for(size_t i=0; i< GetDamageHistoryCount(); i++)
     {
         gemActor* attacker = GetDamageHistory((int) i)->Attacker();
-        // If the target has ever hit you, you can attack them back.  Logging out clears this.
-        if(attacker && attacker == target)
-            return TARGET_FOE;
+        // If the target has ever hit you, you can attack them back if the last hit was no less than 60 sec ago.  Logging out clears this.
+        if (attacker && attacker == target)
+        {
+            csTicks currentTime = csGetTicks();
+            AttackerHistory* lasthit = GetDamageHistory((int)i);
+            if ((currentTime - lasthit->TimeOfAttack()) < 60000)
+                return TARGET_FOE;
+        }
     }
 
     // Declared war?
