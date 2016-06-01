@@ -320,11 +320,13 @@ bool ScriptOperation::CheckMoveOk(NPC* npc, csVector3 oldPos, iSector* oldSector
                 npc->TriggerEvent(&perception);
             }
 
-            Error3("NPC %s starts to fall pos %s",
-                   ShowID(npc->GetPID()),
-                   toString(oldPos,oldSector).GetDataSafe());
+            // show as debug, not as error, again, errors just spam the logs, and if an npc falls through the map or something stupid, it'll be "falling" every tick.
+            NPCDebug(npc, 10, "NPC %s starts to fall pos %s",
+                ShowID(npc->GetPID()),
+                toString(oldPos, oldSector).GetDataSafe());
 
-            npc->Dump();
+            //npc->Dump(); -- this spams the server console + log by massive amounts, and most of it is not ever relevant. 
+            // In case it is, use the "info <id>" command to obtain data for one specific NPC.
 
             return false;
         }
