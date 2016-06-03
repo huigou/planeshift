@@ -336,7 +336,7 @@ void psAuthenticationClient::HandleAuthApproved( MsgEntry* me )
 }
 
 
-void psAuthenticationClient::HandleDisconnect( MsgEntry* me )
+void psAuthenticationClient::HandleDisconnect(MsgEntry* me)
 {
     psDisconnectMessage dc(me);
     Warning1(LOG_STARTUP, "Client was disconnected, logged out or failed to login. Returning to server selection.\n");
@@ -357,7 +357,7 @@ void psAuthenticationClient::HandleDisconnect( MsgEntry* me )
             rejectmsg = "You have been disconnected: " + dc.msgReason;
         }
     }
-                
+
     // we do not want to quit the game, instead we would like to just return to the server selection window.
     psengine->ResetEngine();
 
@@ -366,5 +366,14 @@ void psAuthenticationClient::HandleDisconnect( MsgEntry* me )
     pawsLoginWindow* loginWindow = (pawsLoginWindow*)PawsManager::GetSingleton().FindWidget("LoginWindow");
     loginWindow->Show();
     // show disconnect reason as a pop-up
-    PawsManager::GetSingleton().CreateWarningBox(rejectmsg);
+    if (rejectmsg.StartsWith("Logout"))
+    {
+        // only show a fading text on logout, saves the user clicking, and presumably, they know they logged out.
+        psSystemMessage msg(0, MSG_RESULT, rejectmsg);
+        msg.FireEvent();
+    }
+    else
+    {
+        PawsManager::GetSingleton().CreateWarningBox(rejectmsg);
+    }
 }
