@@ -143,6 +143,11 @@ bool pawsLauncherWindow::OnButtonPressed(int /*mouseButton*/, int /*keyModifier*
     }
     else if(ID == PLAY_BUTTON)
     {
+        // cancel any pending updates, this is to prevent the launcher from crashing if play is pressed when the downloader is still running. There has to be a better way to do this, and in fact
+        // the button should not even show while the downloader is still running, but it does. This cancels and gives the thread a little time to end.
+        psLaunchGUI->CancelUpdater();
+        csSleep(1000);
+        
         psLaunchGUI->ExecClient(true);
         psLaunchGUI->Quit();
     }
