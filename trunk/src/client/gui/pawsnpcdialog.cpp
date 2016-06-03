@@ -89,6 +89,9 @@ bool pawsNpcDialogWindow::PostSetup()
 
 void pawsNpcDialogWindow::Draw()
 {
+    // Setting traits in quests unlocks camera and targetting, so we just reset it here after each draw.
+    psengine->GetPSCamera()->LockCameraMode(true);
+    psengine->GetCharManager()->LockTarget(true);
     //let this dialog invisible for the time calculated to read the NPC say text
     //if we got a new psDialogMenuMessage we don't need to ask for a new menu (gotNewMenu)
     if(useBubbles && npcMsgQueue.GetSize() > 0 && ((ticks != 0 && csGetTicks()-ticks > timeDelay) || clickedOnResponseBubble))
