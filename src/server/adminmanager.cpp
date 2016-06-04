@@ -5262,7 +5262,7 @@ void AdminManager::GetInfo(MsgEntry* me,psAdminCmdMessage &msg, AdminCmdData* cm
             if(flags & PSITEM_FLAG_LOCKABLE)
                 info += " 'lockable'";
             if(flags & PSITEM_FLAG_SECURITYLOCK)
-                info += " 'lockable'";
+                info += " 'securitylockable'";
             if(flags & PSITEM_FLAG_UNPICKABLE)
                 info += " 'unpickable'";
             if(flags & PSITEM_FLAG_NOPICKUP)
