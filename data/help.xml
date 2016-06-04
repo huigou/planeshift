@@ -1776,7 +1776,15 @@ Remove from the key in hand the ability to lock targeted item:
 /key removelock
 
 Take the key in hand and make or unmake it into a skeleton key that will open any lock, if you have a security level greater than 'player':
-/key skel</content></Contents></topic>
+/key skel
+
+This make a lock either unlockable, or non-unlockable
+/key makeunlockable
+
+This is unused currently.
+/key securitylockable
+
+</content></Contents></topic>
 <topic name="/kick"><Contents><content type="text">/kick name reason
 
 Kicks the named player off of the server.</content></Contents></topic>
