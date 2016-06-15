@@ -580,6 +580,17 @@ bool QuestManager::HandleScriptCommand(csString &block,
     op.Append(previous);
     op.Append("</response>");
 
+    // if no op is defined by this (these) command(s), we return, since some of them (like require) can be defined before any "last response" is set.
+    if (previous.IsEmpty())
+    {
+        return true;
+    }
+    // we have an op *and* we don't have a last response, complain and bail out (to continue into the next if causes memory violations.
+    if (!last_response) 
+    {
+        Error2("Can not use '%s' before any NPC: tag in this quest step.", block.GetData());
+        return false;
+    }
     // add script to last response
     if(!last_response->ParseResponseScript(op))
     {
